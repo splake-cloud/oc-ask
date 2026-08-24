@@ -1,0 +1,14 @@
+[Unit]
+Description=SQLMesh subagent memory watchdog — kills processes exceeding 14G RSS in opencode-server cgroup
+After=opencode-server.service
+
+[Service]
+Type=simple
+ExecStart=/home/user/.local/bin/sqlmesh-subagent-watchdog.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
