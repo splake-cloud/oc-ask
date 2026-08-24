@@ -5,6 +5,9 @@ and `/home/user/oc-ask/AGENTS.md` (auto-loaded every session).
 
 One line per memory card, newest first. "Reorient me" → read this index, open matching card.
 
+Memory repo: `git -C /home/user/oc-ask` → `git -C /home/user/oc-ask add opencode_memory/ && git -C /home/user/oc-ask commit -m "memory" && git -C /home/user/oc-ask push`
+Remote: `https://github.com/splake-cloud/oc-ask` (branch `master`, commit `c17a5bf4`)
+
 | Card | Topic | Key contents |
 |---|---|---|
 | [2026-08-24_qwen38_validator_detune.md](2026-08-24_qwen38_validator_detune.md) | Qwen3.8 validator detune: temp 0.8 + reasoning_effort medium, all 4 surfaces, durable via registry | two-lane config map (global opencode.jsonc vs staged registry flow); stager now emits reasoningEffort (fail-closed); activation = restart THEN restage; 5 files uncommitted; lockstep drift check deferred by PM |
