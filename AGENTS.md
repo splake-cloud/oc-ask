@@ -1,1 +1,0 @@
-/data/agentic_trading/AGENTS.md
