@@ -10,6 +10,7 @@ Remote: `https://github.com/splake-cloud/oc-ask` (branch `master`, commit `c17a5
 
 | Card | Topic | Key contents |
 |---|---|---|
+| [2026-08-25_gpu_load_query.md](2026-08-25_gpu_load_query.md) | Query the GPU directly: what is loaded on each card | nvidia-smi --query-compute-apps / --query-gpu; driver knows PID+bytes only, model identity is a cmdline join; vLLM renames to VLLM::EngineCore (walk to parent); pgrep -f vllm self-matches |
 | [2026-08-24_qwen38_validator_detune.md](2026-08-24_qwen38_validator_detune.md) | Qwen3.8 validator detune: temp 0.8 + reasoning_effort medium, all 4 surfaces, durable via registry | two-lane config map (global opencode.jsonc vs staged registry flow); stager now emits reasoningEffort (fail-closed); activation = restart THEN restage; 5 files uncommitted; lockstep drift check deferred by PM |
 | [2026-08-24_sqlmesh_daily_cycle_repair.md](2026-08-24_sqlmesh_daily_cycle_repair.md) | SQLMesh directive + INCIDENT: REMOVE deleted PROD db (symlink); restored + advanced + verified + committed | symlink-before-rm rule; backup cron PATH fixed (3 days false "corrupted"); step-9 hardened; exec-bit fix; 2 commits pushed (7 files); full directive verification with PROOF |
 | [2026-08-24_qwen36_262k_restart.md](2026-08-24_qwen36_262k_restart.md) | qwen3.6 gpu1 restart: 262k ctx + q8_0 KV; full action plan preserved | config edits (L166/L945), setsid launch fix, rollback recipe, deltanet-MoE watch item, serve-restart DONE via -y |
