@@ -1,0 +1,22 @@
+# =============================================================================
+# oc-ask ignore rules — added 2026-08-28.
+#
+# This repo had no .gitignore at all, and both paths below are auto-generated
+# artifacts with timestamped or append-only names, i.e. they grow without bound.
+# They were committed in 7ec529b while still trivial (~100 KB) precisely because
+# nothing excluded them.
+#
+# READ THIS BEFORE ASSUMING THE RULES ARE WORKING: .gitignore NEVER applies to a
+# file already in the index. The 21 files under logs/ and .ai/telemetry/ that
+# 7ec529b tracked stay tracked, and keep getting committed, until someone runs
+# `git rm --cached` on them. That asymmetry is how the sibling repo accumulated
+# 4.70 GB behind ignore rules that were already correct — see
+# opencode_memory/2026-08-28_repo_cleanup_fork_and_47gb_rewrite.md §5.
+# These rules therefore only stop NEW files here.
+# =============================================================================
+
+# sqlmesh run logs — timestamped names, 288 bytes each, two boilerplate lines
+logs/
+
+# append-only validator telemetry
+.ai/telemetry/
