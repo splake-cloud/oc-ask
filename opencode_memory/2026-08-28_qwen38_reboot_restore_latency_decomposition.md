@@ -122,6 +122,14 @@ decision, not edited.**
     `/data/agentic_trading` resolved the memory path **relative to its own cwd** instead of the
     `~/oc-ask/opencode_memory/` that `/data/agentic_trading/AGENTS.md` actually names, and the
     research commits swept the new directory into the project repo.
-  * **NOT reconciled — PM decision.** Merging spans two git repos with independent histories, and
-    the 8 orphans include a card other studies treat as canonical. This card was filed on the
-    `~/oc-ask` side.
+  * **RESOLVED 2026-08-28, same session** (PM: *"fold the 8 orphans into oc-ask and symlink /data"*).
+    All 8 copied here byte-identical (sha256-verified per file); the 6 that already had INDEX rows
+    here stopped being broken links; the temperature-passthrough row was ported verbatim from the
+    `/data` INDEX and `l1_study_hierarchy_banked` (unindexed on BOTH sides) got a newly written row.
+    oc-ask `372055c`, pushed. `/data/agentic_trading/opencode_memory` is now a **symlink** to
+    `/home/user/oc-ask/opencode_memory` (agentic_trading `4f2512a9`), so relative resolution from
+    the project root lands in the canonical store — that removes the cause, not just the symptom.
+    Post-fold invariant, verified: every INDEX row resolves to a file, and every card except
+    `2026-08-27_comfyui_gpu1_eviction.md` (pre-existing, unrelated) has an INDEX row.
+    Pre-merge directory preserved at `/tmp/claude-1000/opencode_memory.premerge` for this session;
+    content also lives in agentic_trading history at `4f2512a9~`.
