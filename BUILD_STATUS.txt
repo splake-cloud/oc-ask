@@ -1,0 +1,21 @@
+BUILD STATE: BLOCKED
+
+Stage:
+  candidate existence check
+
+Passed:
+
+Failed:
+  ✗ Candidate file exists
+
+Artifacts:
+  --help
+
+Production modified:
+  NO
+
+Next permitted action:
+  Ensure BUILDER_RECEIPT.candidate.json exists in workdir
+
+Details:
+  - Candidate not found: --help
