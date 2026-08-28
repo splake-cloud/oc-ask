@@ -84,6 +84,21 @@ Companion to `2026-08-25_iron_fly_substrate_rag_disambiguation.md` (the RAG fix 
   v1 model retirement (delete file + commit + `plan prod` → SQLMesh plans the drop) → RAG card
   repoint (`iron_fly_vs_fly_disambiguation` currently names the wrong substrate).
 
+## Reconciliation (PASSED, ~20:42 UTC)
+
+- Independent recompute of **5 deterministic weeks × 6 cells = 54,678 rows** from canonical
+  parquet (NO v2 read): expiries 2022-06-10 (first), 2022-06-17 (early interior), 2022-07-29
+  (collision: entry 2022-07-25, spot 3974.72 → body 3975 on BOTH grids), 2024-06-14 (middle),
+  2026-08-21 (recent). Compared row-for-row by 19-col EXCEPT both directions.
+- **Result: 0 / 0** (expected_minus_actual, actual_minus_expected). All 19 cols match:
+  keys, strikes, spot, entry_ts, 4 traded legs (put_wing_bid, put_body_bid, call_body_ask,
+  call_wing_bid), fly_value_bidask, and the 3 derived mids (fly_value_mid, entry_debit_mid,
+  exit_credit_mid).
+- Deposit: `/data/agentic_trading/verify/v2-recon-19col-5wk-EXCEPT-0of0.20260825T204211Z.txt` (exit=0).
+- The only bug found was in MY VERIFIER, not the model: line 72 put-wing mid term was
+  `(put_wing_bid + call_wing_ask)/2.0` (wrong operand) → fixed to `(put_wing_bid + put_wing_ask)/2.0`.
+  Model (`iron_fly_weekly_substrate_v2.sql:223`) was always correct.
+
 ## KASA suite (existing, needs adaptation)
 
 - `tests/test_warehouse_iron_fly_weekly_substrate_equivalence.py` — v1's 15-KA KASA suite
@@ -97,16 +112,85 @@ Companion to `2026-08-25_iron_fly_substrate_rag_disambiguation.md` (the RAG fix 
   ±50 was for 25W), KA_07 (IV — passes easily, far wings are 99.75%+).
 - NEW KAs needed: 6-cell coverage (exactly 6 pairs, n_weeks ≥170 each), wing algebra invariant
   (lower = body−W, upper = body+W), dimension domain (grid ∈ {5,25}, W ∈ {75,100,120}).
-- Can only run after the restatement fills the table (currently 0 rows).
+- **BUILT + PASSED 14/14 (~20:47 UTC):** `tests/test_warehouse_iron_fly_weekly_substrate_v2_sixcell.py`
+  (476 lines, standalone `python3` runner, read_only duckdb, physical table
+  `sqlmesh__warehouse.warehouse__iron_fly_weekly_substrate_v2__1230283500`, 48 cols).
+  Deposit: `/data/agentic_trading/verify/v2-kasa-sixcell-14of14.20260825T204751Z.txt` (exit=0).
+  Tests: schema(48), cell_domain(6), cell_week_coverage(181×6), funnel_row_count(1,939,361±1k),
+  key_and_grain(0 null/0 dup), body_strike(grid dev ≤grid/2, 0 off-grid), wing_algebra(0 viol),
+  entry_exit_timestamps, dte(=4), quoteable_iv(0.9786/0.9786 @entry), incomplete_bars(≤30),
+  ranges(debit[-106.75,-34.20], fly[-179,3610.05]), date_bounds, source_accessibility.
+  v1's 15-KA 25W-only bands do NOT transfer (correct): quoteable 80.65% all-rows / 97.86% @entry,
+  IV 98.9% all-rows / 97.86% @entry, incomplete bars 30 (not ≤11), debit/MTM far wider than ±50.
 
-## Open / next
+## v2 FULLY VERIFIED (2026-08-25)
 
-1. Watcher fires on seal (expected ~20:00 UTC market close or later). Check
-   `/tmp/opencode/v2_trigger_status.json` — expect `SEALED → APPLIED` or `FAILED`/`BLOCKED`.
-2. On APPLIED: run the adapted v2 KASA suite (formalize the new KAs), review results with PM.
-3. On full verification pass: v1 reference parquet export → retire v1 model → repoint RAG card.
-4. v2 model file is still **untracked** in git — commit it (with KASA test) after verification.
-5. v1 build spec's KAs reference the wrong (25W) values — superseded by v2 spec values.
+Reconciliation 0/0 + 14/14 KASA + 8 structural checks all PASS. The **transition invariant is
+satisfied**. Transition (all PM-authorized, 2026-08-25) is now COMPLETE end-to-end: v2 committed
+`14c7e148`, v1 reference parquet exported (sha256 recorded), v1 model file retired `167e9e0a`, the
+prod plan to drop v1 from the environment applied via the guarded executor (review-first, zero
+physical changes), and the RAG card `iron_fly_vs_fly_disambiguation` (+3 dependent clauses) repointed
+to v2, live-served (rank #1), and committed `98fc1580`. **The v1→v2 transition is complete
+end-to-end; nothing remains open.**
+
+## Transition steps (PM-authorized, executed 2026-08-25)
+
+1. ~~Watcher fires / KASA / reconciliation~~ — DONE (see Reconciliation + KASA sections).
+2. **v2 committed as its OWN commit — DONE `14c7e148`** (PM-directed, commit-first-before-v1):
+   `sqlmesh: add verified six-cell iron fly substrate v2` — exactly 4 files (888 insertions):
+   `warehouse/models/iron_fly_weekly_substrate_v2.sql`,
+   `tests/test_warehouse_iron_fly_weekly_substrate_v2_sixcell.py`,
+   `verify/v2-recon-19col-5wk-EXCEPT-0of0.20260825T204211Z.txt`,
+   `verify/v2-kasa-sixcell-14of14.20260825T204751Z.txt`. v1 model untouched.
+3. **v1 reference export — DONE** (PM-specified dedicated reference archive, NOT the SQLMesh
+   backup archive, NOT /var/tmp):
+   `/data/warehouse/reference_archive/iron_fly_weekly_substrate/iron_fly_weekly_substrate_v1_superseded_20260825.parquet`
+   (323,226 rows × 46 cols; verified by full-row EXCEPT vs source = **0/0** both directions;
+   sha256 `38d6cf96547cab4426e0d2a459baeabbf26e799ed1e19cd06dbdf9ed2066555c`) +
+   adjacent `iron_fly_weekly_substrate_v1_superseded_20260825.meta.json` (source_relation, rows,
+   status=superseded, reason, replacement=_v2, exported_at, parquet_sha256, verification block,
+   provenance_note). Kept for RAG-disambiguation provenance (the wrong-25W history).
+
+## Transition execution log (ALL DONE — complete end-to-end)
+
+1. ~~Retire v1 model file~~ — **DONE `167e9e0a`** `sqlmesh: retire superseded iron fly substrate v1`
+   (1 file, 334 deletions, committed SEPARATELY after the v2 commit per PM ordering). Precondition
+   verified first: reference parquet exists + sha256 recorded. `sqlmesh.yml` has NO explicit ref to
+   the v1 path (auto-discovery from `warehouse/models/`) → deleting is clean; the other file-path
+   hits are historical docs/specs/scripts, not load-time deps. Only v2 remains as an iron-fly model.
+   ⚠ the v1 PHYSICAL tables remain on disk as the safety net (see below).
+2. **Prod plan to retire v1 — DONE (PM-authorized, guarded path, ~21:14 UTC).** Review-first
+   (read-only `sqlmesh diff prod` = EXACTLY "Removed Models: warehouse.iron_fly_weekly_substrate
+   (Breaking)", nothing else) → minted fresh PM token `pm_prod_retire_iron_fly_v1_20260825`
+   (command_hash `bcbc7f0d…e04d` via executor's `compute_normalized_hash`, env=prod, 6h) bound to
+   argv `plan prod --auto-apply --no-prompts` → applied via
+   `python3 .guarded_runtime/sqlmesh_executor.py --token <path> -- plan prod --auto-apply --no-prompts`
+   (exit 0). Result: SQLMesh removed the v1 model from the prod ENVIRONMENT's virtual layer;
+   **"SKIP: No physical layer updates to perform" / "SKIP: No model batches to execute"** = ZERO
+   physical changes (no v2 rebuild, no unrelated destructive op). Post-apply: `sqlmesh diff prod`
+   = "No changes to plan: project files match the prod environment"; token in consumed_tokens
+   (single-use honored).
+   Evidence: `verify/v1-retire-prod-plan-review.20260825T211435Z.txt`,
+   `verify/v1-retire-prod-plan-applied.20260825T211438Z.txt`.
+   Data state: v2 = 1,939,361 rows (untouched); v1 PHYSICAL tables still on disk (4 snapshot tables,
+   e.g. `__2879869426` = 323,226 rows) = safety net; 31 model physical tables total, all present.
+3. **Repoint RAG card — DONE (~21:40 UTC, PM-authorized; followed docs/RAG.md Checklist H).**
+   Source of truth = `scripts/rag_verifier/build_contracts.py` (curated `data_contracts` well, 86
+   cards). Repointed the canon card `iron_fly_vs_fly_disambiguation` (text: iron fly = body nearest
+   `body_grid`-multiple, wings `body ± W`; AUTHORITATIVE substrate = `iron_fly_weekly_substrate_v2`
+   6-cell body_grid∈{5,25}×wing_width∈{75,100,120}; fixed nearest-5/±100 = ONE of the six cells, not
+   the rule; v1 SUPERSEDED + RETIRED + history in reference_archive; triggers/evidence updated) AND
+   3 dependent scope clauses that deferred to it (spx_long_put_fly_debit, spx_cash_centered_option_
+   strikes, spx_20w_fly_wing_spacing) — those still baked the old fixed spec and would have
+   contradicted the new canon. Process: edit builder → scan-stage --groups data_contracts → verify
+   staged JSONL before seeding → seed-pending --root all (full 8B + small 0.6B, 86 rows each, backed
+   up) → status live both roots → keyed fetch both roots (asserted v2/RETIRED present, old spec
+   absent) → **live service returns repointed card RANK #1** (score 6.312). Deposit:
+   `verify/rag-repoint-ironfly-v2-both-roots.*` (RESULT PASS, exit=0). NOTE: live `:8765` serves the
+   SMALL root (RAG.md §7.0 prose "full root" is documented drift; /health is authoritative).
+   **COMMITTED `98fc1580`** `data_contracts: repoint iron-fly disambiguation card to six-cell v2
+   substrate` (1 file; the two lance indexes + staged JSONL are on-disk data, not tracked).
+4. v1 build spec's KAs reference the wrong (25W) values — superseded by v2 spec values.
 
 ## Critical context
 
