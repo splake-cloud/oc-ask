@@ -1,5 +1,14 @@
 # Iron fly v2 economic substrate — normal `plan prod` promotion (pre-token verification)
 
+> **⚠ SUPERSEDED (2026-08-30):** The "22:35 RESTATE was a no-op" conclusion in this card (section
+> below, line 21) is **wrong**. The restate **did** rewrite the physical table `__1230283500`
+> (a real `DELETE`+`INSERT`, verified in the run log). The "no-op" framing was correct only in
+> the narrow sense that it re-ran the *pre-patch* definition and created no new version — but it
+> **did** change the bytes, which is the row loss the incident tracked. See the forensic
+> correction: `2026-08-30_stale_warehouse_incident_forensics_recovery.md` (this memory dir) and
+> `studies/iv_weekly_substrate/receipts/2026-08-30_stale_warehouse_incident_forensics_and_recovery_plan.md`
+> (D1). The original record below is preserved verbatim for provenance.
+
 **Date:** 2026-08-27 · **Seat:** oc-ask · **Topic:** promote patched `iron_fly_weekly_substrate_v2` (economic leg marks + `entry_debit_economic`) via a **normal** `plan prod` (NOT restate), pre-token risk resolution + categorization de-risk.
 
 Companion to `2026-08-25_iron_fly_substrate_v2_sixcell.md` (the v2 build + v1→v2 transition, done). This card is the **economic-patch re-promotion** on top of the live `__1230283500` table.
@@ -20,6 +29,13 @@ Token argv hash: `bcbc7f0d354237f442805c0293fecab35f7753f55514e9868483263d46b9e0
 
 ## Why the 22:35 RESTATE was a no-op (root cause)
 `plan prod --restate-model ...` **re-backfills the model definition stored in STATE** (`_snapshots` row 576763739 → data_hash 741154747), NOT the working-tree file. So restate re-ran the **pre-patch 48-col** definition into `__1230283500` (grep `with_economic` = 0 in the run log), created no new version, did not promote the view. That is why PM switched to a **normal plan** (which reads the working tree). Log: `warehouse/logs/sqlmesh_2026_08_26_22_35_23.log`.
+
+> **⚠ CORRECTION (2026-08-30):** "no-op" is wrong in the sense that matters. The run log shows a
+> real `DELETE FROM ...__1230283500 WHERE trade_date BETWEEN '2022-06-01' AND '2026-08-24'` +
+> matching `INSERT`, then `Promoting/Finalizing environment 'prod'`. The restate **did** rewrite
+> the physical table (1,939,361 → 1,930,133 rows; 08-18..21 not re-derived). It was a no-op only
+> re: *version* (no new snapshot, view not promoted) — not re: *bytes*. The byte change is the
+> actual row loss. See the 2026-08-30 forensic correction (linked in the banner above).
 
 ## CATEGORIZATION DE-RISK (the key finding of this session — CORRECTS an earlier wrong assumption)
 Earlier I assumed auto-categorization was OFF (no `plan:` section) → change would be UNKNOWN → `--no-prompts` would fail. **That was wrong.** Empirically verified in installed sqlmesh 0.236.1 (all read-only, no token):

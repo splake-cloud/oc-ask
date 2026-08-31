@@ -30,17 +30,19 @@ Deliverable: `studies/iv_weekly_substrate/receipts/2026-08-30_stale_warehouse_in
 - **D3 — real staleness (state `end_ts` is EXCLUSIVE, so 1-day gaps are normal EOD lag, NOT stale):**
   - `breadth_daily` (FULL): state 08-26, **physical 2026-04-10 (138 d)** — deep stale.
   - `weekly_vix_study` (FULL): state 08-25, **physical 2026-04-10 (137 d)** — deep stale.
-  - `iron_fly_weekly_substrate_v2` (INCR): state 08-26, **physical 08-21 (5 d)** — 22:35 restate dropped 08-18..21.
+  - `iron_fly_weekly_substrate_v2` (INCR, daily point-in-time substrate for a weekly strategy): state 08-26,
+    **physical 08-21 (5 missing trading days)** — prod version `__1103730983` false-complete 08-24..08-25 +
+    frontier gap 08-26..08-28. (The 22:35 restate row-loss was on the *old* version `__1230283500`, a different table.)
   - ~12 daily models: physical 08-25, missing frontier days **08-26, 08-27, 08-28** (pool is at 08-28).
   - `nyse_calendar` physical 2026-12-31 = forward-filled, not stale.
   - `warehouse.duckdb` mtime = 2026-08-30 14:56:12; several `_intervals` rows carry `created_ts`
     14:56:12 → state DB rewritten/compacted then (separate event).
 - **D4 — staged recovery plan (PM-gated, NOT executed):** Stage 0 preflight (read-only: confirm
   `--skip-shadow` still set, snapshot 26.8 GB state DB + sha256, capture baseline inventory, check
-  source freshness for the deep-stale models) → Stage 1 re-derive breadth/weekly_vix (FULL, scoped,
-  gated on source freshness) → Stage 2 backfill iron_fly_v2 08-22..08-28 (INCR) → Stage 3 advance
-  daily models to 08-28 (first scoped one-shot advance) → Stage 4 janitor cleanup of orphaned tables
-  (Option B one-shot) → Stage 5 remove `--skip-shadow` (the withheld PM-gated mutation) + observe K
+   source freshness for the deep-stale models) → Stage 1 re-derive breadth/weekly_vix (FULL, scoped,
+   BLOCKED on source refresh) → Stage 2 iron_fly_v2: scoped restate 08-24..08-25 (false-complete) +
+   separately-gated advance 08-26..08-28 (INCR) → Stage 3 advance daily models to 08-28 → Stage 4
+   conditional janitor (dry-run first) → Stage 5 remove `--skip-shadow` (the withheld PM-gated mutation) + observe K
   clean runs. Post-recovery proofs: D3 re-run all at frontier, K× 0-unexplained parity, KASA, prod
   sha256 invariant, retain Stage-0 checkpoint.
 - **D5 — remove Option B as the final close-out step, after Stage 5's K clean runs.** Its gate
@@ -74,14 +76,70 @@ before applying any fix (author ≠ reviewer):
 - `stale_wh_d1_rowloss_proof.20260830T193519Z.txt` — restate log DELETE/INSERT/Promoting/Finalizing (exit 0).
 - `stale_wh_d1_rowcounts.20260830T193519Z.txt` — `__1230283500` 1930133/08-17 vs `__1103730983` 1938281/08-21 (exit 0).
 
+## Stage 0 — EXECUTED (2026-08-31, per PM authorization; read-only, all guards honored)
+- **Guard 1 (no writer):** `pgrep` → only `sqlmesh-subagent-watchdog.sh` (opencode-subagent
+  memory-kill loop, no DB write ops). EOD `inactive/dead`, next fire 23h. **Quiescence proven:**
+  `lsof` empty + `/proc/*/fd` scan no holder + no `.wal`/`.tmp` + empty `duckdb_temp/`.
+- **Guard 2 (space):** 1.3T free on `/` (snapshot target), 2.4T on `/data`.
+- **Guard 3 (no SQLMesh init on live DB):** all inspection via `duckdb.connect(read_only=True)`.
+- **Guard 4 (snapshot while quiescent, inspect copy):** copied to
+  `/tmp/opencode/wh_recovery_20260830/warehouse.duckdb` (16s); **sha256 identical** live vs copy
+  `cb5704ab9087b3d9b1d2877842d78228b7ddbfb03ecb0a7ba4813c595f143bf1`; copy opens read-only
+  (34 tables, prod env, 27 snapshots). Deeper inspection ran against the copy.
+- **No mutations** (no plan apply/restate/backfill/state-repair/shadow-re-enable/janitor/source-refresh).
+- Evidence: `verify/stage0_quiescence.*.txt`, `verify/stage0_snapshot_sha.*.txt`,
+  `verify/stage0_recovery_matrix.*.txt`.
+
+### Source-freshness diagnosis (the ruling's trigger) — BOTH deep-stale sources STALE at 2026-04-10
+- `breadth_daily` ← firrate `index_full_1min*.zip` (`/data/firstrate`): SPX_full_1min **content
+  max 2026-04-10** (4597 days; zip mtime 2026-04-11).
+- `weekly_vix_study` ← `/data/parquet/vix_daily/vix_daily.parquet`: **max date 2026-04-10** (4602 rows).
+- Both models' physical max (04-10) == source frontier → the warehouse is NOT behind the source;
+  **the source stopped at 04-10**. Per PM ruling: **do NOT re-derive from stale inputs**; the two
+  models are **BLOCKED** on a separately-gated **source-refresh plan** (added to deliverable).
+  After refresh, Stage 0 frontier checks must be repeated before Stage 1 is authorized.
+
+### Recovery matrix (key rows; full table in deliverable)
+- **breadth_daily / weekly_vix_study** (FULL): source STALE 04-10 → **SOURCE REFRESH** (gated) then re-derive.
+- **iron_fly_v2** (INCR; **daily point-in-time substrate for a weekly strategy**, NOT weekly-frequency —
+  verified 896 distinct trading days, 5/week contiguous): state claims complete through 08-25, physical
+  max 08-21 → **08-24..08-25 FALSE-COMPLETE** (state claims done, bytes absent; 08-22/08-23 are Sat/Sun;
+  normal advance won't revisit) + 08-26..08-28 genuine frontier gap = **5 missing trading days**. Mechanism =
+  **scoped `--restate-model` of only 08-24..08-25** (re-runs current def, not the 22:35 full-history
+  stale-def restate) + separately-gated advance 08-26..08-28. Same prod version `__1103730983`.
+  **Origin (3 tiers, PM-confirmed wording):** PROVEN = promoted table ends 08-21 while interval state
+  claims through 08-25; STRONG INFERENCE = economic-patch promotion carried interval bookkeeping past the
+  materialized backfill frontier; NOT PROVEN = the exact promotion command/log event.
+  **Sharpened 5-step sequence (each separately PM-gated):** (1) keep `--skip-shadow`; (2) scoped restate
+  08-24..08-25 with current def; (3) prove those 2 dates exist + reconcile rows/keys/strategy-states;
+  (4) separately-gated advance through 08-28; (5) prove 5-session continuity 08-24..08-28 + verify other
+  daily models reached 08-28 → only then evaluate restoring the scheduled advance.
+- **~12 daily models** (FULL/INCR): state consistent (08-26), physical 08-25 → only genuine
+  frontier gap 08-26..08-28 → ordinary **advance** suffices.
+- Current (0 gap): es_regime, es_tpo_profile, gap_magnitude_daily, intraday_features_*, rv_daily,
+  single_print_gaps_v1, sr_levels_v2, tpo_nodes_v1. nyse_calendar forward-filled (not stale).
+
+### PM ruling outcomes applied (2026-08-31)
+- **Forensic conclusion ACCEPTED:** no unexplained logical write at 00:20:48–50 (WAL checkpoint);
+  damaging op = 22:35 restate. **2026-08-27 card "no-op" conclusion marked SUPERSEDED** (banner +
+  inline correction, original preserved verbatim, linked to this forensic correction).
+- **Rotated connect-only log NOT pursued further.**
+- **Durable invocation auditing APPROVED as a design task (not implementation):** cover CLI +
+  Python-context entry points; record PID/PPID, user, cgroup/service, command/caller, project path,
+  DB path, environment, timestamps, exit status, full logs — no secrets.
+- **Stage 4 janitor now CONDITIONAL** on a fresh eligibility simulation (`janitor --dry-run`);
+  Option B may have already cleaned everything eligible → stage may be a no-op.
+- **K = 3** consecutive successful scheduled EOD runs, each with 4 proofs: frontier, reference
+  (0 unexplained), physical-table (no churn), writer-attribution (journal shows EOD shadow_run,
+  no unexplained writer).
+- **`--skip-shadow` and Option B stay in place.** No recovery mutation authorized by the ruling.
+
 ## Open / next (PM decisions)
-1. **Authorize Stage 0 preflight** (read-only; safe now). Stages 1-5 are PM-gated mutations.
-2. **Source-freshness ruling** for breadth_daily (firstrate zips) / weekly_vix_study (VIX source):
-   if the *source* is stale past 2026-04-10, the fix is a source refresh, not a warehouse re-derive.
-3. **22:35 restate row loss now attributed** (corrects the 2026-08-27 card). Old `__1230283500` is
-   orphaned (not the prod version); cleanup is a Stage-4 janitor concern.
-4. **00:20:48 connect-only origin unresolvable** (log rotated). To pin it would require durable
-   audit logging of every sqlmesh invocation on the shared DB (separate hardening task).
+1. **Stages 1-5 + source-refresh plan remain PM-gated** — no recovery mutation authorized yet.
+2. **Source-refresh plan** (separately gated): refresh firrate SPX zip + vix_daily.parquet past
+   04-10, then re-run Stage 0 frontier checks before authorizing Stage 1.
+3. **Durable invocation auditing** — design task approved; implementation not yet authorized.
+4. Snapshot retained at `/tmp/opencode/wh_recovery_20260830/warehouse.duckdb` (rollback point).
 
 ## Traps
 - State `end_ts` is **exclusive** — do not report the daily models' 1-day gap as staleness; that is

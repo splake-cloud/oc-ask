@@ -17,3 +17,6 @@
 
 <!-- Iron Fly V0 gate LOCAL path fix: blueprint ordering, NameError, standalone V2 guard, e2e tests. -->
 <!-- Session: ses_fb5c7f0f3ffe8xmHANRNWzgvIX | Committed: 18f0054e on iron-fly-economic-baseline -->
+
+<!-- Iron Fly L2-F wing-width (75W/100W/120W) CLOSED + banked: on the common-341 ∩ frozen-100W-R≥0.70 population (n=280) neither 75W nor 120W materially improves TP50 vs 100W (Δ −0.1552/−0.0431, both inside ±0.50) — 100W stands; 120W = higher-hit-rate/negatively-skewed, 75W = positive-tail expression. First build had 6 secondary-analysis defects (A1/A2/A4/A5/A6/V6) caught on review, fixed + re-verified; A4 ran 139/141 not spec's 145/145 (deviation on record). Full PM query audit from the canonical file matched to the digit. Also: opencode config git-allow for the ~/oc-ask memory repo (coder3.8 + validate3.8). -->
+<!-- Session: ses_fabec1502ffeehxAP14Y11aDp4 | Committed+pushed 65743a53, 35c0a08d, 1c320722 (L2-F) + f68bc2ff (config) on iron-fly-economic-baseline; build ses_faab4c8deffeOmc6OKrSFBd9TC, fix ses_faa9e4c2fffegkfPdhxVP8XlDs -->
