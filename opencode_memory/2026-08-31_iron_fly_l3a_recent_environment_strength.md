@@ -1,12 +1,44 @@
-# 2026-08-31 — Iron Fly L3-A + L3-B environment-strength pair: scoped, built, verified, committed
+# 2026-08-31 — Iron Fly L3-A + L3-B + L3-C environment-strength trio: scoped, built, verified, committed
 
 Session `ses_fabec1502ffeehxAP14Y11aDp4` (continuation). L3-A = trailing-window
 strength of the completely frozen iron-fly trade (100W, Mon 11:30, g5/g25,
 R≥0.70 primary / R≥0.80 robustness, TP50 headline / TP35 secondary / TP45
 supporting / Friday terminal). **L3-B = the non-overlapping complement** (PM:
 "trailing windows overlap") — three adjacent equal-length pairs
-Latest 6M/12M/18M vs immediately prior. Both descriptive only — no verdict,
-no optimization, no significance testing.
+Latest 6M/12M/18M vs immediately prior. **L3-C = the rolling 12M regime
+time series** (39 month-ends 2023-06→2026-08, monthly step) + the TP50
+payoff decomposition (the mechanism test). All descriptive only — no verdict,
+no optimization, no significance testing. All three CLOSED & committed:
+L3-A `27eac92c`, L3-B `9837638e`, L3-C `a4a6da84`.
+
+## L3-C (rolling 12M strength + payoff decomposition)
+Spec `specs/iron_fly_L3-C_rolling_12m_strength_scope.md` RATIFIED 2026-08-31.
+**PM added a load-bearing correction pre-ratification:** the TP50 payoff
+decomposition per window (n_reachers/n_non_reachers, mean|reach,
+mean|non-reach, median|non-reach, non-reach p10/p25/p50) — the mechanism test
+for "fewer reachers vs more damaging non-reachers". OQ1–OQ5 approved (2026-08
+partial KEEP+flag; TP45 supporting CSV only; both figures; median kept; CI
+kept). First clean build of the L3 series (no defects; dispatch
+`ses_faa264735ffeX1bt3GZEeYlZSo`). verify-run v1–v4 (033155Z–033220Z):
+compile 0, G0–G6+G4b ALL PASS, byte-identical 7/7 **incl. both PNGs**, FAIL=0.
+**Independent recompute: 4 windows × (headline+decomposition) exact, 3 CI
+cells exact, partial flag exact.** Membership identity Σ_window n=3250 exact;
+min n (robustness)=22; G4b reconstruction identity <1e-9 all 78 cells.
+**Result:** rolling-12M mean TP50 PnL (primary) CYCLES — trough 2024-03=1.18,
+peak plateau 2024-10→2025-05 ≈30–34 (2025-04=34.12 max), decay to ~10 by 2026,
+latest partial 2026-08=9.86 (prev complete 2026-07=13.01). **MECHANISM (banked):**
+the mean-PnL collapse ~31→~10 is a REACH-RATE/mix shift, NOT loser-severity —
+reacher count halves (62→33) while reacher mean RISES (44→47→50.9 at 2025-04)
+and non-reacher mean IMPROVES (−20.7→−13.7); the growing non-reacher weight
+(0.19→0.45) drives the mean down. **PM RULING (banked verbatim):** "The iron
+fly remains positive in the latest 12-month environment, but the exceptionally
+strong 2024-H2/2025-H1 edge has decayed. The principal deterioration is lower
+TP50 completion probability." Figures (first image artifacts in series):
+`l3c_rolling_mean_tp50.png` (principal, both gates + CI bands) +
+`l3c_all_metrics.png` (6-panel primary). Receipt
+`receipts/l3c_rolling_12m_strength.md`. **Note:** I can't view PNGs (no image
+input in this model) — verified structurally (valid PNG sig, dims, byte-identical)
+only; PM should eyeball the figures.
 
 ## L3-B (recent vs prior period)
 Spec `specs/iron_fly_L3-B_recent_vs_prior_period_scope.md` RATIFIED 2026-08-31
