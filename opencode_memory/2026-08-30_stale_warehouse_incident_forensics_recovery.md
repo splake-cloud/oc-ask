@@ -44,9 +44,29 @@ Deliverable: `studies/iv_weekly_substrate/receipts/2026-08-30_stale_warehouse_in
   clean runs. Post-recovery proofs: D3 re-run all at frontier, K× 0-unexplained parity, KASA, prod
   sha256 invariant, retain Stage-0 checkpoint.
 - **D5 — remove Option B as the final close-out step, after Stage 5's K clean runs.** Its gate
-  (`_shadow_skipped AND _blocking_steps_ok`, daily_eod_build.py:618) makes it run **only** under
-  `--skip-shadow`; once the advance is re-enabled, `Context.run()` owns the janitor
-  (context.py:806-807) → no double-run. It is a temporary bridge for the `--skip-shadow` era.
+   (`_shadow_skipped AND _blocking_steps_ok`, daily_eod_build.py:618) makes it run **only** under
+   `--skip-shadow`; once the advance is re-enabled, `Context.run()` owns the janitor
+   (context.py:804-805) → no double-run. It is a temporary bridge for the `--skip-shadow` era.
+
+## Finishing review (qwen-coder, independent, EXPLORE) — APPROVE-WITH-FIXES, fixes applied
+Dispatched as a chunked EXPLORE mission (one chunk per deliverable + scope/method + consistency).
+Verdict: substantively correct, plan sound. Adjudicated its findings against on-disk evidence
+before applying any fix (author ≠ reviewer):
+- **Applied (verified):** context.py janitor call is 804-805 not 806-807; no-op claim is card
+  line 21 (my 38/49 was the 00:20:50 claim — disambiguated); `plan` alone doesn't mutate, the
+  house pattern is `plan prod --auto-apply --no-prompts` via guarded executor (Stage 1/3 +
+  principle clarified); K defined = 5 (one trading week, spans a Monday iron_fly entry);
+  rollback limitation noted (Stage-0 checkpoint reverts to original staleness, not a fix);
+  Stage 4 orphan set enumerated (incl. 3 retired v1 iron_fly versions); post-recovery proof
+  1a added (deep-stale models must extend to *source* frontier, else escalate); D3
+  `intraday_features_*` provenance corrected (they ARE warehouse SQLMesh models in the
+  reconcile TABLES registry, advanced 08-26 23:30).
+- **Rejected (reviewer error):** FINDING #6 claimed breadth_daily's source is
+  `{MACRO}/breadth_daily.parquet` — that is the *reconcile baseline* (reconcile.py:84); the
+  *model* source a re-derive reads is the firstrate zips (`breadth_daily.py:24
+  DEFAULT_FIRSTRATE="/data/firstrate"`). Added a clarifying note distinguishing the two.
+- **No fix (reviewer self-corrected):** C3.3 weekly_vix_study state_end 08-25 — deliverable was
+  already correct.
 
 ## Verification (all via `verify-run`, deposited under `verify/`)
 - `stale_wh_d3_inventory.20260830T193508Z.txt` — full state-vs-physical table (exit 0).
