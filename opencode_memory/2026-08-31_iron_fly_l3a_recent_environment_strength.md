@@ -1,9 +1,40 @@
-# 2026-08-31 — Iron Fly L3-A recent-environment-strength: scoped, built, verified
+# 2026-08-31 — Iron Fly L3-A + L3-B environment-strength pair: scoped, built, verified, committed
 
 Session `ses_fabec1502ffeehxAP14Y11aDp4` (continuation). L3-A = trailing-window
 strength of the completely frozen iron-fly trade (100W, Mon 11:30, g5/g25,
 R≥0.70 primary / R≥0.80 robustness, TP50 headline / TP35 secondary / TP45
-supporting / Friday terminal). Descriptive only — no verdict, no optimization.
+supporting / Friday terminal). **L3-B = the non-overlapping complement** (PM:
+"trailing windows overlap") — three adjacent equal-length pairs
+Latest 6M/12M/18M vs immediately prior. Both descriptive only — no verdict,
+no optimization, no significance testing.
+
+## L3-B (recent vs prior period)
+Spec `specs/iron_fly_L3-B_recent_vs_prior_period_scope.md` RATIFIED 2026-08-31
+(OQ1–OQ4: paired week-cluster bootstrap CI on Δ mean TP50 PnL only, headline-
+only CI, TP45 supporting Δ block, calendar-span labels). Periods: exact
+calendar months, prior=[c0,c1) latest=[c1,anchor 2026-08-17 11:30]; zero
+entries on any cutoff; prior∩latest=∅ verified. **First clean build of the L3
+series — no defects, no deviations** (dispatch `ses_faa4078b2ffe8bK4lJBoMuDzEx`).
+verify-run v1–v4 (030002Z–030015Z): compile 0, G0–G6 ALL PASS, byte-identical
+8/8, FAIL=0. **Independent recompute: 3 Δ means + all 6 paired-bootstrap CI
+cells exact.** G4 proves each latest period = L3-A's trailing window exactly.
+Non-defect note: G0 smoke keys coincide with L3-A's (same 352-key universe,
+same deterministic selection — "distinct where possible" unsatisfiable).
+**Result (primary, Δ = latest−prior):** Δ mean TP50 PnL −11.42/−6.72/−21.28
+(6M/12M/18M); only **18M Δ CI excludes zero** (−36.38,−4.17) — its prior
+(2024-02→2025-02) was the strongest stretch ever (P50 0.818, win 0.857);
+12M reach/win flat-to-positive (ΔP50 +0.038, Δwin +0.066) while mean
+negative → mean dragged by Friday-terminal losses on non-reachers; 18M
+uniformly worse on every reach/win/continuation metric; Δ absMDD 18M
+(−126.42) = the deep-drawdown artifact (prior mean 152.7 vs median ~30);
+Δ R mildly negative everywhere (gate less selective recently); Δ P_W
+horizon-dependent (+0.042/−0.089/+0.106). Robustness: Δ means
+−17.58/−19.26/−16.93, all CIs span zero (6M cell small_sample C=2).
+**CLOSED & committed `9837638e`** (PM "write the receipt and commit L3-B. No
+changes to the build."); receipt
+`receipts/l3b_recent_vs_prior_period.md` (11 artifacts incl. 8 outputs).
+
+## L3-A (trailing-window strength)
 
 ## Scope
 `studies/iron_fly_weekly/specs/iron_fly_L3-A_recent_environment_strength_scope.md`
