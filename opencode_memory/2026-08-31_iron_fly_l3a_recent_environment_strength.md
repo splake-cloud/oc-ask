@@ -74,10 +74,13 @@ jumps at 36M/FULL (74.8/59.6 vs ~24–27 elsewhere) — a few deep-drawdown
 weeks in the older history dominate the mean (medians stay ~23–33).
 
 ## State
-- **BUILT & VERIFIED, not yet committed.** Artifacts: 7 CSV/MD under
-  `studies/iron_fly_weekly/outputs/l3a_recent_environment_strength/` +
-  script. Awaiting PM: receipt/commit decision (and any L3-A interpretation
-  ruling).
+- **CLOSED & committed `27eac92c`** (PM ruling "write the receipt and commit
+  Analysis A", 2026-08-31). Receipt
+  `studies/iron_fly_weekly/receipts/l3a_recent_environment_strength.md`
+  (L2-D1 freeze format: verbatim question, core tables both gates,
+  provenance incl. the 3 defects + 1 spec correction, verify transcripts,
+  SHA256 of all 10 artifacts, session IDs). Commit = script + spec + 7
+  outputs + receipt (10 files).
 - Frozen inputs untouched (G1 PASS: l2f `4fc3c4a0…`, l2e `3b5e24d9…`).
 
 ## Files
