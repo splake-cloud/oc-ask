@@ -6,7 +6,7 @@ and `/home/user/oc-ask/AGENTS.md` (auto-loaded every session).
 One line per memory card, newest first. "Reorient me" → read this index, open matching card.
 
 Memory repo: `git -C /home/user/oc-ask` → `git -C /home/user/oc-ask add opencode_memory/ && git -C /home/user/oc-ask commit -m "memory" && git -C /home/user/oc-ask push`
-Remote: `https://github.com/splake-cloud/oc-ask` (branch `master`, commit `c17a5bf4`)
+Remote: `https://github.com/splake-cloud/oc-ask` (branch `master`, commit `2997d46`)
 
 | Card | Topic | Key contents |
 |---|---|
