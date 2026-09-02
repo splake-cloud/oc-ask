@@ -150,6 +150,15 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      (max_return_pct in hand for all days) but is the separate expectancy calc (peel-all vs runner), per the
      adjudication — NOT settled by hit rates alone.** Retain +50% as the default; +40% is a live option, gate
      intact either way.
+     **PEEL-POINT EXPECTANCY — DONE & SETTLED (`peel_expectancy.py`, `3cba6ecf`).** Answer: **keep +50% (1.5D),
+     peel 100%, NO runner.** Primary <=28% (n393): paired diff (1.4D-1.5D) = -1.95%D/trade, Wilcoxon p=0.0000,
+     1.5D better 54.7% of days vs 1.4D 2.3%. Conversion P(reach 1.5D|reach 1.4D)=**0.955** — 95.5% of 1.4D touches
+     also hit 1.5D, so peeling at 1.4D surrenders +0.1D on 214 reach-both trades (+21.4D) to save giveback on only
+     10 reach-1.4D-only trades (+13.7D); net 1.5D ahead by 7.7D. Same direction at <=32% and no-gate (all Wilcoxon
+     p=0.0000; t-test n.s. everywhere = crash tail swamps the mean). **Runner variants (75/25, 60/40) are STRICTLY
+     dominated by 100% peel** on mean P&L and win rate (fly gives back after the touch). Best single config = 100%
+     peel @1.5D. Caveat: absolute P&L is liquidation-marked (bid/ask, matches grid target_hit) -> negative MEAN from
+     the crash tail (min -663%D) but positive MEDIAN (+40/+50%D); the peel-point difference is robust (tail cancels).
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
