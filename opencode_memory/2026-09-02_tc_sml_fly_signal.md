@@ -54,6 +54,16 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      (prev close / intraday time-avg / 5-10-20d MA all n.s., several negative) — the magnet is relative to
      the CURRENT price, not an average. '0-5 below spot' is the worst bucket (30%): a line just under spot
      pulls spot down (magnet) away from the fly. Still entry-only, single-checkpoint, SPX-estimate-dependent.
+   - **DECOMPOSITION (2026-09-02, `sml_spot_vs_drift.py` + `sml_momentum_returns.py`): the SML-vs-spot
+     split is MOSTLY LINE-FREE MOMENTUM.** Identity gap1130 = (SML-spot@print) - drift, and the line prints
+     ~AT spot (med -0.2pt, 88% within 5pt), so gap1130 ≈ -drift (corr(gap,-drift)=+0.966). A pure "SPX fell
+     vs rose over the last N min" rule (NO line, same 212 days) reproduces the split at EVERY lookback:
+     +15.5pp/15m (p=0.028), +11.5pp/30m (p=0.101), +15.4pp/45m (p=0.028), **+21.0pp/60m (p=0.0025)** — best
+     line-free (60m) within ~2.5pp of SML-vs-spot (+23.5pp). So the line is a NOISY TIMESTAMP of recent SPX
+     drift, not an independent signal. **The cleaner rule (better than the SML thesis): a SELLOFF into 11:30
+     raises P(+50%) for a centered fly** — mechanism: a centered long butterfly is cheap vs a lower 11:30 body,
+     so stabilization gets it to +50% more often. 30-min (≈28m print window) is the one n.s. lookback →
+     window-sensitive. Forward-test as a standalone line-free rule before capital.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
