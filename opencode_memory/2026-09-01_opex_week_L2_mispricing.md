@@ -280,8 +280,22 @@ established OPEX premium — if pursued, asks whether observable
 OI/gamma/auction states identify a conditional modern-era subset, not
 whether expiration itself produces a general effect.
 
-- **L3 design ruling (PM, 2026-09-02, banked):** gamma is NOT the OPEX
-  cause — it is a conditioning/state variable. L3 = test whether
+- **L3 design ruling (PM, 2026-09-02, banked; repo:
+  `studies/opex_week_l3/design_ruling.md`):** ONE study, coverage-aware
+  feature blocks — historical arm 2013–2021 (OI, gross gamma magnitude,
+  gamma-profile shape, concentration, pin distance, explicitly-labeled
+  convention-based signed measures) + modern arm 2025-12 onward (all
+  historical features + established UW aggressor-attributed dealer gamma
+  sign AND magnitude). Do NOT impute UW sign backward or downgrade it to a
+  cross-check. Every feature carries an availability window + source
+  contract. Modern signed-gamma results reported at their actual small n —
+  depth limits confidence, not feature legitimacy. Continue accumulating
+  prospectively (intraday grid + UW feed both LIVE, last writes 2026-09-01/
+  02) so the modern arm strengthens automatically. References: 2017–21 =
+  historical POSITIVE; 2013–16 = historical NULL; signed UW = strongest
+  modern conditional-state measure. Gamma = state/conditioning variable,
+  NOT cause; OPEX-vs-non-OPEX matched-state contrast as control; no signed
+  gamma, no causal claims. L3 = test whether
   observable OI/gamma/auction states predict which OPEX weeks show the
   modern rich-straddle signature, using OPEX-vs-non-OPEX contrasts at
   matched states as the control (no signed gamma, no causal claims).
