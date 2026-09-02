@@ -159,6 +159,17 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      dominated by 100% peel** on mean P&L and win rate (fly gives back after the touch). Best single config = 100%
      peel @1.5D. Caveat: absolute P&L is liquidation-marked (bid/ask, matches grid target_hit) -> negative MEAN from
      the crash tail (min -663%D) but positive MEDIAN (+40/+50%D); the peel-point difference is robust (tail cancels).
+     **RUNNER-CONTINUATION AT THE +50% TOUCH — DONE (`9c2329fd`; spec+report RUNNER_CONTINUATION_*.md, midpath build).**
+     Correct substrate = nearest-25 11:30 20W, <=30% premium, first reach 1.5D on the MID mark, n=287 days
+     (NOT the gold cell's body_method_grid). P(2.0D|1.5D)=**65.5%** (97.9% genuine continuation, not overshoot).
+     **Continuation is BINARY not progressive**: reachers +0.49D / non-reachers -0.73D. **Baseline runner value
+     E[exit-1.5] = +0.067D, CI [-0.058,+0.190] = WASH on the MID mark.** reaches_2.0D case-control (466 rules searched)
+     mostly FAILS as a runner signal: 7 top rules hit the PEAK-VS-EXIT trap (P20>base but E[run]<0, e.g. early-touch
+     n_post>=115: P20=73% but E[run]=-0.105) and the best rule's lift collapses 18pp->1.6pp under CENSORING reweight
+     (31% of non-doubles were rising at 15:55). **Best runner-positive state** = body_dwell>=0.57 AND gentle
+     touch_overshoot<=0.02 (SPX dwelt near the body + clean touch), **17% of touches**, E[run]=+0.295D but bootstrap
+     CI [-0.003,+0.568] STRADDLES 0 = NOT confirmed. **Answer: no robust runner-positive state; one weak suggestive one.**
+     Mark-dependent (the key tension): mid=WASH, liquidation=-0.10D (runner dominated). Runner value sits in the spread.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
