@@ -1,3 +1,4 @@
+- 2026-09-02: [L3 gamma data-access diligence + scope](2026-09-02_l3_gamma_data_access.md) — verified all 5 sources on bytes; settlement gap (SRC-E frozen 2021) = the one modern-arm blocker; ET offset is UTC-5 winter/UTC-4 summer (RAG UTC-4 wrong); F9 small-n 8 OPEX weeks; historical arm runnable now
 # opencode_memory — session memory index
 
 Conventions (what "write a session receipt" / "reorient me" mean): see `README.md`
