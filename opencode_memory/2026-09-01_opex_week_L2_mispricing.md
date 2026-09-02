@@ -185,10 +185,36 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
   (no transcripts deposited); final state superseded + transcript-covered;
   noted for the rubric.
 
+## PM rulings 2026-09-02 (L2 closed, L2b ordered)
+
+- **(a) L2 v1 Closes at MARGINAL** (final layer verdict).
+- **(b) NO post-hoc promotion of 2017–2021.**
+- **(c) L2b = targeted backfill, highest-value next action:** acquire only
+  the 27 missing first-session snapshots (SPX, EOD Summary, root/series
+  identity + bid/ask/expiration/strike, no Greeks; no full months/history
+  unless pricing forces). Preregistered spec:
+  `/data/agentic_trading/studies/opex_week_l2b/specs/technical_spec_v1.md`
+  (frozen v1 formulas/thresholds/controls/settlement/split; only the 27
+  INCOMPLETE OPEX observations may be replaced; every existing row must
+  reproduce byte-for-byte or ≤1e-9; v1-vs-v1b side by side; fail-closed
+  per-grid ingest validation incl. PCP + vol-surface bounds + no-
+  cross-contamination; 2014-12 stays INCOMPLETE — waived settlement).
+  Acquisition list: `studies/opex_week_l2_iv/data/backfill/`
+  acquisition_list.csv (27 T0/E pairs; 2014-02-18 T0 holiday-adjusted;
+  2021-09-13 T0 file absent entirely).
+- **New pre-registered statistic (PM):** OPEX arm-level CIs (not just the
+  contrast). v1 values (n=75, month-clustered 10k SEED=42): short
+  +17.0bp CI [−9.4, +50.6]; long −24.2bp CI [−58.0, +2.4]; val −21.3bp CI
+  [−54.8, +5.1] — ALL CROSS ZERO. The differential (contrast) is the
+  evidence; absolute short expectancy is unproven on the full sample. L2b
+  reports the same CIs on the completed population.
+- **(d) L3 deferred** until L2b completes or DataShop pricing makes the
+  backfill uneconomic.
+
 ## Open / next
 
-- PM reads the MARGINAL verdict. Options: accept as the L2 answer (rich
-  OPEX straddles, unconfirmed on the early half); commission the 2013-15
-  OPEX-monthly T0 snapshots from another source to restore the early half
-  (would change the disposition question); or prospective confirmation.
+- PM acquires the 27 grids via DataShop → raw bytes to
+  `studies/opex_week_l2b/data/raw/` → BUILD+EXECUTE envelope to qwen-coder
+  (spec as written) → main-seat re-verification (incl. the 2014-03-17→21
+  hand-verified grid + row-identity proof) → L2b verdict.
 - L3 (OI/gamma/auction) + prospective OPEX Monday accumulation unchanged.
