@@ -227,6 +227,45 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
 - **(d) L3 deferred** until L2b completes or DataShop pricing makes the
   backfill uneconomic.
 
+## L2b local recovery — RUN + VERIFIED (2026-09-02, commit `611ac636`)
+
+PM ruling: v1's early-half weakness = convention-blind Friday-expiry join, NOT
+missing vendor coverage. v1 frozen as as-run MARGINAL; L2b = separately
+pre-registered correction. Local 26-grid recovery dispatched to qwen-coder,
+bounced once (2 rule deviations), re-verified, committed.
+
+- **Grids: 23/26 PASS, 3 REJECT** (2014-11-17, 2014-12-15, 2015-01-12 —
+  PCP fail: chain `stockPrice` column diverges from the grid's
+  quote-implied level by 5.1/10.0/3.2 pts on exactly the last
+  Saturday-coded months; quotes are perfectly parity-consistent with their
+  own implied level — substrate quirk, fail-closed per spec, no repair).
+  2014-12 stays INCOMPLETE (waived SET) regardless. 2021-09-13: DataShop
+  zip still to order (only remaining acquisition).
+- **Identity (main-seat verified):** 23 rows changed (all
+  INCOMPLETE→PRIMARY), 446 rows field-identical; v1 output sha256s
+  unchanged (independently re-hashed). Hand recompute 2014-03-17→21:
+  S0=1857.909155, K=1860, S_T=1893.30, C+P mids 21.589 → +63.03/+54.36/
+  −73.74bp — matches v1b row to 4dp. Family means reproduce to 4dp.
+- **v1 vs v1b (n=98 OPEX / 354 non-OPEX):** θ_settle −22.8bp CI
+  [−50.1,+1.6] MARGINAL (was CLEARS); θ_long_exec −24.7bp CI [−52.2,−0.4]
+  CLEARS (was CLEARS); θ_short_exec +21.0bp CI [−3.1,+48.2] MARGINAL (was
+  CLEARS). Exec gate **FAIL** (θ_short_exec CI includes 0; frozen rule =
+  exec member must independently clear floor). Split: 2013–16 **+1.1bp
+  n=45 (sign flip, floor fail)**; 2017–21 −42.9bp n=53 (CLEARS).
+  **Disposition: MARGINAL stands** (frozen replication rule — 2013–16
+  fails sign AND floor; L2b spec §5). Early-half data gap CLOSED (23/26 ≥
+  21 gate). **The settlement-mispricing effect is 2017–21-local**: with
+  the early half data-complete it shows no effect (and the sign flips).
+  Arm CIs (n=98): val −14.26 [−38.32,+5.11]; long −17.54 [−41.75,+1.41];
+  short +8.82 [−9.77,+32.52] — all cross zero (differential evidence
+  only).
+- **Bounce (delegate, verified fixed):** disposition was labeled "NONE"
+  (a member-verdict label, not a study disposition) and exec gate was
+  PASS on point-estimate alone — both corrected against quoted frozen
+  rule text. First dispatch also skipped verify-run deposits (same process
+  finding as v1's first run); bounce deposited all five transcripts
+  (`verify/l2b_local_*.20260902T200005Z.txt`).
+
 ## Open / next
 
 - PM acquires the 27 grids via DataShop → raw bytes to
