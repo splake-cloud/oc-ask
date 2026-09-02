@@ -170,6 +170,17 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      touch_overshoot<=0.02 (SPX dwelt near the body + clean touch), **17% of touches**, E[run]=+0.295D but bootstrap
      CI [-0.003,+0.568] STRADDLES 0 = NOT confirmed. **Answer: no robust runner-positive state; one weak suggestive one.**
      Mark-dependent (the key tension): mid=WASH, liquidation=-0.10D (runner dominated). Runner value sits in the spread.
+     **ACTIVE-RUNNER FIRST-PASSAGE — DONE (`57ebe304`; supersedes the passive wash/trap framing).** The runner is
+     ACTIVELY MANAGED (limit at profit target, stop at protective floor, time-stop 15:55); payoff = first passage,
+     NOT the 15:55 mark (a 2.0D limit fills at the touch; later giveback irrelevant) — the passive-hold wash was the
+     wrong object. Pop 11:30 nearest-25 20W, first mid 1.5D, <=28 (n242)/<=32 (n333), no gold/regime/SML/<=30
+     intermediary. P(2.0D before 1.0D)=**0.508**(<=28)/0.514(<=32), model-independent. **ALL 12 target x floor cells
+     POSITIVE, both gates, both exec models** (level-fill +0.015..+0.097; stable neighborhood, not isolated). Headline
+     (2.0,1.0) mean incr: level-fill +0.043/+0.058 D, market-fill +0.070/+0.072 D; win ~55-57%. Level-fill (user's
+     framing, +0.5/-0.5) central; market-fill (cross-value) = slippage bound (higher: target overshoot dominates). Best
+     cell (level) = higher target+floor (2.5,1.40) but low win rate; (2.0,1.0) is the balanced cell. Year ~3-4/6 positive.
+     25%/40% runner scales linearly. Caveats: discrete-bar first-passage (intra-bar order unresolvable), exec-model
+     (best-target direction reverses), composite 3-leg fill simplification. The FLOOR's real win = capped downside.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
