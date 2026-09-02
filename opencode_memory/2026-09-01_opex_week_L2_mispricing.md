@@ -266,10 +266,24 @@ bounced once (2 rule deviations), re-verified, committed.
   finding as v1's first run); bounce deposited all five transcripts
   (`verify/l2b_local_*.20260902T200005Z.txt`).
 
-## Open / next
+## Open / next — L2b CLOSED 2026-09-02
 
-- PM acquires the 27 grids via DataShop → raw bytes to
-  `studies/opex_week_l2b/data/raw/` → BUILD+EXECUTE envelope to qwen-coder
-  (spec as written) → main-seat re-verification (incl. the 2014-03-17→21
-  hand-verified grid + row-identity proof) → L2b verdict.
-- L3 (OI/gamma/auction) + prospective OPEX Monday accumulation unchanged.
+**L2b CLOSED at MARGINAL (PM ruling 2026-09-02).** 2021-09-13 NOT acquired
+(no decision value under the frozen split rule — it cannot repair the failed
+2013–16 replication); remains INCOMPLETE permanently. **Final statement
+(PM, verbatim):** "OPEX-week SPX straddles appear richer than controls
+during 2017–2021, but the effect is absent in the now adequately populated
+2013–2016 replication period, is not robust at executable bid prices in the
+full corrected sample, and does not establish positive absolute expectancy
+from shorting OPEX straddles." **L3 framing (PM):** NOT confirmation of an
+established OPEX premium — if pursued, asks whether observable
+OI/gamma/auction states identify a conditional modern-era subset, not
+whether expiration itself produces a general effect.
+
+- L3: per PM's framing above; deferred; data (OI/gamma) acquisition is the
+  gating step.
+- Nothing else open on this thread: v1 frozen as-run MARGINAL (`38d0d88c`),
+  L2b closed (`611ac636` + closure block), pilot artifact on disk, SFTP
+  route verified (askpass in `~/.secrets/ds_askpass.sh`; hosts
+  sftp[2].datashop.livevol.com:22; space out connections — kex reset after
+  rapid retries).
