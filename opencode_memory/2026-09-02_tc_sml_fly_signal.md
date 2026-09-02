@@ -181,6 +181,27 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      cell (level) = higher target+floor (2.5,1.40) but low win rate; (2.0,1.0) is the balanced cell. Year ~3-4/6 positive.
      25%/40% runner scales linearly. Caveats: discrete-bar first-passage (intra-bar order unresolvable), exec-model
      (best-target direction reverses), composite 3-leg fill simplification. The FLOOR's real win = capped downside.
+     **CORRECTION (n_post leak).** n_post (count of post-touch quoteable bars) is a CENSORING var, not a predictor —
+     it encodes the observation window to hit 2.0D and was in 160/466 of the old price-path rules -> those are invalid
+     live classifiers. touch_time also fixed: minutes-since-midnight (the old numeric percentiles of HHMM, e.g. 1483, are
+     not valid times). Manifest: RUNNER_CONTINUATION_FEATURE_MANIFEST.md (12 rule-input features; crossing_pattern +
+     regime_id were computed but NOT in the 466 rules).
+     **V2 FEATURE SET + COVERAGE GATE (`ab8242db`).** Corrected PIT-safe baseline (ONE touch-time var, signed+abs
+     SPX-body dist, body dwell, crossing_pattern, pre-touch efficiency, touch overshoot, entry premium + regime
+     controls) + NEW families from the full stg_spx_options chain (IV pre-computed, no BS back-out): body/wing/OTM/
+     skew/curvature IV + IV change; IV/RV + implied-remaining-vs-realized (RV from dense stockPrice); 0DTE put
+     vol/OI/liquidity concentration at body. 287 touch-days, 37 markers. Coverage: baseline/RV/strike 100%; body_iv
+     92.4% (17 days source putMidIv=0.0, 2022 cluster, NOT patched); derived IV 89.9%. IV spot-verified 3/3.
+     **V2 BROAD MARKET-STATE SEARCH (`7ddeb0b0`) -> NO MARKER SURVIVES multiple-testing.** Primary outcome = per-day
+     incremental of the FROZEN (2.0/1.0 level-fill) runner + P(target_before_floor); reaches_20D demoted to
+     diagnostic; 1.75/2.5/MFE/time-to-2.0D descriptive. 320 candidates (IV on 270 CC, non-IV on 287; 3 weak markers
+     dropped to descriptive; log(iv_rv_ratio) + implied_vs_realized_diff, raw 176x ratio forbidden). 116 clear +0.03D
+     runner lift, NONE survive Bonferroni (0.2725>max 0.1833) or FDR (top q 0.12-0.29); ~96/320 clear by chance.
+     Top in-sample: low IV surface + low body_iv_entry (n34, +0.249D, p~0.01 standalone) -> follow-up candidate
+     (uniform-IV recompute on all 287 + OOS), NOT validated. No peak-trap. 65.5% continuation days have NO
+     identifiable market-state profile (body_dwell the only mild tilt, non-surviving). 17 excluded IV days: no
+     material selection (7pp reach20D, n.s.). **Verdict: the runner's +0.065D (P tbf 51.9%) is a STRUCTURAL
+     first-passage asymmetry (51.9% target vs 42% floor), not a state-conditional edge to condition on.**
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
