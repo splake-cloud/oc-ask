@@ -213,6 +213,25 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      those obs; real confirmation needs new/held-out trades); (b) do NOT overstate the mechanism — the +0.5 (2.0D)
      and -0.5 (1.0D) barriers are equidistant from 1.5D, so low IV does NOT mechanically favor the upper barrier;
      the in-sample lift has no established mechanism. **Gamma (L3/UW) stays a separate study.**
+     **V3 OPTION-STATE PASS (`c355b8b6`) - what PRODUCED the gain, not the vol environment.** Final bounded pass
+     before gamma. Features (637 reached-1.5D-mid, -> <=28 242 / <=32 333): (1) leg-level attribution entry->touch
+     (dFly=dL-2dB+dU, leg contribs/debit, % from short body, wing asymmetry, single-leg concentration, fly change
+     final 5/15min); (2) DYNAMIC smile entry->touch (dIV/strike, dskew, dcurvature, body-vs-wing compression);
+     (3) payoff-relative geometry (|SPX-K|/implied move, wing width/implied, dist-to-wing/implied, remaining implied
+     move vs move-required-for-2.5D via BS revalue, composite fly spread). CORRECTED TARGET: reach 2.5D before 1.0D
+     (first-passage), (2.5/1.0) runner incremental, continuous additional_MFE. P(reach25_before_10): <=28 24.0% / <=32
+     19.8% / all 10.7%. **STRUCTURAL FINDING: ~90% of 2.5D outcomes are VOL-driven** (of the 58 <=28 big-fly days
+     only 6 are move-reachable holding IVs) -> implied_vs_25D only 11% coverage, descriptive-only; the vol surface
+     (not SPX position) is the right lens. **SEARCH: 165 candidates (120 single + 45 pair), 50 clear +0.05, 0 survive
+     Bonferroni/BH-FDR.** STRONGEST in-sample signal = DYNAMIC-SMILE CURVATURE FLATTENING: dcurvature<=25pct /
+     body_wing_compression>=75pct (body IV compressing relative to wings) -> P(reach25) 0.327 vs 0.240, mean runner
+     +0.206 vs +0.053, n=55, consistent P28/P32, NOT a peak-trap = the user's 'genuine curvature development'
+     hypothesis (vs underlying crossing the body). Top-by-lift_tbf (wing_asymmetry) IS a peak-trap (raises peak +0.145
+     > tradable +0.088). No decision-time option-state marker reliably improves the tradable outcome -> CONSISTENT
+     with the flat-runner ruling; the dynamic-smile curvature signal is a FROZEN-HYPOTHESIS candidate for prospective
+     confirmation (strongest signal in the whole study, in-sample only). NOTE: the 0.086 leg-attribution 'identity
+     dev' is the touch-overshoot + entry-mid-below-quote-debit (contributions sum to the actual 0.65, not the 0.5
+     nominal) - not a bug. (Recurring: my commits land in concurrent L3/OPEX commits due to the shared master tree;
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
