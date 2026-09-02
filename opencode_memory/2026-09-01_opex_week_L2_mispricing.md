@@ -143,15 +143,52 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
 - Commits `bb194be3` (ingest + data) + `70d3a221` (spec §10 final); verify
   transcripts verify/l2_settle_ingest_*.
 
+## Results (2026-09-02, run v1 + bounce, commit 38d0d88c)
+
+- **DISPOSITION: MARGINAL.** Family 3/3 CLEARS_FLOOR: θ_settle −29.8bp
+  CI [−62.4, −2.6]; θ_long_exec −31.3bp; θ_short_exec +29.2bp CI
+  [+2.1, +6.1]; Holm adj p 0.0618 (descriptive). Execution gate PASS
+  (SHORT_AT_BID). Split replication: 2013-16 fails floor (−2bp, n=22) →
+  MARGINAL per pre-registered rule. Reading: OPEX-week straddles look
+  systematically rich (short-at-bid earns ~29bp on the full sample), but
+  the 2013-16 half — decimated by the ORATS root gap (only 22 weeks) —
+  cannot confirm; 2017-21 half is clean (−43bp).
+- **Root cause of the thin early half:** ORATS 2013-15 T0 (Monday) files
+  capture the weekly/daily root, not the monthly root — 27 of 108 W1 OPEX
+  months have no T0 snapshot of the OPEX monthly (all 2013: 12, all 2014:
+  12, 2015-01, 2015-12, 2021-09) → INCOMPLETE. Same gap extends to W0
+  (2006-2011: only 1 of 72 OPEX weeks has the monthly at T0 — verified).
+  This is substrate, not fixable in-study.
+- **Main-seat re-verification found + fixed (pre-verdict spec amendments,
+  commit 9349a447):** (1) delegate's first run gated verdicts on an
+  invented α=0.05 Holm-p (mislabeled column) and ANDed p into the
+  execution gate — bounced; spec now has explicit verdict vocabulary
+  (CLEARS_FLOOR/MARGINAL/NONE, Holm descriptive). (2) G1 consistency gate
+  (0.1% in 99%) was miscalibrated — measured 420 Mondays: median 0.068%,
+  p95 0.426%, p99 1.083%, signed median −0.011% (correct series, no
+  offset); recalibrated to series-identity stats, disclosed. (3) Anchor
+  #1 (2013-06-10→14) is a 2nd-Friday WEEKLY, not an OPEX monthly (June
+  2013 monthly = 6/21, T0 snapshot absent) — relabeled; anchor #5 added
+  (2016-06, true OPEX monthly, hand-verified leg). (4) Dropped clause
+  (per-week CSV) + S5 not computed + W2 skipped on false "absent" premise
+  (atm_iv_daily IS on box) — all delivered in bounce.
+- **S5 (doctrine quantified):** open-based vs SET payoff: mean −2.7pts,
+  median −1.4, p5 −14.4, p95 +6.1 (open is NOT a SET proxy — confirmed,
+  and the error is fat-tailed). Close-based: mean +3.3pts, p95 +32.4.
+- **W2 context (n=1193 days):** OPEX-Monday IV 23.2% vs non-OPEX 25.7%;
+  next-day |ret| 0.731% vs 0.748%; corr(IV,|ret|)=0.41 — context only.
+- **Files:** script scripts/opex_l2_mispricing_v1.py; outputs v1_weeks.csv
+  (469 rows, row-checkable), v1_family.csv, v1_s5_settlement_diag.csv,
+  v1_w0/w2_context.csv; receipts v1_g0/g1/g2/verdicts; transcripts
+  verify/l2_bounce_*.
+- **Process finding:** first dispatch skipped its verify-run commands
+  (no transcripts deposited); final state superseded + transcript-covered;
+  noted for the rubric.
+
 ## Open / next
 
-- **2 weeks remain pending** (both in the ledger, INCOMPLETE in the primary
-  unless resolved): S 2014-12-19 (AM SET — no public source carries the AM
-  print) and W 2018-12-05 (Wednesday absent from Yahoo AND the spine —
-  two-vendor hole). PM: one DataShop SPX daily file resolves both, or waive
-  (n floors hold either way).
-- Then: BUILD+EXECUTE dispatch to qwen-coder per house envelope (spec rev
-  r4; gates G0/G1(+settlement)/G2/G3; main-seat re-verification of a sample
-  of weeks).
-- L2 memory card gets results section post-run.
+- PM reads the MARGINAL verdict. Options: accept as the L2 answer (rich
+  OPEX straddles, unconfirmed on the early half); commission the 2013-15
+  OPEX-monthly T0 snapshots from another source to restore the early half
+  (would change the disposition question); or prospective confirmation.
 - L3 (OI/gamma/auction) + prospective OPEX Monday accumulation unchanged.
