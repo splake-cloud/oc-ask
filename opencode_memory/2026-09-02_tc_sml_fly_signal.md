@@ -47,6 +47,13 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      (the p=0.017 pooled was the understated SE — exactly as predicted).
    - **SML direction is only a *marginal 11:30* tilt** (all-premium, p=0.039, one row/day); 12:30 has
      none. NOT an established edge.
+   - **REFINEMENT (2026-09-02, `sml_spot_weighted.py`): the SML-vs-CURRENT-SPOT signal is STRONGER than
+     vs the body** — above-spot 63.9%(n108) vs below 40.4%(n104), **+23.5pp, p=0.0009, CI[+10.3,+36.6]**,
+     and MORE robust to the SPX estimate (robust core significant to 2pt vs 1pt for body). Body is just a
+     25-pt snap of spot (|body-spot| med 6pt; 75% agreement). **SML vs any WEIGHTED AVERAGE is DEAD**
+     (prev close / intraday time-avg / 5-10-20d MA all n.s., several negative) — the magnet is relative to
+     the CURRENT price, not an average. '0-5 below spot' is the worst bucket (30%): a line just under spot
+     pulls spot down (magnet) away from the fly. Still entry-only, single-checkpoint, SPX-estimate-dependent.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
