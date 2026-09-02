@@ -91,9 +91,10 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
   the certified OPEX final session from pattern_opex_week; W: SPXW rows with
   explicit MM/DD/YYYY; label drift by year handled in parser).
 - **GAP LEDGER (source-side omissions — fail-closed, nothing fabricated):**
-  S missing 11 OPEX months (2014-12, 2016-12, 2019 Jan–Oct — public archive
+  S missing 12 OPEX months (2014-12, 2016-12, 2019 Jan–Oct — public archive
   partial); W missing 82 chain weekly expiries (2013: 32, 2014: 16, 2015: 8,
-  2016: 4, 2017: 6, 2018: 3, 2019: 7, 2020: 3, 2021: 3). Receipt status
+  2016: 4, 2017: 6, 2018: 3, 2019: 7, 2020: 3, 2021: 3; 26 of 82 are Saturday
+  expiries settling the prior session). Receipt status
   FAILED by design until PM fills (DataShop SPX index daily) or waives.
 - Spot-checks vs spine (consistency, not identity): S vs open −5.4 / −6.5 /
   +6.0 pts (the measured open-vs-SET gap — small, nonzero: doctrine
@@ -102,17 +103,35 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
 - Two W values on OPEX final sessions (2019-08-16, 2021-04-16) = the
   PM-settled SPXW weekly expiring ON OPEX day (dual roots) — provenance only,
   never referenced by the study.
+
+**Fill mechanism (2026-09-02, PM elected DataShop fill):** commit
+`6e7a67a6`. `scripts/opex_l2_settlement_ingest.py --offline --fill <csv>`:
+- **T(E) convention** (verified from the feeds): the public W feed dates
+  rows by the settlement session; a chain expiry E settles at T(E) = latest
+  trading day ≤ E (weekend expiries → prior session; S fills require
+  T(E) = E — AM SET never proxied). The DataShop file's own date set is the
+  authoritative calendar (the spine has vendor holes, e.g. 2013-01-19).
+- Overlap validation BEFORE any fill: S column must match the 89 public S
+  values exactly on all overlapping OPEX dates; W column within 0.01 on all
+  928 overlapping W dates; per-candidate columns tried, 100%-passer chosen,
+  else abort with stats. Filled rows tagged source=datashop + settlement_date.
+- Test battery: synthetic file incl. decoy SSV column → PASS (1118 rows,
+  ledger 94→0, 27 weekend-mapped fills); wrong-S-series → FAIL closed;
+  missing OPEX date → FAIL closed. Ledger untouched on abort.
+- Normalized table now has `source` + `settlement_date` columns for all rows.
+- G1 note: 2 W rows (2016-01-29, 2020-03-18) deviate 0.11–0.34% from spine
+  close (official vs vendor close) — spec G1 is ≥99% compliant; exceptions
+  reported, not fatal.
 - Commits `bb194be3` (ingest + data) + `70d3a221` (spec §10 final); verify
   transcripts verify/l2_settle_ingest_*.
 
 ## Open / next
 
-- **PM decision (blocks the primary):** fill the 94 ledger gaps via DataShop
-  SPX index daily file (complete 2013–2021 as designed) OR accept gaps (11
-  OPEX weeks + 82 control weeks INCOMPLETE; 2013–16 control half thinned;
-  2019 OPEX slice = 2).
-- Then: BUILD+EXECUTE dispatch to qwen-coder per house envelope (spec
-  `studies/opex_week_l2_iv/specs/technical_spec_v1.md`, rev r4; gates
-  G0/G1(+settlement)/G2/G3; main-seat re-verification of a sample of weeks).
+- **PM: deliver the DataShop SPX index daily CSV (2013-01-01 → 2021-12-31,
+  raw bytes, to `studies/opex_week_l2_iv/data/dashop/`).** One command on
+  arrival: `python3 scripts/opex_l2_settlement_ingest.py --offline --fill
+  <file>` → PASS receipt + filled table, then BUILD+EXECUTE dispatch to
+  qwen-coder per house envelope (spec rev r4; gates G0/G1(+settlement)/G2/G3;
+  main-seat re-verification of a sample of weeks).
 - L2 memory card gets results section post-run.
 - L3 (OI/gamma/auction) + prospective OPEX Monday accumulation unchanged.
