@@ -4,12 +4,15 @@ Topic: does the Discord channel author's **SML (Strongest Morning Line)** / **SA
 carry edge for the desk's SPX 0DTE long-put butterfly as a condition on the convergence tree
 (premium% gate → SML side)? Plus a re-derivation of the "gold cell" peel/runner.
 
-**STATUS (after four audits): the line-specific tradable structure largely did NOT survive.**
-The only robust findings are the **premium% entry gate** (not line-related) and the **SML morning
-price-magnet** (a price-path effect, not a fly P/L signal). The SML *direction* entry edge, the
-**SML "ceiling"/exit (F3)**, the gold-cell×SAL hold finding (F6), **and the F9 "SAL alignment→
-stability" (retracted as a premium-composition artifact)** were each **retracted or downgraded**.
-Full detail in `/data/agentic_trading/analysis/sml_fly_verify/TECHNICAL_REPORT.md` (17 sections)
+**STATUS (after four audits + selloff-rule disposition): the line-specific tradable structure
+largely did NOT survive.** The only robust findings are the **premium% entry gate** (not line-related)
+and the **SML morning price-magnet** (a price-path effect, not a fly P/L signal). The SML *direction*
+entry edge, the **SML "ceiling"/exit (F3)**, the gold-cell×SAL hold finding (F6), **the F9 "SAL
+alignment→stability" (retracted as a premium-composition artifact)** were each **retracted or
+downgraded**. The **"selloff into 11:30 → +50%" momentum candidate is a NO-GO** (+21pp was a
+SML-print-time subset artifact; true line-free effect +7.5-9.5pp, and NEGATIVE inside the ≤28%
+premium gate where you actually trade — no implementable edge, no forward test). Full detail in
+`/data/agentic_trading/analysis/sml_fly_verify/TECHNICAL_REPORT.md` (17 sections)
 + **11** verify scripts (verify_07–11 are the five audits).
 
 ## Constraints (stated once — professional desk, don't re-qualify small-n every message)
@@ -60,10 +63,24 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      vs rose over the last N min" rule (NO line, same 212 days) reproduces the split at EVERY lookback:
      +15.5pp/15m (p=0.028), +11.5pp/30m (p=0.101), +15.4pp/45m (p=0.028), **+21.0pp/60m (p=0.0025)** — best
      line-free (60m) within ~2.5pp of SML-vs-spot (+23.5pp). So the line is a NOISY TIMESTAMP of recent SPX
-     drift, not an independent signal. **The cleaner rule (better than the SML thesis): a SELLOFF into 11:30
-     raises P(+50%) for a centered fly** — mechanism: a centered long butterfly is cheap vs a lower 11:30 body,
-     so stabilization gets it to +50% more often. 30-min (≈28m print window) is the one n.s. lookback →
-     window-sensitive. Forward-test as a standalone line-free rule before capital.
+     drift, not an independent signal. ~~"The cleaner rule: a SELLOFF into 11:30 raises P(+50%)"~~ **NO-GO —
+     RETRACTED 2026-09-02, see disposition below.**
+   - **DISPOSITION — SELLOFF RULE: NO-GO (2026-09-02, `sml_forwardtest_spec.py`, n=1217 line-free 2021-2026).**
+     The "selloff into 11:30 → +50%" candidate does NOT survive grounding on the clean line-free population
+     (all 1130_20W entries, one/day — the population a line-free forward test would actually use):
+     - **+21.0pp (p=0.0025) was a SUBSET ARTIFACT** — it was computed on the 212 days where the SML was
+       printed BEFORE 11:30, not a line-free rule. The SML print timing is a strong confound: printed
+       before 11:30 → +21.0pp (p=0.0025, n212) vs printed only AFTER 11:30 → **−21.9pp (p=0.040, n97)** —
+       a mirror image. So the "momentum" was entangled with the line's timing all along.
+     - **True line-free effect is modest and marginal:** unconditional +7.5pp (p=0.009) full 2021-2026 /
+       +9.5pp (p=0.077) 2025-02-13+ — below the ~15pp entry-threshold, and p not robust.
+     - **The "particularly when premium is favorable" clause is CONTRADICTED:** within the ≤28% entry gate the
+       60-min selloff effect is NEGATIVE and n.s. in every population (−2.3 to −4.0pp, p>0.6). It is only
+       (weakly) positive in the mid/expensive buckets the premium gate already rejects. No implementable edge.
+     - **Decision: NO-GO.** No forward test. Keep the observation (a morning selloff mildly raises the
+       unconditional +50% rate off-sample), not a rule. Durable factors unchanged: premium% gate (entry),
+       F7 morning-revisit/fade (interpretive), SML direction/position = proxy of SPX drift (retracted as
+       independent info), no SML hold/exit.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
