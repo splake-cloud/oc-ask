@@ -120,6 +120,13 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
    `data/discord/` to `.gitignore`.
 
 ## NOTES
+- **Payoff/risk correction (4th fix):** the report + verify_02 originally misstated the
+  long-debit put-fly payoff. Correct: **max net profit = W − D; max net loss = D (the full
+  debit, BOUNDED)** reached at/beyond the **outer wings**, which are **ONE wing-width from the
+  body (not two)**; intrinsic payoff = 0 at ±W, W at the body. So `premium% = D/W`, reward/risk
+  = (1−prem)/prem (a 28% fly risks 0.28W to make 0.72W), and `MAE_frac = 1.0` = max loss (not
+  2.0). No finding changed — risk/MAE interpretation only (the trade was LESS risky than the old
+  prose implied). verify_09's payoff function was already correct.
 - DuckDB reserved words on this box: `first`, `last`, `days` — alias them.
 - Pandas precedence trap: parenthesize each comparison (`(f.a==x) & (f.b==y)`).
 - HHMM vs total-minutes: `first_touch_time_mid` is HHMM (1424=14:24) but the line `time` is total
