@@ -52,7 +52,10 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      none. NOT an established edge.
    - **REFINEMENT (2026-09-02, `sml_spot_weighted.py`): the SML-vs-CURRENT-SPOT signal is STRONGER than
      vs the body** — above-spot 63.9%(n108) vs below 40.4%(n104), **+23.5pp, p=0.0009, CI[+10.3,+36.6]**,
-     and MORE robust to the SPX estimate (robust core significant to 2pt vs 1pt for body). Body is just a
+     and MORE robust to the SPX estimate than the body: **boundary-exclusion sweep — significant through
+     2pt exclusion (+18.7pp, p=0.0161), n.s. only at 3pt (+12.7pp, p=0.1149)** (body F1 is the fragile one,
+     p 0.039→0.118 at 1pt). It is NOT "fragile at 1pt" — do not carry that. See the Canonical statement
+     below for the precise close. Body is just a
      25-pt snap of spot (|body-spot| med 6pt; 75% agreement). **SML vs any WEIGHTED AVERAGE is DEAD**
      (prev close / intraday time-avg / 5-10-20d MA all n.s., several negative) — the magnet is relative to
      the CURRENT price, not an average. '0-5 below spot' is the worst bucket (30%): a line just under spot
@@ -81,6 +84,29 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
        unconditional +50% rate off-sample), not a rule. Durable factors unchanged: premium% gate (entry),
        F7 morning-revisit/fade (interpretive), SML direction/position = proxy of SPX drift (retracted as
        independent info), no SML hold/exit.
+   - **CANONICAL CLOSING (2026-09-02, final — banked).**
+     **Decisive evidence = the WITHIN-GATE result** (premium ≤28%, where the strategy actually trades):
+       - SML-versus-spot: **+14.5pp, p=0.180** (n.s.)
+       - Selloff-vs-non-selloff: **−2.6pp, p=0.68** (negative, n.s.)
+     The SML classification is largely another representation of the same recent-SPX-drift variable
+     (corr 0.966), not a distinct line effect.
+     **Precision — two corrections to any prior statement:**
+     1. The +23.5pp spot result does NOT "die at ~1pt SPX error." Boundary-exclusion sweep (drop rows
+        within X pts of the above/below line): **excl ≤2pt → +18.7pp, p=0.0161 (still significant);
+        excl ≤3pt → +12.7pp, p=0.1149 (n.s.)**. It dies as an INDEPENDENT LINE effect once decomposed
+        into (original line placement at print) + (subsequent SPX drift) — the line prints ~at spot, so
+        the residual line content is small.
+     2. The two "selection" issues are DISTINCT:
+        - **+23.5pp** = a valid association within the 212-day SML-era sample, but primarily a DRIFT PROXY
+          (not inflated by selection per se).
+        - **+21pp** = genuinely INFLATED by selecting days when the SML printed before 11:30 (SML-print
+          timing confound); the full line-free estimate is **+7.5pp**.
+     **Canonical statement (verbatim):**
+     > SML position and recent SPX drift exhibit statistically significant associations with target
+     > attainment in selected or unconditional populations. They represent substantially the same
+     > underlying drift condition. Neither provides a statistically reliable or sufficiently large
+     > incremental effect within the premium-qualified population where the strategy trades. Therefore,
+     > neither becomes an entry rule; premium% remains the only surviving entry filter.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
