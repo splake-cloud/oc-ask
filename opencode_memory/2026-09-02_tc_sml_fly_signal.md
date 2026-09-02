@@ -109,14 +109,32 @@ hold or exit.**
 - Source: `verifications/artifacts/2026-08-14_fly_hold_cut_surface_v1/`. 4 conditions:
   premium_at_touch≤26.5%, checkpoint∈{1130,1230}, regime=3, first_touch<14:30, threshold=1.50×.
 - **n=52, 39 days, 2022-03→2026-08 (~12/yr)** — the spec's "40-70/yr" was wrong.
-- **Mid: mean continuation +6.9% (CI [−14.1%, +27.9%])** → hold-all is the mean-EV corner at mid.
-  **Worst-fill: mean −12.9%** → peel-all corner. **Peel 60-75% at +50%, keep 25-40% runner** is
-  defensible. **Peel fraction = PM DECISION (live position), not a study output.**
-- **⚠ 2026-09-02 reconciliation (`2026-09-02_f5_grid_reconcile_v1/`): the gold cell is UNCHANGED on
-  the current grid (n=52, 52 retained, 0 entered/exited), BUT the +6.9%/−12.9% figure above is NOT
-  reproducible from the saved definition** (compute_continuation gives mid +48.55% / wf −20.14%,
-  n=24/52 survivorship; touch_events.exit_1555_* corrupted). **Do not act on the peel fraction until
-  the formula + the 24/52 survivorship are resolved.**
+- **⛔ THE CITED "+6.9% mid (CI[−14.1,+27.9]) / −12.9% worst-fill" IS UNSUPPORTED — DO NOT USE** (see below).
+  It was the original sizing basis for "peel 60-75% / keep 25-40% runner"; that basis is void.
+- **⚠ 2026-09-02 reconciliation (`2026-09-02_f5_grid_reconcile_v1/`): the gold cell is UNCHANGED on the
+  current grid (n=52, 52 retained, 0 entered/exited).** `touch_events.exit_1555_mid` is the SAME continuation
+  % as path_panel (max|diff|=0.000; it is a %, not an absolute — an earlier "corrupted" note was WRONG).
+- **⚠ 2026-09-02 CONTINUATION AUDIT (`2026-09-02_f5_continuation_audit_v1/`)** — pinned the estimand and
+  bounded the +6.9%:
+  - **Estimand (as-implemented):** decision = first_touch_time_mid (mark hit 1.5×debit, the +50% touch);
+    exit = **15:55**; num = fly_value_mid[15:55] − fly_value_mid[touch]; denom = fly_value_mid[touch] (=V_touch,
+    ~1.5×D); per-trade then arithmetic mean; population = gold cell WITH a 15:55 mid quote; missing **dropped** →
+    n=24. (fly_value = GROSS mark, valid bounds [0, W].)
+  - **24-observed robust stats:** mean +48.55% (CI t[+15.6,+81.5]), **median +69.6%**, 10%-trimmed +53.1%,
+    **pos 79.2%**, p05 −80.2% / p10 −64.9% / p25 +12.6%, **date-clustered 95% CI [+7.1,+81.7] (17 days)**.
+  - **The 28 missing (no 15:55 mid) are NOT random:** two drivers — (a) **era/data-coverage** (2022: 1/11,
+    2023: 0/1 observed vs 2024-26 17/40) and (b) **liquidity** (last mid quote median 1546, all <1555; losers drift
+    off the body and go OTM, then stop being quoted). Missingness associates with LOSERS: 19/28 at/below the touch
+    level at last quote; settlement-winners 4/28 (missing) vs 16/24 (observed).
+  - **Partial-ID bounds (all 52, value in [0,W]):** all-52 MEAN continuation identified only in
+    **[−30.9%, +127.0%] (~158pp wide)** — does not single out +6.9%.
+  - **Settlement/intrinsic proxy (SEPARATE, complete all-52, close SPX):** mean **−11.4%**, median **−61.2%**,
+    pos **38.5%** — the typical gold fly gives back most of the +50% gain by the close. This is the only
+    fully-identified continuation; it is negative, supporting PEELED (not hold-all).
+  - **CONSEQUENCE:** the 60-75% peel / 25-40% runner was sized against an unproducible number. **Re-size against
+    (a) the 24-observed robust stats (median +69.6%, pos 79%, but survivorship-biased recent-year winners) and
+    (b) the settlement proxy (complete, mean negative) — or a prespecified, saved estimand with the missingness
+    handled explicitly. Do not act on +6.9%/−12.9%.**
 - The gold cell is a **peel/runner, not a hold.**
 
 ## "What is the line?" — unverifiable by design; behavior (magnet) is real
@@ -157,13 +175,11 @@ hold or exit.**
    regime_id (only grid col in the predicate) unchanged on all common keys; body/wing unchanged;
    5 entry_debit changes are 2026-08-13 regime-5 (non-members). **STOP-gate:** 91 new keys have NO
    touch/path (artifacts end 2026-08-12); 3 grid-eligible candidates (regime 3, cp 1130/1230, all
-   2026-08-25) EXCLUDED as unconfirmable. **BUT two caveats surfaced:** (a) SURVIVORSHIP — only
-   24/52 have a 15:55 mid quote, so continuation is on n=24 (bias risk); (b) **the cited sealed
-   "+6.9% mid / −12.9% worst-fill" is NOT reproducible** from the study-script
-   `compute_continuation` (path_panel touch→1555, /touch), which gives **mid +48.55% CI[15.6,81.5]
-   / worst-fill −20.14% (n=24)** — identical sealed vs current. The +6.9% was computed
-   interactively and not saved; `touch_events.exit_1555_*` are corrupted (~10–20×). **Resolve the
-   formula + survivorship before the peel/runner decision.** The 13 new days still need a touch/path
+   2026-08-25) EXCLUDED as unconfirmable. **SUPERSEDED by the continuation audit (see the
+   continuation-audit block above): +6.9%/−12.9% is UNSUPPORTED — DO NOT USE**; the 28 missing are
+   not random (era + liquidity), the all-52 mean is only partially identified in [−30.9,+127.0], and
+   the complete settlement proxy is negative (mean −11.4%). (CORRECTION: `touch_events.exit_1555_mid`
+   is NOT corrupted — it matches path_panel exactly.) The 13 new days still need a touch/path
    REBUILD (forward to 2026-09-01) to be included.
 7. **Hygiene:** change Discord password (invalidate token) → delete `~/discord-export/token`; add
    `data/discord/` to `.gitignore`.
