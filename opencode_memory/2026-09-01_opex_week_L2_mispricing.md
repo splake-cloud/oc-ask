@@ -104,6 +104,24 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
   PM-settled SPXW weekly expiring ON OPEX day (dual roots) — provenance only,
   never referenced by the study.
 
+**FILL RESOLVED 2026-09-02 (no DataShop login needed for 81 of 82 W + 11 S):**
+- Parser bug found: a hidden `<input>` between `<h4>` and `<table>` made the
+  section regex silently drop 11 S months (2016-12 + 2019 Jan–Oct) that were
+  in the ALREADY-DOWNLOADED raw files all along. Window-based sectioning
+  fixed it → S gaps 12 → 1 (only 2014-12-19; the 2014 file genuinely has 11
+  sections). Ledger 94 → 83.
+- **Yahoo Finance ^GSPC daily close (free, no auth) IS the same official
+  16:00-close series as the public W feed**: overlap 928/928 dates, 923 exact
+  within 0.01, worst 5.29 pts on one bad-tick day (2021-08-11). Raw JSON +
+  normalized CSV in `studies/opex_week_l2_iv/data/yahoo/`.
+- `--vendor` fill mode: overlap rule ≥99% within tol + no value > 0.5% off,
+  W-only (vendor files have no AM settlement), T(E) on the file's calendar,
+  **weekday holes never proxied** (a weekday expiry missing from the file is
+  UNFILLABLE — caught Yahoo's 2018-12-05 hole; 2013-01-19 is a SATURDAY
+  expiry so Friday-settle is legitimate). 81 filled; ledger → 2 pending:
+  S 2014-12-19 + W 2018-12-05 (two-vendor hole). Status PARTIAL, post-fill
+  G1 1007/1009 < 0.1% (2 known exceptions). Final: 1116 rows (107 S, 1009 W).
+
 **Fill mechanism (2026-09-02, PM elected DataShop fill):** commit
 `6e7a67a6`. `scripts/opex_l2_settlement_ingest.py --offline --fill <csv>`:
 - **T(E) convention** (verified from the feeds): the public W feed dates
@@ -127,11 +145,13 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
 
 ## Open / next
 
-- **PM: deliver the DataShop SPX index daily CSV (2013-01-01 → 2021-12-31,
-  raw bytes, to `studies/opex_week_l2_iv/data/dashop/`).** One command on
-  arrival: `python3 scripts/opex_l2_settlement_ingest.py --offline --fill
-  <file>` → PASS receipt + filled table, then BUILD+EXECUTE dispatch to
-  qwen-coder per house envelope (spec rev r4; gates G0/G1(+settlement)/G2/G3;
-  main-seat re-verification of a sample of weeks).
+- **2 weeks remain pending** (both in the ledger, INCOMPLETE in the primary
+  unless resolved): S 2014-12-19 (AM SET — no public source carries the AM
+  print) and W 2018-12-05 (Wednesday absent from Yahoo AND the spine —
+  two-vendor hole). PM: one DataShop SPX daily file resolves both, or waive
+  (n floors hold either way).
+- Then: BUILD+EXECUTE dispatch to qwen-coder per house envelope (spec rev
+  r4; gates G0/G1(+settlement)/G2/G3; main-seat re-verification of a sample
+  of weeks).
 - L2 memory card gets results section post-run.
 - L3 (OI/gamma/auction) + prospective OPEX Monday accumulation unchanged.
