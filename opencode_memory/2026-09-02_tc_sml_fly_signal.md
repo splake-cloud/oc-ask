@@ -136,23 +136,20 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
        nearest-25 path = the blocked forward rebuild.
      - **Phrasing fix (do not carry "both knobs are now measured"):** the GATE change (28→32) is measured;
        the TARGET change (+50→+40) has a directionally-relevant PROXY result only.
-   - **FROZEN CHECK (2026-09-02) — settles the +50→+40 TARGET question. PENDING the nearest-25 path
-     rebuild; NO investigative work now.** Once the blocked forward rebuild emits max_return_pct_to_1555
-     for the nearest-25 paths, this is a DIRECT calculation (no re-decision, no re-specification):
-     - POPULATION: nearest-25, checkpoint_label=='1130_20W', one trade/day (assert rows==days), full date
-       range the rebuild covers. premium = entry_debit / wing_width * 100.
-     - OUTCOME: max_return_pct_to_1555 (max intraday return % on the entry debit, by 15:55). PRIMARY target
-       = >=40 (+40%); REFERENCE target = >=50 (+50%). CONSISTENCY CHECK FIRST: on any row that already has
-       both max_return_pct_to_1555 and target_hit_by_1555, verify (max_return_pct_to_1555>=50) == target_hit
-       (should agree ~100%, as on the grid where it was 99.9%).
-     - REPORT — each of the three comparisons, at BOTH +40% and +50% side by side:
-         (1) <=28 vs >28      (2) <=32 vs >32      (3) the 28<p<=32 incremental band (its own hit rate + n)
-         For each: hit rate per arm (n + Wilson 95% CI), lift (arm1-arm2) + 95% CI (Newcombe, no continuity
-         correction), and Fisher exact p.
-     - SETTLEMENT: "Is +40% the better target than +50% for the nearest-25 strategy?" Judge on EXPECTANCY —
-       the hit rate in the gated (<=28 / <=32) population and the 28-32 marginal band at the earlier vs
-       later target — NOT on whether premium% stays p<0.05 (per the adjudication: an earlier peel can improve
-       the trade and soften the gate at once). **Retain +50% until this check says otherwise.**
+   - **FROZEN CHECK — EXECUTED & SETTLED (2026-09-02)** (`nearest25_path_extend.py` + `frozen_check_40pct.py`,
+     `711aee3e`). The blocked forward rebuild is DONE: validated standalone re-impl of fly_trades+fly_paths
+     1130_20W/nearest_25 (bit-exact vs existing grid: 22/22 days max|diff|=0.0, target agreement 1.000) →
+     built max_return_pct_to_1555 for the FULL nearest-25 pop (1237 days, 2021-05-14..2026-09-01, incl 19 new
+     days). Consistency lock (max_return_pct>=50)==target_hit = 1.0000.
+     RESULT — the premium% gate is **ROBUST to the target choice**:
+       +50%: <=28 +14.3pp (p=0.0000), <=32 +14.0pp (p=0.0000).
+       +40%: <=28 +8.2pp (p=0.0086), <=32 +8.5pp (p=0.0036) — compressed ~half (ceiling+mechanical), still robust.
+     The grid proxy's "gate falls to p~0.06" was an ARTIFACT; on the real pop the gate HOLDS at +40%. 28-32 band
+     (n173): 47.4% (+50%) / 53.8% (+40%), above rejected at both. OOS 19 new days: base 68-74% (strong recent
+     regime), gate n too small to measure. **The peel-POINT P&L decision (exit at 1.4D vs 1.5D) is now COMPUTABLE
+     (max_return_pct in hand for all days) but is the separate expectancy calc (peel-all vs runner), per the
+     adjudication — NOT settled by hit rates alone.** Retain +50% as the default; +40% is a live option, gate
+     intact either way.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
