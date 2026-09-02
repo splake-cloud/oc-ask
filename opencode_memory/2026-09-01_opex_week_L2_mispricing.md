@@ -74,9 +74,45 @@ closed/byte-clean. L2 root: `studies/opex_week_l2_iv/` (new).
 - Probe scripts used: /tmp/orats_settle_probe{3,4,5}.sh (sudo, token never
   printed).
 
+## Settlement acquisition (2026-09-02) — RESOLVED via public endpoint
+
+PM instructions: pull the Cboe settlement values directly. **DataShop NOT
+needed** — the free public endpoint
+`https://www.cboe.com/index_settlement_values/get_sv_data/{S,W}/{YEAR}/` (no
+auth) carries both feeds 2013–2021. Acquired by
+`scripts/opex_l2_settlement_ingest.py` (18 files, 3 s polite rate, retries,
+sha256): raw bytes `studies/opex_week_l2_iv/data/raw/`; manifest (url,
+fetched_utc, http_status, sha256) `data/manifest.csv`; normalized
+data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
+`data/receipts/ingest_v1.md`, `data/gap_ledger.csv`.
+
+- Formats: 2020–21 structured JSON records (explicit expiration_date);
+  2013–19 HTML fragments (S: 12 monthly sections, no dates → month mapped to
+  the certified OPEX final session from pattern_opex_week; W: SPXW rows with
+  explicit MM/DD/YYYY; label drift by year handled in parser).
+- **GAP LEDGER (source-side omissions — fail-closed, nothing fabricated):**
+  S missing 11 OPEX months (2014-12, 2016-12, 2019 Jan–Oct — public archive
+  partial); W missing 82 chain weekly expiries (2013: 32, 2014: 16, 2015: 8,
+  2016: 4, 2017: 6, 2018: 3, 2019: 7, 2020: 3, 2021: 3). Receipt status
+  FAILED by design until PM fills (DataShop SPX index daily) or waives.
+- Spot-checks vs spine (consistency, not identity): S vs open −5.4 / −6.5 /
+  +6.0 pts (the measured open-vs-SET gap — small, nonzero: doctrine
+  validated); W vs close −0.73 / +1.26 / +0.14 pts (≈0 → W = 16:00 close
+  confirmed).
+- Two W values on OPEX final sessions (2019-08-16, 2021-04-16) = the
+  PM-settled SPXW weekly expiring ON OPEX day (dual roots) — provenance only,
+  never referenced by the study.
+- Commits `bb194be3` (ingest + data) + `70d3a221` (spec §10 final); verify
+  transcripts verify/l2_settle_ingest_*.
+
 ## Open / next
 
-- PM: ratify r3 re-scope (price-level primary) → commit dispatch → BUILD+
-  EXECUTE to qwen-coder per house envelope.
-- PM: DataShop account/quote for SSV → §11 activates; fold outcome into §10.
+- **PM decision (blocks the primary):** fill the 94 ledger gaps via DataShop
+  SPX index daily file (complete 2013–2021 as designed) OR accept gaps (11
+  OPEX weeks + 82 control weeks INCOMPLETE; 2013–16 control half thinned;
+  2019 OPEX slice = 2).
+- Then: BUILD+EXECUTE dispatch to qwen-coder per house envelope (spec
+  `studies/opex_week_l2_iv/specs/technical_spec_v1.md`, rev r4; gates
+  G0/G1(+settlement)/G2/G3; main-seat re-verification of a sample of weeks).
 - L2 memory card gets results section post-run.
+- L3 (OI/gamma/auction) + prospective OPEX Monday accumulation unchanged.
