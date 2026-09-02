@@ -112,6 +112,11 @@ hold or exit.**
 - **Mid: mean continuation +6.9% (CI [−14.1%, +27.9%])** → hold-all is the mean-EV corner at mid.
   **Worst-fill: mean −12.9%** → peel-all corner. **Peel 60-75% at +50%, keep 25-40% runner** is
   defensible. **Peel fraction = PM DECISION (live position), not a study output.**
+- **⚠ 2026-09-02 reconciliation (`2026-09-02_f5_grid_reconcile_v1/`): the gold cell is UNCHANGED on
+  the current grid (n=52, 52 retained, 0 entered/exited), BUT the +6.9%/−12.9% figure above is NOT
+  reproducible from the saved definition** (compute_continuation gives mid +48.55% / wf −20.14%,
+  n=24/52 survivorship; touch_events.exit_1555_* corrupted). **Do not act on the peel fraction until
+  the formula + the 24/52 survivorship are resolved.**
 - The gold cell is a **peel/runner, not a hold.**
 
 ## "What is the line?" — unverifiable by design; behavior (magnet) is real
@@ -145,8 +150,21 @@ hold or exit.**
 5. **Establish the SML direction validly** — only a marginal 11:30 tilt (p=0.039), **fragile to a
    ~1pt SPX error** (verify_11); needs more line history, a prespecified multi-checkpoint
    day-level design, or a tighter ES→SPX estimate.
-6. **Re-derive the gold cell (F5) on the current 7,912-row production grid** (it was sealed on the
-   7,821-row grid, verify_10) before acting on the peel fraction.
+6. **~~Re-derive the gold cell (F5) on the current 7,912-row grid~~ — DONE (2026-09-02,
+   non-mutating, `verifications/artifacts/2026-09-02_f5_grid_reconcile_v1/`). Result: **gold cell
+   UNCHANGED** (n=52, 52 retained, 0 entered, 0 exited). Current grid is a strict SUPERSET
+   (7,821 common / 0 old-only / 91 new-only = 13 days 2026-08-14→09-01 × 7 cp; 0 dupes).
+   regime_id (only grid col in the predicate) unchanged on all common keys; body/wing unchanged;
+   5 entry_debit changes are 2026-08-13 regime-5 (non-members). **STOP-gate:** 91 new keys have NO
+   touch/path (artifacts end 2026-08-12); 3 grid-eligible candidates (regime 3, cp 1130/1230, all
+   2026-08-25) EXCLUDED as unconfirmable. **BUT two caveats surfaced:** (a) SURVIVORSHIP — only
+   24/52 have a 15:55 mid quote, so continuation is on n=24 (bias risk); (b) **the cited sealed
+   "+6.9% mid / −12.9% worst-fill" is NOT reproducible** from the study-script
+   `compute_continuation` (path_panel touch→1555, /touch), which gives **mid +48.55% CI[15.6,81.5]
+   / worst-fill −20.14% (n=24)** — identical sealed vs current. The +6.9% was computed
+   interactively and not saved; `touch_events.exit_1555_*` are corrupted (~10–20×). **Resolve the
+   formula + survivorship before the peel/runner decision.** The 13 new days still need a touch/path
+   REBUILD (forward to 2026-09-01) to be included.
 7. **Hygiene:** change Discord password (invalidate token) → delete `~/discord-export/token`; add
    `data/discord/` to `.gitignore`.
 
