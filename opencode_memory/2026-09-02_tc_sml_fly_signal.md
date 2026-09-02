@@ -107,6 +107,15 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      > underlying drift condition. Neither provides a statistically reliable or sufficiently large
      > incremental effect within the premium-qualified population where the strategy trades. Therefore,
      > neither becomes an entry rule; premium% remains the only surviving entry filter.
+   - **TESTED & NO-GO (2026-09-02): "settled vs transiting at the body"** (`sml_settle_transit.py`,
+     verified 0-mismatch, `88340adf`). The best remaining LINE-FREE idea: within the ≤28% gate, does SPX
+     *dwelling/oscillating around the body* at 11:30 (vs a *single efficient sweep through it*) raise
+     P(+50%)? Frozen + outcome-blind + PIT-safe + 3-way cross-state (none/single-pass/multiple) +
+     30-min window. **NO-GO, fails all 5 pre-set bar criteria**: gate lift +6.25pp (p=1.0, <15pp);
+     TRANSIT **n=4** (only 4 of 58 single-pass days have eff≥0.5 — the "single efficient sweep" is too
+     rare to evaluate, and relaxing the def to reach n=40 is the pinned forbidden search); sign unstable
+     (gate +6.25 / full −11 / 2022 +22 / 2025 −47); SETTLED (n48)=56.25% ≈ gate base. Choppiness around
+     the body buys nothing over the premium gate. Do not re-run without a materially different def.
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
