@@ -280,8 +280,31 @@ established OPEX premium — if pursued, asks whether observable
 OI/gamma/auction states identify a conditional modern-era subset, not
 whether expiration itself produces a general effect.
 
-- L3: per PM's framing above; deferred; data (OI/gamma) acquisition is the
-  gating step.
+- **L3 design ruling (PM, 2026-09-02, banked):** gamma is NOT the OPEX
+  cause — it is a conditioning/state variable. L3 = test whether
+  observable OI/gamma/auction states predict which OPEX weeks show the
+  modern rich-straddle signature, using OPEX-vs-non-OPEX contrasts at
+  matched states as the control (no signed gamma, no causal claims).
+  **Feature availability (main-seat verified):** OI + per-strike gamma
+  exist in the DAILY chain (spx_daily_strikes) from 2006 (1 EOD snapshot/
+  day); the 136 one-minute intraday grid (spx_intraday_strikes) runs
+  2020-08 → present (auction-state features: 2020-08 →); BVC
+  gamma_substrate 2022 → (sign = pre-registered assumption, superseded —
+  labeled proxy only); UW Periscope gamma_intraday (the only
+  aggressor-attributed, dealer-SIGNED series; 10-min; 2025-12-12 →, live,
+  pre-signed, validate-output-don't-audit, irregular strike grid, guard
+  gamma IS NULL, do NOT re-weight by OI, cross-compare vs raw grid only
+  with x spot^2 x 0.01). So: gross gamma magnitude (sign-free), profile
+  shape, concentration, pin distance, OI level/delta, volume/flow,
+  auction build-up — all observable across BOTH arms (2017–21 positive
+  reference + 2013–16 null period); signed measures = clearly-labeled
+  convention proxies (2006 → re-derived, 2022 → BVC) + UW-signed modern
+  (2025-12 →). RAG grounding: data_contracts gamma_intraday_bars /
+  gamma_intraday_vs_substrate / gamma_substrate (BVC); domain_facts
+  oi-vs-volume (OI = context not flow), dealer sign identification
+  (SqueezeMetrics/Volland = competing hedged assumptions; UW = empirical),
+  gamma sign mechanism (mechanism, not validated edge). Term: gamma / net
+  gamma / gamma profile — not GEX.
 - Nothing else open on this thread: v1 frozen as-run MARGINAL (`38d0d88c`),
   L2b closed (`611ac636` + closure block), pilot artifact on disk, SFTP
   route verified (askpass in `~/.secrets/ds_askpass.sh`; hosts
