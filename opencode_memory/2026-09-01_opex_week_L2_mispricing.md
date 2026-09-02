@@ -319,6 +319,29 @@ whether expiration itself produces a general effect.
   (SqueezeMetrics/Volland = competing hedged assumptions; UW = empirical),
   gamma sign mechanism (mechanism, not validated edge). Term: gamma / net
   gamma / gamma profile — not GEX.
+- **L3 spec drafted (rev r3, 2026-09-02; repo
+  `studies/opex_week_l3/specs/technical_spec_v1.md`):** corrections
+  banked — [r1] CP_FIXED_OI = Σ Γ·OI·100·S²·0.01·(+1 call/−1 put) as the
+  primary historical signed proxy (positioning convention, NOT observed
+  sign; units = $-hedge notional per 1% move, ≠ UW share-delta per 1-pt,
+  conversion pinned); OI = daily-published state (09:32 switch + 1-snap
+  flicker verified; G0 effective-date gate vs OCC; NO intraday OI
+  constructs); raw volume = unsigned trading activity/turnover; F10
+  pre-expiry intraday state DESCRIPTIVE in v1 (post-entry), 15:45
+  decision-time trade = pre-registered v2; Block A0 = mandatory 2022+
+  outcome map BEFORE any modern state search (two clocks: PRIMARY
+  EOD-entry 16:00 = L2b-comparable, SECONDARY opening-entry 09:35 = new
+  estimand); controls corrected: non-OPEX weeks join their OWN weekly W
+  settlement, never the monthly S event; unified 09:35 state decision
+  time (no mixed-time lookahead); UW = project-authoritative live modern
+  state (not groupable with BVC). **[r3] OI standing: opening inventory
+  prior — full searchable feature (F1/F2 restored from r2's context
+  demotion); the no-update limitation propagates to ALL OI-weighted
+  features (F1,F2,F4–F8 = the book entering the session, not live
+  positions); turnover measures activity against it, cannot distinguish
+  opened vs closed positions.** Hierarchy: UW signed (live) > raw gamma +
+  turnover (live) > OI/OI-weighted (opening inventory prior, expected
+  decay). Awaiting PM ratify, then A0 dispatch.
 - Nothing else open on this thread: v1 frozen as-run MARGINAL (`38d0d88c`),
   L2b closed (`611ac636` + closure block), pilot artifact on disk, SFTP
   route verified (askpass in `~/.secrets/ds_askpass.sh`; hosts

@@ -202,6 +202,17 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      identifiable market-state profile (body_dwell the only mild tilt, non-surviving). 17 excluded IV days: no
      material selection (7pp reach20D, n.s.). **Verdict: the runner's +0.065D (P tbf 51.9%) is a STRUCTURAL
      first-passage asymmetry (51.9% target vs 42% floor), not a state-conditional edge to condition on.**
+     **FINAL TRADEABLE RULING (2026-09-02, supersedes all runner-conditioning).** After a qualifying fly hits 1.5D,
+     run the SAME active 2.0D-target / 1.0D-floor runner (15:55 time-stop) on EVERY qualifying touch, WITHOUT any
+     decision-time filter (no IV / IV-RV / body-path / regime / strike-structure). No tested decision-time state
+     reliably improves expectancy; the edge is the flat structural asymmetry. Upstream premium% ENTRY gate
+     (<=28 primary / <=32 supported) is separate + unchanged. **Low-IV rule = FROZEN HYPOTHESIS**
+     (RUNNER_LOWIV_FROZEN_HYPOTHESIS.md): recorded, NOT investigated further in-sample; prospective/held-out
+     confirmation ONLY (new forward touches, pre-specified n + threshold, no re-mining). TWO CORRECTIONS: (a)
+     uniform-IV recompute on the SAME 287 is measurement-consistency, NOT validation (the rule was selected from
+     those obs; real confirmation needs new/held-out trades); (b) do NOT overstate the mechanism — the +0.5 (2.0D)
+     and -0.5 (1.0D) barriers are equidistant from 1.5D, so low IV does NOT mechanically favor the upper barrier;
+     the in-sample lift has no established mechanism. **Gamma (L3/UW) stays a separate study.**
 3. **GEOMETRY / exit audit** (`verify_09_geometry_exit.py`, report §6) — the old F3 "SML ceiling."
    - **F3 RETRACTED** as both a ceiling test and a live exit. It was (a) **outcome-on-outcome**
      (15:55 close → 15:55 target), (b) **butterfly payoff geometry** (distance from the body;
