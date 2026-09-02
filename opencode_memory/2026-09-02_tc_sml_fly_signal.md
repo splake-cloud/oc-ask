@@ -220,9 +220,13 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      (3) payoff-relative geometry (|SPX-K|/implied move, wing width/implied, dist-to-wing/implied, remaining implied
      move vs move-required-for-2.5D via BS revalue, composite fly spread). CORRECTED TARGET: reach 2.5D before 1.0D
      (first-passage), (2.5/1.0) runner incremental, continuous additional_MFE. P(reach25_before_10): <=28 24.0% / <=32
-     19.8% / all 10.7%. **STRUCTURAL FINDING: ~90% of 2.5D outcomes are VOL-driven** (of the 58 <=28 big-fly days
-     only 6 are move-reachable holding IVs) -> implied_vs_25D only 11% coverage, descriptive-only; the vol surface
-     (not SPX position) is the right lens. **SEARCH: 165 candidates (120 single + 45 pair), 50 clear +0.05, 0 survive
+     19.8% / all 10.7%. **STRUCTURAL FINDING (wording corrected 2026-09-02):** of the 58 <=28 big-fly days, only 6
+     are reproduced by the realized SPX path under a FROZEN touch-IV surface (holding touch IVs + T, SPX varied); the
+     other 52 are NOT reproduced by SPX-move alone. That does NOT isolate the cause - the unexplained component is a
+     MIX (overall IV level, skew/curvature, theta combined with surface movement, quote/BS-model residual), NOT proven
+     to be generic IV expansion. The actual MARKER is specific: curvature flattening / body-IV-compressing-relative-to-
+     wings (a SURFACE-SHAPE change), NOT generic vol level. This surface-reshaping (not vol-expansion) framing must
+     carry into the gamma study. implied_vs_25D only 11% coverage -> descriptive-only. **SEARCH: 165 candidates (120 single + 45 pair), 50 clear +0.05, 0 survive
      Bonferroni/BH-FDR.** STRONGEST in-sample signal = DYNAMIC-SMILE CURVATURE FLATTENING: dcurvature<=25pct /
      body_wing_compression>=75pct (body IV compressing relative to wings) -> P(reach25) 0.327 vs 0.240, mean runner
      +0.206 vs +0.053, n=55, consistent P28/P32, NOT a peak-trap = the user's 'genuine curvature development'
