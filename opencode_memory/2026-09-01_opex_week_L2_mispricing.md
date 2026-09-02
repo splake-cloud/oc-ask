@@ -147,7 +147,9 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
 
 - **DISPOSITION: MARGINAL.** Family 3/3 CLEARS_FLOOR: θ_settle −29.8bp
   CI [−62.4, −2.6]; θ_long_exec −31.3bp; θ_short_exec +29.2bp CI
-  [+2.1, +6.1]; Holm adj p 0.0618 (descriptive). Execution gate PASS
+  [+2.1, +61.4] (erratum 2026-09-02: prose earlier said +6.1 — a
+  transcription error; frozen v1 CSV has ci_upper=0.006144 = +61.4bp);
+  Holm adj p 0.0618 (descriptive). Execution gate PASS
   (SHORT_AT_BID). Split replication: 2013-16 fails floor (−2bp, n=22) →
   MARGINAL per pre-registered rule. Reading: OPEX-week straddles look
   systematically rich (short-at-bid earns ~29bp on the full sample), but
@@ -202,6 +204,20 @@ data/settlements_spx.csv (**1024 rows: 96 S, 928 W**); receipt + gap ledger
   Acquisition list: `studies/opex_week_l2_iv/data/backfill/`
   acquisition_list.csv (27 T0/E pairs; 2014-02-18 T0 holiday-adjusted;
   2021-09-13 T0 file absent entirely).
+- **L2b amendments (PM 2026-09-02, rev r2, all in the spec):** (1) no
+  stock-price requirement on the no-Calcs file — S0 = chain stockPrice at
+  T0 (spine close for 2021-09-13); a file spot, if present, is a cross-
+  check only and never the S0 source. (2) Expiry validation
+  convention-aware: accept E or E+1 (Saturday) — Saturday coding is a
+  known convention in this vendor family (Feb-2015 change, Dec-2015
+  grandfathered); the 2012 exclusion's "vendor Saturday expiry labels" may
+  have been valid historical coding, not a defect (2012 stays excluded as
+  a window decision); series identity still required. (3) v1 short-exec CI
+  erratum (prose said +6.1, frozen CSV has 0.006144 = +61.4bp; v1 files
+  untouched; all v1/v1b comparisons read the CSV). (4) "Root-gap
+  DISCONFIRMED" gated: valid only if ≥21 of the 26 2013–16 grids pass §3
+  validation; below that the early half remains data-limited, not
+  disproven; rejection list always reported.
 - **New pre-registered statistic (PM):** OPEX arm-level CIs (not just the
   contrast). v1 values (n=75, month-clustered 10k SEED=42): short
   +17.0bp CI [−9.4, +50.6]; long −24.2bp CI [−58.0, +2.4]; val −21.3bp CI
