@@ -341,7 +341,19 @@ whether expiration itself produces a general effect.
   positions); turnover measures activity against it, cannot distinguish
   opened vs closed positions.** Hierarchy: UW signed (live) > raw gamma +
   turnover (live) > OI/OI-weighted (opening inventory prior, expected
-  decay). Awaiting PM ratify, then A0 dispatch.
+  decay). **[r4, 2026-09-02: Block B statistically closed]** (a) ONE
+  pre-registered Holm family per arm over ALL searchable cells × 3
+  outcome members × clock — no cell-level claim outside the family, no
+  'descriptive' escape for cell claims; (b) G_B0 outcome-blind support
+  gate: cell grid + n_OPEX/n_non-OPEX computed from state features +
+  week type ONLY, deposited as receipts/b_support_presearch.csv (sha256)
+  BEFORE any outcome lookup; SEARCHABLE iff n≥20 both arms; search
+  script reads the file (mechanical enforcement); hash in G2 set; no
+  cell added/dropped/re-binned after deposit; (c) unweighted raw gamma
+  = pricing/vol-surface state, NOT positioning (no position content);
+  only live positioning measure = F9 UW; only opening positioning
+  measures = tier 3. Gate order G0, G1, G_B0, G2, G3, G4. Awaiting PM
+  ratify, then A0 dispatch.
 - Nothing else open on this thread: v1 frozen as-run MARGINAL (`38d0d88c`),
   L2b closed (`611ac636` + closure block), pilot artifact on disk, SFTP
   route verified (askpass in `~/.secrets/ds_askpass.sh`; hosts
