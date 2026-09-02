@@ -4,12 +4,13 @@ Topic: does the Discord channel author's **SML (Strongest Morning Line)** / **SA
 carry edge for the desk's SPX 0DTE long-put butterfly as a condition on the convergence tree
 (premium% gate → SML side)? Plus a re-derivation of the "gold cell" peel/runner.
 
-**STATUS (after three audits): the line-specific tradable structure largely did NOT survive.**
-The only robust findings are the **premium% entry gate** (not line-related) and the **SML/SAL
-morning price-magnet** (a price-path effect, not a fly P/L signal). The SML *direction* entry
-edge, the **SML "ceiling"/exit**, and the gold-cell×SAL hold finding were each **retracted or
-downgraded** by the audits below. Full detail in
-`/data/agentic_trading/analysis/sml_fly_verify/TECHNICAL_REPORT.md` (17 sections) + 9 verify scripts.
+**STATUS (after four audits): the line-specific tradable structure largely did NOT survive.**
+The only robust findings are the **premium% entry gate** (not line-related) and the **SML morning
+price-magnet** (a price-path effect, not a fly P/L signal). The SML *direction* entry edge, the
+**SML "ceiling"/exit (F3)**, the gold-cell×SAL hold finding (F6), **and the F9 "SAL alignment→
+stability" (retracted as a premium-composition artifact)** were each **retracted or downgraded**.
+Full detail in `/data/agentic_trading/analysis/sml_fly_verify/TECHNICAL_REPORT.md` (17 sections)
++ **11** verify scripts (verify_07–11 are the five audits).
 
 ## Constraints (stated once — professional desk, don't re-qualify small-n every message)
 - **Fill data excluded** — ORATS bid/ask worst-fill is too conservative; ALL analysis on **mid** marking.
@@ -31,7 +32,7 @@ downgraded** by the audits below. Full detail in
 - Do NOT use `es_continuous_databento close − cumulative_offset` as ES ground truth (roll-seam artifact,
   ~50-70pts off on a subset; ES ends 2026-08-31).
 
-## THREE AUDITS (the load-bearing part of this thread)
+## FOUR AUDITS (the load-bearing part of this thread)
 Each audit was prompted by a valid critique, confirmed empirically, and removed a claimed piece.
 
 1. **POINT-IN-TIME audit** (`verify_07_pit.py`, report §2.1) — look-ahead on the line joins.
@@ -56,26 +57,53 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
      observed after the fact.
    - Small residual (SML-near vs far at same body-distance: 74% vs 31%, p=0.00) but axes are
      collinear → NOT cleanly separable from geometry; not established.
+4. **COMPOSITION / confounding audit** (`verify_11_robustness.py` regime+boundary,
+   `verify_06_2factor.py` F9 stratification, report §12/§14) — prompted by "the marginal
+   ALN-vs-FAR dip difference is composition-driven" + "regime was dropped without a test" +
+   "the ES→SPX classification is fragile near the boundaries."
+   - **F9 "SAL alignment→stability": RETRACTED as an alignment effect.** The marginal "ALN dip
+     13% vs FAR 35%" is a **premium-composition artifact**: SAL-ALN is 56.7% expensive-premium
+     (dip% mechanically small — the denominator is the fly value at touch), SAL-FAR is 27.9% cheap.
+     **Within** each premium bucket the ALN-vs-FAR dip difference is ≤17pp and **inconsistent in
+     sign** (cheap +17, mid −7, exp −13). No robust line-based hold signal.
+   - **Regime 3/4: tested, adds NOTHING.** Main effect small and **negative** (49.7% vs 58.0%,
+     p=0.305; within cheap 62.3% vs 66.7%, p=0.812); n.s. in every premium×SML stratum.
+   - **ES→SPX boundary sensitivity: the F1 +15pp tilt is FRAGILE.** 10–21% of rows within 3pt of
+     the side boundary; a 1pt worst-case SPX error drops the lift p 0.033→0.118 (n.s.). The
+     premium% gate (F8) doesn't use the line and is unaffected.
+   - **F7 fade: survives the CORRECT paired test.** The report used unpaired Mann-Whitney
+     (p~1e-55); the paired Wilcoxon signed-rank (same 326 days) gives **p=1.75e-42** and **9/9
+     AWAY×TOL combos keep AM>PM**. The "SAL PM magnet" is **downgraded**: same-day same-window the
+     SAL line attracts more (1.30 vs 0.65/day, paired p=3.31e-13) **but it is freshness-confounded**
+     (fresh afternoon SAL vs stale morning SML) — "magnet" not established.
+   - **F4 empirical modulo null:** SPX price-endings are **uniform** (each digit 9.7–10.4%), so the
+     uniform null is empirically justified; the 1.64× round-5 excess (ES space) is real but mild.
 
 ## WHAT SURVIVES (defensible) vs WHAT DIDN'T
 **Defensible (robust under valid inference, not geometry):**
 - **Premium% is the entry gate** (not line-related): cheap ≤28% ≈ 53-60% vs expensive >45% ≈ 15%;
   monotone; survives day-level clustering (cheap-vs-exp p≈0.000; GEE OR 0.15). **The only robust
   entry factor.**
-- **SML attraction fades AM→PM; SAL is the PM magnet** (F7, p~1e-55, 326 days) — a *price* effect:
-  SML pulls SPX toward it in the morning (2.27 approaches/day) and stops pulling by the afternoon
-  (0.67); the SAL takes over in the PM. **Tradable content = the magnet/path, not a fly exit.**
-- **The line is a specific, real, idiosyncratic tick** (F4): 16.4% on round-5 (null 10%), ~1.5×
-  random → an arbitrary tick, not a generic round number.
+- **SML attraction fades AM→PM** (F7, **paired** Wilcoxon p=1.75e-42, 326 days, 9/9 param combos)
+  — a *price* effect: SML pulls SPX toward it in the morning (2.27 approaches/day) and stops
+  pulling by the afternoon (0.67). The old "SAL is the PM magnet" is **downgraded**: same-day
+  same-window the SAL line attracts more (1.30 vs 0.65/day) **but freshness-confounded** (fresh
+  PM line vs stale AM line) — "magnet" not established.
+- **The line is a specific, real, idiosyncratic tick** (F4): 16.4% on round-5 (empirically-
+  justified uniform null 10%), ~1.64× → an arbitrary tick with a *mild* round-5 preference, not a
+  generic round number.
 
 **Suggestive (NOT capital-grade):**
 - **SML-above at 11:30 → marginal +15pp tilt** (all-premium, p=0.039, one row/day); cheap-cell
-  refinement not significant. Secondary tilt, not an edge.
-- **F9 (afternoon-only):** after the SAL prints, SAL on the body → steadier remainder (dip 13% vs
-  35%, n=342, p=0.000) but confounded by SPX position at SAL print; does NOT extend the runner.
+  refinement not significant, **and fragile to a ~1pt SPX estimate error** (p 0.033→0.118 n.s.).
+  Secondary tilt, not an edge.
+- **~~F9 (afternoon-only): SAL on the body → steadier remainder~~ — RETRACTED as a premium-
+  composition artifact** (within-bucket dip difference ≤17pp, inconsistent sign). See audit #4.
 - **F2 path quality:** SML-above = rough path (MAE ~1.85 wings) but small-n (n=43).
 
-**RETRACTED:** F3 "SML ceiling/exit" (geometry), F6 gold-cell×SAL (look-ahead, n→1).
+**RETRACTED:** F3 "SML ceiling/exit" (geometry), F6 gold-cell×SAL (look-ahead, n→1), **F9
+"SAL alignment→stability" (premium-composition artifact)**. **There is no robust line-based
+hold or exit.**
 
 ## Gold cell (peel/runner) re-derivation — unchanged by the audits
 - Source: `verifications/artifacts/2026-08-14_fly_hold_cut_surface_v1/`. 4 conditions:
@@ -99,24 +127,27 @@ Each audit was prompted by a valid critique, confirmed empirically, and removed 
   checkpoint_label, body_strike, entry_debit, wing_width, regime_id, target_hit_by_1555,
   entry_quoteable`). Body = `FLOOR((stockPrice+12.5)/25)*25`. Premium% = `entry_debit/wing_width*100`.
 - `spx_1min` in `research.duckdb` (SPX index 1-min, 11:00-16:00 ET).
-- **Report + 9 scripts:** `/data/agentic_trading/analysis/sml_fly_verify/` — `TECHNICAL_REPORT.md`
-  + `verify_01..09`. verify_07 (PIT leak), verify_08 (clustering), verify_09 (geometry/exit) are
-  the three audits — read all three. All read-only, all rc=0.
+- **Report + 11 scripts:** `/data/agentic_trading/analysis/sml_fly_verify/` — `TECHNICAL_REPORT.md`
+  + `verify_01..11`. verify_07 (PIT leak), verify_08 (clustering), verify_09 (geometry/exit),
+  verify_10 (substrate lineage), verify_11 (composition/robustness: regime + boundary) are the
+  **five audits** — read all five. All read-only, all rc=0.
 - Python venv: `/data/agentic_trading/.venv/bin/python` (pandas 2.3.3, pyarrow 25.0.1, duckdb 1.5.5,
   scipy, statsmodels).
 
 ## Open / next
 1. **PM: gold-cell peel fraction** (60-75% peel / 25-40% runner) — live position decision.
 2. **Forward test** — out-of-sample / live tracking of the **premium% gate** (the one robust entry
-   factor). There is no line-based exit to forward-test (F3 retracted). This is the actual gate
-   before capital.
-3. **F9 confound control** — SAL alignment conditioned on SPX-vs-body *at SAL print* (causal vs
-   proxy). Prerequisite for trusting F9 for sizing.
+   factor). There is **no line-based exit or hold** to forward-test (F3 ceiling retracted; F9
+   line-hold retracted). This is the actual gate before capital.
+3. **~~F9 confound control~~ — DONE: F9 retracted** as a premium-composition artifact (audit #4).
 4. **Magnet-depletion test** — does the SML's *attraction* (F7) deplete after repeated same-day
    touches? (failure mode; test the *magnet*, not the retracted ceiling.)
-5. **Establish the SML direction validly** — only a marginal 11:30 tilt (p=0.039); needs more line
-   history or a prespecified multi-checkpoint day-level design.
-6. **Hygiene:** change Discord password (invalidate token) → delete `~/discord-export/token`; add
+5. **Establish the SML direction validly** — only a marginal 11:30 tilt (p=0.039), **fragile to a
+   ~1pt SPX error** (verify_11); needs more line history, a prespecified multi-checkpoint
+   day-level design, or a tighter ES→SPX estimate.
+6. **Re-derive the gold cell (F5) on the current 7,912-row production grid** (it was sealed on the
+   7,821-row grid, verify_10) before acting on the peel fraction.
+7. **Hygiene:** change Discord password (invalidate token) → delete `~/discord-export/token`; add
    `data/discord/` to `.gitignore`.
 
 ## NOTES
