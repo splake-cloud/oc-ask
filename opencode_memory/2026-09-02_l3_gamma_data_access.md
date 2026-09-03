@@ -59,3 +59,19 @@ pricing-surface state (tier 2), NOT positioning. "gamma / net gamma / gamma prof
 - PM decision on execution order: run the historical arm now (no network), and/or approve the
   settlement extension (network) to unblock the modern arm.
 - The gamma study BUILD (Block B historical arm) is the next step once PM picks the order.
+
+## Follow-up (PM approved both): execution results
+
+**(b) Settlement extension (unblocks modern/UW arm) — DONE** (delegated qwen38-collab, commits c227ec7a + 81bbb0a5):
+- settlements_spx.csv now 2013-2026 (2248 rows; 2013-2025 G0c byte-identical + 160 2026 rows).
+- All 8 UW OPEX weeks' S_T present: 2025-12-19=6796.54 + 2026 {01-16:6960.38, 02-20:6840.59, 03-20:6594.63, 04-17:7085.86, 05-15:7439.67, 07-17:7441.18, 08-21:7687.93}.
+- 2 bounces: (1) off-by-one (range ended at 2025); (2) re-run dropped 44 W-fill rows + hit read-only pattern_opex_week certification (ends 2026-07-17) + fill-file-span. Fixed via the robust path (restore verified 2013-2025 + append 2026 from the already-fetched raw/S_2026.json + raw/W_2026.json via the script's own parse_new). Documented: 2026-08-21 (future OPEX) can't be cross-certified (read-only calendar); S=8 for 2026 is temporal (Sep-Dec not settled).
+
+**(a) Historical arm (2013-21) Block B — DONE** (delegated qwen-coder, commit 83821977):
+- F1-F8 built on the expiring root (469 weeks; F5-F8 coverage 435/469 = near-ATM gate drops ~34 sparse weeks). F10 descriptive, not built (excluded per C8).
+- G_B0 outcome-blind support gate (deposited BEFORE any PnL access — verified line-order in blockb.py): 98 cells -> 35 searchable (n_OPEX>=20 & n_nonOPEX>=20).
+- Holm family = 35 cells x 3 members (pnl_val/long_exec/short_exec) = 105, month-clustered bootstrap 10k SEED=42, 10bp floor.
+- **VERDICT: CLEARS_FLOOR=0, MARGINAL=25, NONE=80.** No OI/gamma/auction state identifies an executable OPEX subset after multiplicity. MARGINAL cluster: low full-chain OI / low OI concentration -> cheaper straddle long-exec (CI excludes 0, Holm p=1.0).
+- Verified: G_B0 ordering, determinism (byte-identical re-run), hand F7+F8 spot-checks (2015-02-17 OPEX + 2013-01-07 non-OPEX). F8 = expiring-root CP_FIXED_OI (defensible interpretation; spec silent on expiration window).
+
+**Next:** modern arm (A0 outcome map + F9 UW search on the 8 OPEX weeks) is now unblocked. NOTE: a concurrent A0 process (scripts/opex_l3_a0_outcomes.py + studies/opex_week_l3/data/) was already active when I ran — coordinate before building the modern arm to avoid duplicate work / concurrent-commit clobber.
