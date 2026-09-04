@@ -42,6 +42,9 @@ measured free), not separately measured; the free row is measured.
   gpu2 (18,305 free), leaving ~2.6 GiB there. That is the 2026-08-20 PM-authorized
   arrangement, so it is known to work, but it is the tight card. Name it before
   flipping the `full-root.conf` drop-in.
+  **SUPERSEDED 2026-09-04:** the tri-card is gone from the box; the 8B full root now runs
+  on **gpu0** (55,675 MiB free beside the qwen3.6 coder's fixed 41.6 GiB footprint → ~21 GiB
+  headroom after the 8B pair lands). See 2026-09-04_qwen38_dual_instance_gpu_topology.md.
 - Footprint, not the unit name, identifies which is loaded (`verifier-rag-small`
   serves both). Read `/health` or the cmdline back.
 

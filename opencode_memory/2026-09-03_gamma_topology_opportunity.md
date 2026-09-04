@@ -147,3 +147,53 @@ Also: corrected 3 Phase-2C ledger lines ("necessary"->"FAVORABLE but not suffici
 "pinning mechanism"->"rare conflicting pattern, NOT a demonstrated mechanism"; "tighter fly"->"the 2.5D
 target being closer in SPX-space") + corrected the record that the 8.7/30.1 was 7 days. Frozen registration
 + live rule byte-identical to `feaceb12` (verified).
+
+## UW substrate update-through-9/3 verification + 9/3 reconstruction (`3dd2e2c6`) — 2026-09-04
+Substrate-and-inspection task (no hypothesis tests/rule search/registration/classification). Verified the
+live-feed re-ingest (2026-09-03 20:55Z) that brought the canonical UW Periscope SPX dealer-gamma substrate
+(`pools/uw_gamma/`) through 9/3. **PASS on all 10 points, no STOP triggered.**
+- old max 2026-09-01 (180 dates, 7,261 snaps, 1,587,919 rows; git blob e9c6912b) -> new max 2026-09-03
+  (182 dates, 7,347 snaps, 1,607,478 rows). Appended 9/2 (9,735) + 9/3 (9,824) = 19,559 rows, 86 snaps.
+- 43 captures/date (09:00-16:00 ET, 42 on-sched + 1 off-sched 20:00Z rejected). 9/3 = `0dte` (0DTE-only,
+  expiry_raw=2026-09-03), consistent with 8/21-9/2 (regime flipped all_expiry->0dte ~2026-06-16/29).
+  0 dup keys, 0 null/0 sign-mismatch, raw supplier units (gamma -51842.6..89087.2). 152 non-flat strikes,
+  7200-7960; 7750/7730/7770 dense 5-pt.
+- Pre-update unchanged via PM-approved equivalence class (re-run independently): C1 per-strike+snapshot
+  bidir EXCEPT=0 vs git blob; C2 accepted_rejected byte-identical 7262-line prefix (+86 new); C3 manifest
+  360/360 content-equiv (sha drift = re-ingest). Independent recompute 9/2+9/3 (DuckDB SQL over raw lake
+  parquet): max abs diff 0.0 (per-snapshot + per-strike).
+- **9/3 reconstruction (descriptive only):** 7750 unremarkable at open (rank 9-12, ~300 gamma), first
+  LARGEST dealer-long node 09:40 (SPX 35 pts away), lapsed rank 2-7 during the 10:00-11:00 dip (7694),
+  durable rank-1 from 11:10 through close (share->0.97, gamma->89,087) as SPX pinned at the 7750 body.
+  Gamma takeover: 09:40 rank-1 was TRANSIENT (lapsed 10:00-11:00 dip); durable rank-1 from 11:10, COINCIDENT
+  with the SPX impulse onset (11:10->11:30), price arriving ~20 min later (11:30). No clean lead (corrected
+  from an earlier 1.5-2h over-claim). SPX overshoot +6.30 (14:16), ~4h within 10pts. 7750/7730/7770 PUT fly (putMid(7730)-2putMid(7750)+putMid(7770), 0DTE) entered 11:30 for
+  $6.25 = 31.25% prem (28-32 band, ABOVE the <=28 primary book); +40/+45/+50 at 12:30/12:52/12:56; max
+  +168% at 15:58; adverse dip -0.8%. Reconciles w/ trader's obs (7750 green/dealer-long, largest by ~11:00)
+  - NO discrepancy (durable rank-1 from 11:10). No generalization, no cohort design.
+Files: `analysis/sml_fly_verify/gamma_topology/` (UW_SUBSTRATE_903_VERIFICATION.md, UW_903_RECONSTRUCTION.md,
+uw_903_capture_table/gamma_grid/fly_1min.csv). Frozen reg + live rule byte-identical to feaceb12.
+
+## Cohort map — 11:30 gamma-body alignment (`529cb1ce`) — 2026-09-04
+Built the descriptive cohort map (dispatched to qwen-coder, independently verified) over the **111 UW-era
+study days** (P&L book ∩ gamma dates, 2025-12-12→2026-08-31). For each 11:30 fly: the 11:30 dominant
+positive-gamma node + the body's pos-gamma rank history, 5 node-history groups, temporal order, the
+continuous profile (rank/share/margin/distance/arrival/overshoot/pre-entry-dwell, no frozen threshold),
++ the fly/SPX outcomes (+40/45/50, time-to-target, adverse excursion, max fly return 15:55, afternoon
+body dwell, settlement), split by premium band + expiry regime.
+- **The body IS the 11:30 dominant node on only 12/111 days (10.8%)**: A1_EMERGENT=2, A2_PERSISTENT=9,
+  +1 T blip. Full partition: T_TRANSIENT=34, E_ELSEWHERE=21, N_NEVER_ABSENT=45.
+- **9/3's signature (A1_EMERGENT) RECURS: 2026-03-13 + 2026-05-01 (2/111) + 9/3 (worked example) = 3.**
+  **ALL THREE LOSE (−0.5)**: the fly touches LATE (~13:30, ~2h after entry), deepens below the entry
+  (min fly_mult 0.60/0.33/0.99), and trips the 1.0D floor BEFORE the 2.5D target — even though it
+  recovers in value (max_fly ~2.2–2.7). So the impulse-to-dominant-node pin is a real recurring state
+  but a LOSING one as traded (2.5D-vs-1.0D first-passage).
+- **The "expensive fly that monetizes cleanly" hypothesis is REFUTED**: the aligned EXPENSIVE flies
+  (b28_32+gt32, 7 days) NEVER hit the 2.5D target (0/7); the aligned cheap (le28, 5) hit it 2/5. Across
+  the book, >32 is the WORST monetizer (2.5D hit 1/34), le28 the best (22/60) — premium and clean
+  monetization are NEGATIVELY related.
+- Catalog-size (A1 n=3, aligned n=12, aligned-expensive n=7): descriptive, not a test. All A1 are
+  all_expiry; no 0dte A1 yet. 9/3 is a raw reconstruction (P&L book ends 8/31); its −0.5 inferred from
+  the 11:32 floor (fly_mult 0.992) preceding the later 2.5× touch.
+- Files: `cohort_alignment.parquet` (111×35), `cohort_map_builder.py`, `verify_cohort.py`,
+  `COHORT_MAP_ENVELOPE.md`, `COHORT_ALIGNMENT_REPORT.md`. No registration/live change.
