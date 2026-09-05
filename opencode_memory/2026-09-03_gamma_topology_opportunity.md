@@ -1,6 +1,6 @@
 # 2026-09-03 — SPX 0DTE fly gamma-topology → opportunity map + ranked ledger (discovery)
 
-**Committed + pushed** (`e586c382` Phase-0 substrate, `bbf0ee2f` Phase-1 ledger; Agent-Print:
+**Committed + pushed** (through `c2b90cdf` + D4 correction pass; D4 ratified 2026-09-04 target-first +1.0D; Agent-Print:
 author qwen3.8-27b-fp8). Separate **discovery branch** from the frozen adjudication registration
 (`feaceb12`, untouched). Objective: **opportunity discovery + market-state characterization**, not
 "prove most states unusable." Significance = evidence metadata, not a gate; 6-class classification.
@@ -162,8 +162,9 @@ live-feed re-ingest (2026-09-03 20:55Z) that brought the canonical UW Periscope 
   bidir EXCEPT=0 vs git blob; C2 accepted_rejected byte-identical 7262-line prefix (+86 new); C3 manifest
   360/360 content-equiv (sha drift = re-ingest). Independent recompute 9/2+9/3 (DuckDB SQL over raw lake
   parquet): max abs diff 0.0 (per-snapshot + per-strike).
-- **9/3 reconstruction (descriptive only):** 7750 unremarkable at open (rank 9-12, ~300 gamma), first
-  LARGEST dealer-long node 09:40 (SPX 35 pts away), lapsed rank 2-7 during the 10:00-11:00 dip (7694),
+- **9/3 reconstruction (descriptive only):** 7750 unremarkable PRE-OPEN (rank 9-12, 09:00-09:30, no spot,
+  gamma ~270-370), already LARGEST dealer-long node at first spot capture 09:40 (SPX 35 pts away), lapsed
+  rank 2-7 during the 10:00-11:00 dip (7694),
   durable rank-1 from 11:10 through close (share->0.97, gamma->89,087) as SPX pinned at the 7750 body.
   Gamma takeover: 09:40 rank-1 was TRANSIENT (lapsed 10:00-11:00 dip); durable rank-1 from 11:10, COINCIDENT
   with the SPX impulse onset (11:10->11:30), price arriving ~20 min later (11:30). No clean lead (corrected
@@ -183,17 +184,174 @@ continuous profile (rank/share/margin/distance/arrival/overshoot/pre-entry-dwell
 body dwell, settlement), split by premium band + expiry regime.
 - **The body IS the 11:30 dominant node on only 12/111 days (10.8%)**: A1_EMERGENT=2, A2_PERSISTENT=9,
   +1 T blip. Full partition: T_TRANSIENT=34, E_ELSEWHERE=21, N_NEVER_ABSENT=45.
-- **9/3's signature (A1_EMERGENT) RECURS: 2026-03-13 + 2026-05-01 (2/111) + 9/3 (worked example) = 3.**
-  **ALL THREE LOSE (−0.5)**: the fly touches LATE (~13:30, ~2h after entry), deepens below the entry
-  (min fly_mult 0.60/0.33/0.99), and trips the 1.0D floor BEFORE the 2.5D target — even though it
-  recovers in value (max_fly ~2.2–2.7). So the impulse-to-dominant-node pin is a real recurring state
-  but a LOSING one as traded (2.5D-vs-1.0D first-passage).
-- **The "expensive fly that monetizes cleanly" hypothesis is REFUTED**: the aligned EXPENSIVE flies
-  (b28_32+gt32, 7 days) NEVER hit the 2.5D target (0/7); the aligned cheap (le28, 5) hit it 2/5. Across
-  the book, >32 is the WORST monetizer (2.5D hit 1/34), le28 the best (22/60) — premium and clean
-  monetization are NEGATIVELY related.
-- Catalog-size (A1 n=3, aligned n=12, aligned-expensive n=7): descriptive, not a test. All A1 are
-  all_expiry; no 0dte A1 yet. 9/3 is a raw reconstruction (P&L book ends 8/31); its −0.5 inferred from
-  the 11:32 floor (fly_mult 0.992) preceding the later 2.5× touch.
+- **CORRECTION (re-verified 2026-09-03): 9/3 is A2_PERSISTENT, NOT A1_EMERGENT** — the "rank 9–12"
+  values were the PRE-OPEN 09:00–09:30 snapshots (no spot); at the first spot capture (09:40) 7750 was
+  already rank 1, so its best open-window rank (09:40–10:10) is 1. The durable-dominant-node pin still
+  RECURS: A1_EMERGENT n=2 (2026-03-13, 2026-05-01, book) + 9/3 raw as the A2_PERSISTENT 0dte variant.
+  **Outcome-mixed (D4 ratified 2026-09-04):** the two book A1 days LOSE (−0.5 floor-first; touch
+  LATE ~13:30; min fly_mult 0.60/0.33; 1.0D floor trips before the 2.5D target; recover in value
+  ~2.2–2.5× but lose as traded). **9/3 is the opposite shape: +1.0D, subsequently
+  2.5D-target-first** — touched 12:56 (mid convention) after a shallow 0.992 PRE-TOUCH dip at 11:32
+  (an acquisition-path observation only, not a floor event), never fell to the post-touch floor,
+  crossed 2.5D.
+- **The "expensive fly that monetizes cleanly" hypothesis is REFUTED on the book days**: the aligned
+  EXPENSIVE BOOK flies (b28_32+gt32, 7 days) NEVER hit the 2.5D target (0/7); the aligned cheap (le28,
+  5) hit it 2/5. Across the book, >32 is the WORST monetizer (2.5D hit 1/34), le28 the best (22/60) —
+  premium and clean monetization are NEGATIVELY related. **9/3 (raw, 31.25% mid, aligned
+  lapse-and-reclaim, +1.0D) is the first raw counterexample candidate — one day.**
+- Catalog-size (A1 n=2 book, A2 n=9 book + 9/3 raw, aligned n=12, aligned-expensive n=7): descriptive,
+  not a test. All A1 are all_expiry; no 0dte A1 in the book (the 0dte pin variant exists only as raw 9/3,
+  A2_PERSISTENT). 9/3 is a raw reconstruction (P&L book ends 8/31); its runner is **+1.0D
+  target-first** under the frozen post-touch contract (D4 ratified 2026-09-04); the 0.992 dip at
+  11:32 is pre-touch, an acquisition-path observation.
 - Files: `cohort_alignment.parquet` (111×35), `cohort_map_builder.py`, `verify_cohort.py`,
   `COHORT_MAP_ENVELOPE.md`, `COHORT_ALIGNMENT_REPORT.md`. No registration/live change.
+
+### 182-day complete population: path fields + subtypes (2026-09-04, committed c2b90cdf)
+PM task (full text in transcript): add 7 outcome-blind path fields to the complete 182-day
+acquisition population; recompute group counts on the full population; report acquisition
+outcomes by path subtype with runner separate; confirm 9/3 A2.
+
+- **Deliverables** (topology dir): `ACQ_PATH_FIELDS_ENVELOPE.md` (S1–S13, 3 revisions),
+  `acquisition_scorer.py`, `verify_path_fields.py` (V1–V5), `acquisition_scores.parquet`
+  (182×41), `ACQ_PATH_SUBTYPES_REPORT.md`. Plus first-round files committed this time:
+  ACQUISITION_ENVELOPE.md, acquisition_scorer.py (orig), verify_acquisition.py,
+  acquisition_scores.parquet (orig) — the 4 previously-untracked acquisition files.
+- **Groups (full population, NOT book-inherited):** A1=3 (book's 2 + **2026-04-24**, a
+  non-touch A1 day the touch-conditioned book never saw), A2=16, T=56, E=38, N=69.
+  111 overlap days reproduce the book cohort exactly (A1=2, A2=9, T=34, E=21, N=45).
+- **Subtypes:** NEVER_DOMINANT 107, TRANSIENT 53, LATE_EMERGENCE 14, LAPSE_RECLAIM 7,
+  CONTINUOUS 1 (the single day dominant from first spot capture through close). Invariants
+  verified (CONTINUOUS⊆A2, LATE_EMERGENCE⊆{A1,T}, NEVER_DOMINANT⊆{E,N}, LAPSE_RECLAIM⊆{A1,A2,T}).
+- **Acquisition read (descriptive):** premium band dominates (le28 ≈ 76–100% at 150%,
+  gt32 ≈ 38–67%); within band, dominance-path subtypes acquire cleaner/earlier (LATE_EMERGENCE
+  median t150=206 min vs NEVER_DOMINANT 299; TRANSIENT deepest adverse excursion, min-fly 0.39).
+  No sweeps/tests — fixed cells only.
+- **Runner reported separately** (frozen post-touch contract): rebuilt in Revision 2 after
+  finding the original `runner_floor_first` was structurally ≡1 (ask/bid debit ⇒ every day
+  starts <1.0×, floor fires at bar 0). New columns `runner_reach_25_before_10` /
+  `runner_incr_25_10`; 111/111 exact vs runner_features_v3 (delegate V5 + my own independent
+  first-passage from nearest25, 0 mismatches).
+- **9/3 confirmed A2_PERSISTENT / LAPSE_RECLAIM:** pct 4/15, streak 30 (11:10→16:00),
+  lapses 1, takeover 11:10, cont 0, lr 1, le 0. Book-faithful row: debit 6.50, 32.5% (gt32),
+  t140/145/150 = 122/126/176 min, min-fly-before-150 0.954, max 2.5115×. Ratified mid-convention
+  status (31.25%, 28–32 band, 12:30/12:52/12:56) reported alongside; gap = leg spread.
+- **D4 RATIFIED (2026-09-04, target-first, +1.0D):** 9/3 touched 1.5D at 12:56 (mid convention),
+  never fell to the post-touch floor (post-touch min 1.32 mid / 1.75 ask-bid), crossed 2.5D →
+  **+1.0D, subsequently 2.5D-target-first** (NOT −0.5D). Every "subsequently floor-first" narrative
+  corrected; the 11:32 dip (0.992) preserved only as an acquisition-path observation. **MID
+  convention = primary study result; ask/bid = labeled execution comparison** (not the governing
+  research mark). Corrected characterization (PM wording): "A 31.25%-premium fly entered during a
+  lapse-and-reclaim body-node state reached +40%, +45% and +50%, suffered almost no meaningful
+  acquisition drawdown, never hit the post-touch floor, and subsequently reached 2.5D." Decision
+  table (premium band × path subtype, +45%-leading: n / +40 / +45 / +50 / median t→+45% /
+  pre-target min / 2.5D runner) extracted from the existing 182-day file into
+  ACQ_PATH_SUBTYPES_REPORT.md §5 (no new search); 9/3 = cleanest acquisition in the file (fastest
+  t145 in its band, best pre-target min in its cell) and the first raw counterexample to the
+  book-days refutation. Candidate (coherent, n=1, needs accumulation): a wider-premium fly with
+  favorable body-node evolution may acquire cleanly and still retain runner value. Correction pass:
+  D4_CORRECTION_ENVELOPE.md (sections A–E) applied to ACQ_PATH_SUBTYPES_REPORT.md +
+  COHORT_ALIGNMENT_REPORT.md + both correction envelopes; UW_903_RECONSTRUCTION.md needed no change
+  (its 0.992 dip was already acquisition-framed). 2026-09-04 table correction (PM ruling): §5
+  regenerated in the governing MID convention (current raw pool, uniform 182 days): 25 days
+  re-band; the 28–32×lapse/reclaim cell is **9/3 itself** (t145 = 82 min @12:52, pre-target min
+  0.992, +1.00 target-first — the expected anchors); the old cell's 205/0.89/0/1(+0.97) was
+  **2026-02-11's ask/bid row** (29.0%; re-bands to ≤28 at 26.5% mid; 205 = first 1.45× at 14:55 on
+  the file's nearest25-era path — minutes from 11:30, correctly labeled; 0.89 = its ask/bid
+  mfb145; 0/1(+0.97) = that day's frozen-book time-stop runner, internally consistent). Strongest
+  rows in the governing numbers = **late emergence**: ≤28 LE **8/8 reach +50%** (t145 median 93
+  min, fastest in table); >32 LE 3/4 at +45 and +50 (direction unchanged from the ask/bid display
+  5/6, 4/6). 02-11 source-divergence flag (future audit): file row (nearest25 book-era path)
+  vs current raw pool differ mid-afternoon (first 1.45× 14:55 vs 13:35; same 15:55 exit
+  2.4698×); other spot-checked book days (04-06, 12-17, 07-14) match exactly. Numerators
+  independently re-verified from row-level flags; both singleton cells traced to source rows.
+  Refutation wording corrected (cohort report + memory): "Among the seven previously examined
+  aligned expensive touchers, none reached the 2.5D runner target under that analysis."
+- **LATE_EMERGENCE FROZEN for forward accumulation (2026-09-04, LATE_EMERGENCE_FROZEN.md +
+  late_emergence_14_inspection.csv):** definition frozen at S11 (first rank-1 > 1010 AND 16:00
+  capture rank-1; invariants S12/S13). 14-day inspection: **the state is a late-afternoon
+  dominance state, NOT an entry-time state** — 13/14 days body NOT rank-1 at 11:30 (9/14 body
+  gamma NEGATIVE at 11:30); takeover START vs +45%: BEFORE on 3 (03-13 10:20, 03-25 12:40,
+  08-14 11:50), AFTER 10, MISS 1 (04-15); but the live 3-capture CONFIRMATION (the actionable
+  timestamp — a start is not knowable live) gives **2/11/1**: only 03-13 (10:40) and 08-14
+  (12:10) confirm BEFORE the day's +45%; 03-25 flips (confirm 13:00 > +45% ~12:47); 6 S11 days
+  have NO confirmation at all (body rank-1 in exactly one capture). **Verified actionable
+  anchors = 03-13 + 08-14 only.** Guardrail (PM): S11's 16:00-conditioned success rate is NOT
+  the live event's expected performance. Gamma FOLLOWED price
+  on 13/14; **on 2026-03-13 it LED ~43 min** (takeover 10:20 with SPX 41pt away; first ≤10pt
+  arrival 11:03; never ≤5pt pre-11:30) — the only lead, and the only day the state was known at
+  11:30 (rank-1, 2.81x, streak 34). Dist at takeover: 13/14 ≤13pt; 03-13 = 41pt, 06-09 = 25pt.
+  Afternoon bimodal: pinned vs wander (06-09 max 82pt) — all 14 end day with body dominant.
+  CHECK A: both regimes (all_expiry +45 10/11; 0dte 3/3). CHECK B: within band x 11:30-distance
+  cells LE still outperforms (e.g. >32 ≤5pt 4/5 vs 16/36) BUT the entry-time difference is
+  DISTANCE (LE median 3.6pt vs 6.1pt), not gamma — on 13/14 the state is an intraday
+  confirmation, not an entry signal. **Corrections (PM review, logged in doc §6):** original
+  table said "followed on all 14 / ≤25pt / 12-of-14 before takeover" — all three wrong, caused
+  by a minutes-vs-HHMM bug in the rel/timing logic for the 5 durable-run days (takeovers
+  rendered as 17:00/20:40/25:10/23:50/22:20); re-derived from raw captures. Frozen hypothesis
+  (PM wording): body becomes durable dominant pos-gamma node after the opening window -> higher
+  prob +45-50%; ≤28 preferred, 28-32 candidate extension; no runner-policy override until
+  continuation accumulates. Accumulation protocol: log BOTH timestamps (takeover start +
+  durable confirmation) + takeover-time strata + dist_1130 + band + mid attainment +
+  frozen-contract runner separately. No live/registration change; definition frozen (change =
+  new label).
+- **LIVE TAKEOVER EVENT CATALOG (2026-09-05, LATE_EMERGENCE_FROZEN.md §4 +
+  live_takeover_catalog.csv):** all real-time confirmed body-node takeovers (3rd consecutive
+  rank-1 capture of a >=3 run; NO 16:00 condition) across the full 182-day population:
+  **82 events / 60 days (33%)**; 16 days >=2 events; S11's 14 days hold only 8 of them.
+  Each event reprices the centered 20W fly from its confirmation bar (pre-11:30 events from
+  pre-11:30 pool bars — first build bug: all repriced from 11:30, 03-13 shown $3.15/5.4pt
+  instead of $1.50/49.5pt; corrected, `reprice_bar` column prints the bar). Categories:
+  **A pre-arrival (prospective entry) 25: 100% reach +45/+50, med close 2.13x, p25 0.38**
+  (bimodal: many 2-5x + several total losses; robust to dropping 5 sub-$2 events 21/21);
+  B near-body 42 (52%); C post-11:30 45 (42%); C2 17 (53%); D after-45 20 (45%). Strata:
+  pre-11:30 36/38 + 1.74x med; 11:30-13:30 8/17 + **0.13x med** (worst); >13:30 10/27 + 0.84x.
+  LE-S11 events: med 1.47x, p25 1.00 (no sub-1.0 close) vs non-S11 1.03x/0.15. Anchors:
+  03-13 (10:40, $1.50 -> +45 @10:46, +50 @10:47, peak 5.82x, close 2.03x); 08-14 (12:10,
+  $7.28 -> +45 @13:36, close 1.49x). All timestamps minutes-since-midnight; HHMM display
+  only (PM mandate after the HHMM-vs-minutes bug class).
+- **Revision 3 (my spec defect, caught by my own verification):** `late_emergence` originally
+  gated at first rank-1 > 11:30, which mislabeled A1 days emerging in (10:10, 11:30] and ending
+  dominant (fell to TRANSIENT). Boundary = after the open window (>1010). 9/3 unaffected.
+- **View state note (D5, resolved):** the `gamma_research_active` catalog was redefined mid-task
+  by the concurrent data-catalog session (16:05; api-1.0 schema, 26 cols, `underlying='SPX'
+  AND is_flat=false` filters, 759,054 rows; 9/3's four pre-open no-spot rows no longer in view,
+  same 39 spot captures + identical gamma values). The deliverable was built AFTER the rebuild
+  and fully re-verified against the current state: exact-algorithm parity 182/182 × 8 fields,
+  0 mismatches. `UW_903_RECONSTRUCTION.md`'s 43-row table (pre-rebuild view) remains valid for
+  the 39 spot rows; the 4 pre-open rows are substrate-only.
+- **Environment:** qwen-coder handled all 3 build revisions cleanly; its V5 anchor (111/111)
+  passed. My independent parity script (`/tmp/verify_path_parity.py`, untracked scratch) —
+  note: my first attempt had 4 bugs of its own (HHMM-vs-minutes threshold, spot filter, tie
+  handling, groupby-apply iteration); the committed evidence is the fixed exact-replica.
+
+## Session closeout (2026-09-05, maintenance shutdown)
+
+**Commit train this segment (all pushed, Agent-Print present):** `8335cb39` (LE frozen +
+14-day inspection) → `56c72290` (PM correction round 1: 03-13 LEAD, distances, 3/10/1) →
+`4138bdce` (confirmation-as-actionable 2/11/1 + 182-day live catalog + pre-entry repricing fix).
+Deliverables: `LATE_EMERGENCE_FROZEN.md` (§4 live catalog, §7 correction log items 1–5, §6
+protocol logs both timestamps + catalog fields), `late_emergence_14_inspection.csv` (dual
+timestamps), `live_takeover_catalog.csv` (82 events × 33 fields).
+
+**Open / next session:**
+1. **Forward accumulation** is the standing task: per-day logging begins (S11 state +
+   confirmation/start timestamps + confirmation-time strata + dist_1130 + band + mid
+   attainment + catalog fields + frozen runner separately). The catalog says the interesting
+   question is confirmation-time strata + category A (pre-arrival) recurrence, not the S11
+   rate itself.
+2. **02-11 source-divergence audit** (flagged, not urgent): nearest25 book-era path vs current
+   raw pool disagree mid-afternoon (first 1.45× 14:55 vs 13:35; same 15:55 exit 2.4698×);
+   other book days match exactly.
+3. **2 untracked leftover files** in `analysis/sml_fly_verify/adjudication/`
+   (`final_pnl_extract.py`, `verify_bsm.py`) — scope deviation to commit or remove.
+4. Category A (pre-arrival, 25 events, 100% reach +45/+50, bimodal closes) is the strongest
+   live-event cell so far — n=25 is still small and the p25 0.38× left tail is real;
+   accumulation should track it explicitly (it is a pre-entry, not hold/add, category).
+
+**Standing facts for re-entry:** registration frozen at `feaceb12`; S11 definition frozen
+(change = new label); no runner-policy override from LE state (PM); mid convention governs;
+minutes-since-midnight discipline for all time comparisons (bug class bit twice:
+HHMM-vs-minutes, then 11:30-path reprice); anchors 03-13 + 08-14; scratch scripts
+(`/tmp/le_events.py`, `/tmp/le_catalog.py`, `/tmp/fly_path_full.parquet`) are untracked and
+regenerable.
