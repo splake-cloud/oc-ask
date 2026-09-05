@@ -1,9 +1,14 @@
 # 2026-09-04 — Qwen 3.8 dual-instance GPU topology + durable launch recipes
 
-**Why this card:** a session launched a second qwen3.8 instance on gpu1 (co-resident with
-RAG) and one was restored on gpu2; PM corrected the topology and the util assumption.
-Recipe is now pinned from the LIVE process cmdlines so a reboot/downtime can be restored
-without re-researching.
+**SUPERSEDED by [2026-09-05_qwen38_dual_instance_gpu_topology.md](2026-09-05_qwen38_dual_instance_gpu_topology.md).**
+This card had the ports swapped between gpu1/gpu2 (gpu1=:8012 was wrong; gpu2=:8011 was wrong)
+and placed RAG on gpu1 (RAG is on gpu2). The 2026-09-05 card has the verified topology.
+
+**Why this card was created (and superseded):** a session launched a second qwen3.8 instance on
+gpu1 (co-resident with RAG) and one was restored on gpu2; PM corrected the topology and the
+util assumption. Recipe was pinned from the LIVE process cmdlines so a reboot/downtime could
+be restored without re-researching. **Later verification showed the port-to-GPU mapping was
+inverted and RAG was on gpu2, not gpu1.**
 
 ## Topology (verified 2026-09-04, `nvidia-smi` + `/proc/<pid>/cmdline` + `curl`)
 

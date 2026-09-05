@@ -1,5 +1,10 @@
 # 2026-09-04 — SPX 0DTE put fly: when is a loser unlikely to turn around (MAE / cut study)
 
+**Session ID:** `01a06d8f-6e98-712a-b5bf-4ad157ff5c45` (pi seat, qwen3.8-27b-fp8) ·
+**Status at close:** all 5 phases + repeatable-setup verdict complete, artifacts committed
+(`2bf7be57`, `e729c983`), study consolidated in `studies/0dte_fly/`; PM rebooted for
+maintenance — see "Resume on reboot" section at the bottom of this card.
+
 **Mission (PM):** statistically, when does a losing daily butterfly (0DTE put fly) stop being likely to
 recover? "First cut is simply a distribution of losses that shows probability of recovery." Data-read
 exercise, not a build. Pi seat, qwen3.8-27b-fp8.
@@ -222,3 +227,41 @@ commit `2bf7be57`, no parquet in git (regeneration recipe in the outputs manifes
 Follow-up (PM: /tmp is not reboot-safe): working parquet moved to durable
 `studies/0dte_fly/scratch/fly_setup.parquet` (424 KB, gitignored, regenerates in <1 s),
 all scripts + manifest updated, stale /tmp copy removed — commit `e729c983`.
+
+---
+
+## Final Q&A with PM (2026-09-04, after save) + resume-on-reboot
+
+**PM re-statement adjudicated (NO):** "regimes 3,4,5 with premium ≤25" does not work —
+T≤25 pooled: R3 57.3%/+0.172 vs R4 50.3%/−0.260, R5 50.9%/−0.072, R3+R4 53.4%/−0.067,
+R3+R4+R5 52.7%/−0.069. The rule is **R3-only**. (R5's holdout-C-only +0.144 noted;
+not promoted — protocol forbids holdout-driven selection.)
+
+**"Every occurrence" semantics (confirmed with PM):** each checkpoint is its own trade —
+premium computed from THAT checkpoint's nearest_25 body (`entry_debit ÷ wing_width` at
+the checkpoint), ≤25 on an R3 day = new position. It is **pyramiding**, not top-up: an
+open 11:30 position does not block a qualifying 12:30 entry (up to 7 same-day positions,
+each with its own P0 exit and ~1-in-4 full-premium floor). Capping at 1/day zeroes the EV.
+
+**One-line live rule (PM's requested format):** R3 day (top-overhang) + premium ≤25% of
+wing → enter at any checkpoint ≥11:30, every occurrence, P0 exit (first +50 cross of
+executable mark `max(mid−0.15,0)` else 15:55). 57.3% hit / +0.17 D (103 trades/yr);
+stricter sibling T≤20: 61.9% / +0.24 D / 37 trades/yr.
+
+## Resume on reboot (PM system maintenance 2026-09-04)
+
+Everything is durable; nothing lives in /tmp anymore:
+1. **This card** (`~/oc-ask/opencode_memory/INDEX.md` → `2026-09-04_fly_loss_cut_mae.md`).
+2. **Study dir** `/data/agentic_trading/studies/0dte_fly/` — decision card, M3 report
+   (full verdict + 72-row family), spec, 3 as-run scripts, `outputs/m3_repeatable_setup/`,
+   and the working parquet at `studies/0dte_fly/scratch/fly_setup.parquet` (gitignored,
+   regenerates <1 s via `scripts/m3_build_dataset.py`).
+3. **Commits:** `2bf7be57` (study consolidation + M3), `e729c983` (scratch parquet move)
+   — both on master, both with Agent-Print trailer; study tree clean at shutdown.
+4. **L3** `STUDY_SPX_0DTE_FLY_CANONICAL.md` (mark rulings, P0 verdict, premium_pct source
+   fix). Note: an unrelated uncommitted modification to it was present at shutdown
+   (another seat's work — do not assume it is this thread's).
+5. **Open items (unchanged):** findings_update formalization packet (PM's call),
+   entry-conditioned management grid inside the winner population, nearest_5 arm,
+   17/27 IV-threshold drift check for live use, regime-timestamp resolution (day-level
+   label; strictly-live R3 proxy is NOT the edge).
