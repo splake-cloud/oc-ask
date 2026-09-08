@@ -63,8 +63,25 @@ Also: a delegate's returned `git diff` mis-rendered a doubled path (`STAGING_ROO
 and broken indentation — the ACTUAL file was correct (verified by import + grep); the returned diff was
 not trusted, the file was re-read.
 
+## End-to-end (runner live) — DONE
+Runner came online. Real `--gamma` (no seam) works: writes `<id>.req`, runner claims it, stages 3 fresh
+slices, writes response. **Runner end-to-end latency ~33s** (.req 17:34:46 → response 17:35:19), so the
+original 30s `GAMMA_POLL_TIMEOUT` was too tight → bumped to **60s** (tuning constant, not a spec value).
+Live run completed in 34s, printed full block. Independent recompute of the real 17:30Z file matched
+(g_b 21453.44, top2 7690/5011.29, rank 1, Q1 1.00, Q2 4.28, S+ 53%, gross 34%).
+
+## TZ display fix (PM red flag) — DONE, verified
+PM caught: dashboard showed `Slice: 17:30 ET` for a `17:30Z` source. **Diagnosis: display-only, NOT
+internal.** Parse (line 437 `fromisoformat(ts.replace("Z","+00:00"))`), eligibility compare (line 440
+`slice_dt <= decision_time_utc`), and age (line 460 `decision_time_utc - current_dt`) ALL already used
+aware-UTC instants (correct). Defect: `strftime("%H:%M")` was called on the aware-UTC datetime (formats
+in UTC) but labeled "ET". Fix (3 lines): `.astimezone(ET)` before the Slice + History strftimes, plus a
+`source:`/`ET:` diagnostic. Verified: summer 17:30Z→13:30 ET (UTC-4), winter 17:30Z→12:30 ET (UTC-5);
+17:30Z fixture now prints `Slice: 13:30 ET`, `source: 2026-09-08T17:30:00Z`, `ET: 2026-09-08T13:30:00-04:00`,
+History `13:10/13:20/13:30`; age from aware-UTC instant (14-15m); gamma values UNCHANGED. Transcript
+`verify/gamma_tz_fix.*.txt`. Still 447 insertions / 0 deletions vs HEAD (purely additive).
+
 ## Open / next
-- **End-to-end test BLOCKED on the runner** (backfill to 08-25 frees the browser). When the runner is
-  live, run `premium_pct_now --gamma` with NO GAMMA_REQ_ID to confirm the real `.req`→response path.
-- Commit only after PM says it works (currently 445 insertions uncommitted on `scripts/premium_pct_now.py`).
+- Commit only after PM says it works (currently 447 insertions uncommitted on `scripts/premium_pct_now.py`;
+  revert = `git checkout -- scripts/premium_pct_now.py`).
 - The `GAMMA STATE` descriptive qualifiers (dominance/trend) are PM-flagged for possible trimming.
