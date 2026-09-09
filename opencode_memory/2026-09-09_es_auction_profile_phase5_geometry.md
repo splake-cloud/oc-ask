@@ -332,3 +332,35 @@ Full dispatch arc executed under the operator's GO chain:
 - Next: dispatch D1 (qwen38-collab :8011, `scripts/study_a_core_v1.py` Chunks
   1–3) → D2 (qwen-coder :8081, build) → D3 (qwen38-collab, gates+analysis) →
   KASA7 (pi seat) → study receipt.
+
+### Study A: FULL CHAIN EXECUTED & CLOSED (2026-09-09, operator GO)
+- **D1** study_a_core_v1.py (qwen38-collab): e2e9a7cd → 95ee29dc (E-2) →
+  d7fe701e (wording). Errata E-1/E-2 raised by D1, PM-adjudicated
+  (d1ba5369).
+- **D2** build_study_a_v1.py (qwen-coder): 8325340f (E-4 values) → 8405826e
+  (pin refused probe file) → 3cdaee0c (X7 root overrides). **E-4: in-window
+  census corrected by direct measurement** — 04-29 bar file has 1379 rows
+  (missing 2026-04-28 19:21 ET) ⇒ asof 04-28 REFUSED (the D1 amendment
+  working as designed); 19/20 admitted; 509 rows; arm A k=1 internal 15/19
+  (90/192 was a wrong-population whole-pool figure).
+- **D3** check_study_a_v1.py (qwen38-collab, 9594d74c): G0–G9 all PASS,
+  tampers 5/5 observed-FAIL, import audit PASS. D3 caught a PM envelope
+  slip (T3 median A k1 168 vs printed 170) via its cross-assert — refused,
+  not weakened.
+- **X7** /tmp-copy build: byte-identical event sha (28 manifest diffs =
+  path strings only).
+- **KASA7** (pi seat, pm_kasa7_adjudicate.py): 10/10 CONFIRMED, 0 BLOCKER /
+  0 MAJOR. Hand traces: weekend 04-17→04-20 (internal cells) + 04-13→04-14
+  (touched C k1 r2: bar 120, mae 17, mfe 13; non-touch misses 136/43).
+- **VERDICT: NO** per frozen §3.8 (C q1<q4 all 4 scales; B un-evaluable —
+  q4 internal-depleted; two-arm YES config not established). Small-N
+  honest posture; C signal recorded in verdict_evidence.
+- **Banked MINORs pending operator ruling:** M1 decision-rule gap
+  (one-arm-evaluable case unmapped — recommend explicit mapping next
+  protocol version), M2 K8 1-char extraction delta, M3 PM envelope slip
+  (process note), M4 stale §10 attestation line.
+- Artifacts (sha256 in receipts/study_a_hvn_attraction_receipt.md): spec
+  39e5efe6…, core 17261a06…, build b24fd6c6…, check 33f13d6a…, harness
+  bcd07d35…, event 8758a1a0…, manifest c75183a4…, analysis 53338452….
+- Commits: ca09d8ba → … → 66aa9464 (closure receipt). Next studies
+  (B first-encounter, C LVN traversal…) are operator-driven.
