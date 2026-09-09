@@ -311,3 +311,24 @@ Full dispatch arc executed under the operator's GO chain:
   MAE-MFE / primary definition+T1-T4 protocol / context_v1-only
   conditioning / study-package deliverable) — spec freezes on ratification,
   then dispatch D1→D2→D3 → KASA7 (kasa7_adjudication.md) → study receipt.
+
+### Study A: D1–D8 ruled, spec v7 FROZEN (2026-09-09)
+- Operator rulings: **D1 AMENDED** (immediate next pool session `E′=min{s:E>s}`;
+  refuse the pair if absent/incomplete; **never forward skip**; never calendar),
+  D2 ratified, D3 ratified (native canonical; front twin never a second
+  observation), **D4 ratified with pin** (0-based touch bar index = bar-start
+  offset; first outcome bar ⇒ 0/0), **D5 AMENDED** (miss = minimum bar-range-
+  to-band interval distance over full session — directional shortcut went
+  negative on gap-over: F-b now carries a gap-over bar, miss 2 not −6),
+  D6 ratified, **D7 ratified with clarification** (context_v1 = entire
+  admissible source; T1–T4 use only protocol-declared context variables
+  gap_ticks/range_ratio_prev; no post-outcome feature selection), D8 ratified
+  (study artifact package only).
+- Fixtures F-a..F-f re-pinned to amended rules; all reproduce mechanically
+  (verified in-session). In-window facts unchanged: 20/20 admitted, identity
+  window, 47% A/k=1 internal.
+- Spec: `specs/spec_v7_study_a_hvn_attraction.md` (FROZEN); blueprint v7
+  ruling table updated. Commit `ca09d8ba`.
+- Next: dispatch D1 (qwen38-collab :8011, `scripts/study_a_core_v1.py` Chunks
+  1–3) → D2 (qwen-coder :8081, build) → D3 (qwen38-collab, gates+analysis) →
+  KASA7 (pi seat) → study receipt.
