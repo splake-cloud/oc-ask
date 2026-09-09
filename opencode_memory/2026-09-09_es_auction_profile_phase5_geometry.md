@@ -89,3 +89,86 @@ unreachable). Gate: guard firing on the battery = MAJOR.
 - Profile files: `outputs/profiles_v1/profiles/<profile_id>.parquet`
   (columns: profile_id, price_bin [DOLLARS], volume, volume_fraction;
   **bin4 = round(price_bin × 4)** — the file has NO bin4 column)
+### 2026-09-09 (late): canonical D3 full-mode run — PASS
+:8012 three-round review loop (NO-GO F1/F2 → NO-GO F5 → GO) caught 3 real full-mode
+defects (fixture-scale assumptions: T1 pid, trough-walk first-cell, G5 `twin` column)
++ my F1b. Canonical run then caught a 4th the review loop missed: D2 manifest
+`n_rows` keys non-conformant to spec §4.4 (short keys pinned at line 438; D2 wrote
+file-stem keys; my own §C checker had hard-coded D2's keys — ledger item 6). D2 fixed
+(1e8969fd, parquets byte-identical), run 2: **RESULT (full): PASS exit 0**
+(`d3v2-canonical-full.20260909T134625Z.txt`), run 1 FAIL transcript kept as provenance
+(`...133931Z.txt`). All UNPROVEN-UNTIL-RUN items cleared. Part D (geometry + node
+naming) verified end-to-end. Next: KASA5 semantic lane (S1–S9 matrix) if dispatched.
+### 2026-09-09 (latest): KASA5 complete — S1–S9 all CONFIRMED
+receipts/kasa5_adjudication.md. KASA re-derivation (no production imports;
+dict-pooling, runs-as-triples, integer-exact) matched every cell: 1536 +
+139576 + 34018 rows + 10/10 fixtures. 1 MINOR: §3.9 Cand-C prose two-readable;
+§6 pins fix it (maximal runs of the qualifying set); build == pins. Process
+incident K6: I reported a "PASS" before reading the transcript (it was exit 1,
+harness key-name bug cand vs candidate) — corrected same turn, false-claim
+recorded in the receipt ledger; future rule: no verdict before reading the
+deposited transcript. Part D closed semantically; Part E freeze awaits GO.
+### 2026-09-09 — PHASE 5 CLOSED
+Operator ratified the frozen study interface and closed Phase 5.
+specs/study_interface_v1.md (ratified, frozen v1): hash-pinned substrate,
+keys/row-order, NULL + E-v5-2 bound semantics, arm semantics (canonical
+HVN/LVN NONE; A literature arm, B/C sensitivity), primary representation =
+continuous Part-A geometry, success states YES/NO/CONDITIONAL/
+REDUNDANT-WITH-CONTINUOUS-GEOMETRY, change-control (new quantity/threshold =
+new version + new adjudication), per-study checklist. Closure receipt:
+receipts/phase5_closure_receipt.md. Next stage (new dispatch): candidate-node
+behavior studies on the frozen substrate.
+### 2026-09-09 — PHASE 6 RULED: frozen spec_v6 written (pi, handoff-incoming session)
+Operator rulings on blueprint_v6 D1–D8, with three amendments, encoded in the
+FROZEN `studies/es_auction_profile/specs/spec_v6_pit_market_context.md`
+(blueprint marked superseded). Amendments: (1) v1 fields TRIMMED to a closed
+32-column list (IDENTITY 5 / COORDINATE STATE 3 / NATIVE 8 / FRONT 4 / PRIOR 7
+/ RELATIVE 3 / ROLL STATE 2); exact-bar source admitted (session aggregates
+from the substrate's exact interval bars); **no discretionary regime labels in
+v1** (high_volume_day/wide_range_day/trend_day/volatile = thresholds that
+belong later). (2) Join criterion corrected to the INVERSE pair: every profile
+exactly one context match (join key = profile asof session); every context row
+≥1 profile match; no context row outside the declared 20-session population;
+native/front twins map to the SAME context row (coordinate column selection,
+no duplicated context records). (3) Minimal semantic-claim set S1–S7 (context
+timestamp / PIT admissibility / session aggregation / prior-session resolution
+= immediately preceding complete eligible session, never calendar D−1 /
+coordinate mapping / future-deletion invariance f(I_≤t)=f(I_full) / no
+outcomes), with **S2/S6/S7 highest-severity KASA claims**.
+Grounded facts verified before spec writing: 384 profiles, 20 distinct asof
+sessions 2026-04-13→2026-05-08 (10–24 profiles/session; 76 are prior_eth
+anchored); 21 substrate partitions all single-contract ESM6, partition D spans
+D−1 18:00→D 17:00 ET; C*=ESM6 unambiguous all 20 asofs (front_delta=0 is a
+data fact, transform stays general); roll ESM6→ESU6 triggers 2026-06-15
+(out-of-window ⇒ live_leg_required=false all rows); **2026-04-13 has no prior
+session in the substrate ⇒ its prev_* (7) + RELATIVE (3) block is NULL +
+manifest refusal code by construction**. 2026-05-11 partition is post-window
+(truncation-invariance later-cut only, not a context row).
+Next: D1 context builder → qwen-coder; D2 gates G0–G6 (G2 truncation
+invariance decisive; G6 = the 4-way join contract) → qwen38-collab; KASA S1–S7
+(pi, ≥1 hand-traced date); :8012 review before canonical run; canonical run;
+Phase-6 freeze record.
+
+### 2026-09-09 — PHASE 6 RULES GIVEN → FROZEN SPEC v6
+Operator ruled D1–D8 (recommendations stand, three amendments). Frozen spec:
+`studies/es_auction_profile/specs/spec_v6_pit_market_context.md` (committed in
+/data/agentic_trading); blueprint_v6 status line updated to "RULED".
+Amendments: (1) v1 field list is a CLOSED 32-column set — exact-bar source
+admitted; NO discretionary regime labels (high_volume_day/wide_range_day/
+trend_day/volatile = thresholds that belong later, new version). (2) Join
+acceptance = four-part: every profile exactly one context match (join key =
+profile asof session); every context row ≥1 profile; no row outside the 20
+declared sessions (2026-04-13→05-08); native/front twins share one row,
+select coordinate columns. (3) Phase 6 built around semantic claims
+S1–S7 (timestamp / PIT admissibility / session aggregation / prior =
+immediately preceding complete eligible session, never calendar D−1 /
+coordinate mapping / future-deletion invariance f(I≤t)=f(I_full) / no
+outcomes); **S2/S6/S7 = highest-severity KASA claims (BLOCKER)**.
+Grounded facts pinned in spec §2: 20 asof sessions (10–24 profiles each,
+384 total; 76 prior_eth anchors); substrate 21 partitions all ESM6;
+C*=ESM6, is_ambiguous=False all 20; ESM6→ESU6 roll triggers 2026-06-15
+(out of window); 2026-04-13 prev_* block = NULL + manifest refusal (no
+prior session in substrate — expected). Refusal reason codes live in the
+manifest refusal block (field list has no reason columns). Next: D1 builder
+→ qwen-coder; D2 gates (G0–G6 incl. truncation invariance, 3 cut points) →
+qwen38-collab; KASA pi; :8012 review before canonical run.
