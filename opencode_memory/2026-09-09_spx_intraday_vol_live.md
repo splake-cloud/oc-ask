@@ -3,7 +3,9 @@
 **Objective.** Bring IV and RV volatility statistics to intraday (sub-checkpoint)
 frequency so they are usable for live trading, while the EOD SQLMesh warehouse keeps
 accumulating the historical record. Two deliverables, both built + independently
-verified this session; **all artifacts uncommitted** (deposit, not commit).
+verified this session; **both committed + pushed** (`f6e56d30`). A second thread in
+the same session — the `uw_gamma` EOD gate failure — was root-caused, re-certified,
+and pushed (`4626d695`, see "uw_gamma re-certification" below).
 
 ## Decisions (PM/operator rulings, this thread)
 - **IV source = SPX options** (`stg_spx_options_live`), collect **BOTH call and put**
@@ -90,8 +92,16 @@ verified this session; **all artifacts uncommitted** (deposit, not commit).
 - DO NOT run `sqlmesh plan/run/apply` against the real warehouse state
   (`/data/warehouse/warehouse.duckdb`) — use a scratch project.
 
+## Commit / push state
+- **Both deliverables committed + pushed as `f6e56d30`** (vol live work). No longer untracked.
+- The `uw_gamma` re-cert from the same session pushed as **`4626d695`** (it rode along
+  when the ES/institutional-positioning session rebased the shared local stack and pushed;
+  all 10 files byte-identical on the remote, Agent-Print trailer intact).
+- A dangling local `commit-tree` (`5643383b`) from an aborted "push just my commit" attempt
+  is **NOT** on the remote — it was a naive tree-swap that would have dropped other
+  sessions' files; caught before push, now orphaned locally.
+
 ## Open / next
-- **Nothing committed.** The 4 paths above are untracked deposits. Commit is a PM step.
 - **Cron + real out-dir not wired.** `refresh_vol_live.py` is OUT_DIR-parameterized and
   builds/tests against scratch (honors read-only `/data/parquet`). Choosing the real
   production out-dir and adding the cron entry is a PM/ops step, not done.
@@ -104,10 +114,41 @@ verified this session; **all artifacts uncommitted** (deposit, not commit).
 - Pre-existing ES test `test_warehouse_rv_daily_equivalence.py` still broken
   (references `warehouse/config.yaml`); left alone (not this thread's scope).
 
+## uw_gamma re-certification (second thread, same session)
+- EOD SQLMesh build red-lined on `uw_gamma` alone (all 12 health checks green otherwise).
+- **Root cause:** `/data/parquet/gamma_intraday` is **restating** — the laptop `GammaEOD`
+  job + `gamma/gamma_lake_sync.sh` atomic swap rewrites historical dates. The 2026-09-08
+  20:16 UTC re-capture changed 18 May–Jun dates (+1 late 20:00Z snapshot each, spot restated)
+  → the frozen-slice exact count-pins in `sqlmesh/tests/uw_gamma_equivalence.py` broke
+  (4 FAIL → 15 FAIL).
+- **PM ruling — Option A:** accept the 09-08 re-capture as new certified truth; split into
+  two materializations:
+  - **A — frozen/certified**: `pools/uw_gamma/certified/20260909_post_restatement/`
+    (pinned, immutable, git-tracked; re-verifiable via `RE_CERTIFICATION.md`).
+  - **B — growing**: the live pool (`pools/uw_gamma/*.parquet`, gitignored, rebuilt in-place
+    daily by `build_core.py`); gate checks it with **restatement-stable** checks only
+    (structural invariants + per-date raw-lake row reconciliation), **no exact count-pins**.
+- **New certified frozen-slice values** (`< 2026-09-02`): per_strike 1,592,730 / 7,280 snaps
+  / 550 strikes / gamma_zero 840,753 / gamma_null 1,882 / spot_null_pre_0616 4,123;
+  snapshot 7,280 / 7,197 accepted / 74 off-schedule / 9 null_net_gamma; manifest 368 (184+184).
+- **Gate reworked 32→21 assertions, ALL PASS** (verify-run deposit
+  `verify/uw_gamma_gate_growing.20260909T123140Z.txt`).
+- `data_catalog_check` OK (line 704 re-pinned 1587919→1592730).
+- Docs updated: `docs/data_catalog.yaml`, `docs/data_pools/POOL_LEDGER.yaml`,
+  `pools/uw_gamma/SQLMESH_BRIEFING.md`.
+- Mutation boundary respected: no SQLMesh state-DB writes, no `docs/SQLMESH_*` writes,
+  no `sqlmesh plan/apply`.
+
 ## Relevant files
-- `/data/agentic_trading/warehouse/models/rv_daily_spx.py` — SPX RV EOD model (untracked).
-- `/data/agentic_trading/tests/test_warehouse_rv_daily_spx_equivalence.py` — self-contained, 11/11 (untracked).
-- `/data/agentic_trading/scripts/refresh_vol_live.py` — intraday live refresh (untracked).
+- `/data/agentic_trading/warehouse/models/rv_daily_spx.py` — SPX RV EOD model (committed `f6e56d30`).
+- `/data/agentic_trading/tests/test_warehouse_rv_daily_spx_equivalence.py` — self-contained, 11/11 (committed).
+- `/data/agentic_trading/scripts/refresh_vol_live.py` — intraday live refresh (committed).
+- `/data/agentic_trading/pools/uw_gamma/certified/20260909_post_restatement/` — pinned frozen-slice artifact (4 parquet/csv + `RE_CERTIFICATION.md`), the re-validation anchor (committed `4626d695`).
+- `/data/agentic_trading/sqlmesh/tests/uw_gamma_equivalence.py` — reworked gate, 21 restatement-stable assertions (committed).
+- `/data/agentic_trading/pools/uw_gamma/.gitignore` — anchored (live copies ignored, pin tracked).
+- `/data/agentic_trading/pools/uw_gamma/SQLMESH_BRIEFING.md` — re-certification record.
+- `/data/agentic_trading/verify/uw_gamma_gate_growing.20260909T123140Z.txt` — verify-run deposit (21/21 PASS).
+- `/data/agentic_trading/verify/refresh_vol_live_verify.20260909T113723Z.txt` — verify-run deposit (Phase 2, ALL PASS).
 - `/data/agentic_trading/.ai/inbox/build_spec_rv_daily_spx.md` — PM spec (sha256 above).
 - `/data/agentic_trading/local-ai/seed_author/production_delta/rv_daily_spx/` — receipt + report.
 - `/data/agentic_trading/verify/refresh_vol_live_verify.20260909T113723Z.txt` — verify-run transcript.
