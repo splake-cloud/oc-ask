@@ -364,3 +364,23 @@ Full dispatch arc executed under the operator's GO chain:
   bcd07d35…, event 8758a1a0…, manifest c75183a4…, analysis 53338452….
 - Commits: ca09d8ba → … → 66aa9464 (closure receipt). Next studies
   (B first-encounter, C LVN traversal…) are operator-driven.
+
+### Closure ruling (operator, 2026-09-09) — Study A FINAL; next = Study B
+- **Study A = CLOSED / NO** (confirmed; not reopened). M1–M4 BANKED as
+  provenance; E-1…E-4 BANK CLOSED (no retrofit).
+- **New forward-looking protocol rule (binding, protocol v2 onward):**
+  multi-arm decision rule + structurally unevaluable required arm ⇒
+  **INDETERMINATE**, unless the remaining evaluable evidence
+  independently satisfies a separately pre-declared terminal rule.
+  Transcribed in study_interface_v1.md addendum §7 (frozen body
+  untouched). Does NOT apply retroactively to Study A.
+- **Subsidiary finding preserved separately:** Arm C q1<q4 at all four
+  scales incl. gap splits — evidence for follow-up; must not determine
+  any later study's thresholds/arms/outcome/queue position.
+- **Queue: A (CLOSED/NO) → B (first encounter, NEXT) → C (LVN traversal).**
+  B before C by pre-registration order (sequence must not be
+  outcome-responsive). B = behavioral decomposition behind A: A = does
+  structure get REACHED; B = what happens AT the first encounter
+  (idea.md: APPROACH → TOUCH → REJECT/ACCEPT/TRAVERSE).
+- Commits: 66aa9464 (closure receipt) → 606448c8 (ruling + addendum).
+- Study A artifact set pinned in receipts/study_a_hvn_attraction_receipt.md.
