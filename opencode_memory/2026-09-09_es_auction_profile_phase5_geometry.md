@@ -251,6 +251,46 @@ Full dispatch arc executed under the operator's GO chain:
   m7b (manifest path cosmetics). Reviewer's caveat: S6 coverage = G2+G3b
   JOINTLY (G2 alone has no FA/roll teeth). Review outcome appended to
   review/context_v1_canonical_run_review_package.md (00782598).
-- Remaining chain: diff-only re-review (expected GO) → canonical
-  verification run (formal receipts) → KASA6 (S1–S7, ≥1 hand-traced date,
-  S2/S6/S7 highest severity) → Phase-6 freeze record.
+- :8012 diff-only re-review (qwen38-reviewer) → **GO** (canonical run
+  authorized): both remediation commits contain exactly the five fixes
+  (M1/M2/M3 + G4-for-M3 + m3/m4/m7a), no unrelated drift, each changed
+  branch proven dormant on the frozen window (value-identity holds).
+- Formal canonical verification run (verify/contextv1-canonical-full):
+  G0–G7 + G-consistency 10/10, tampers 3/3, PM acceptance battery 32/32,
+  determinism double build byte-identical in-transcript. Canonical
+  artifact sha256: context_v1.parquet
+  0d6e5dc1a123ad6ca75dec7ca3af3fb99d02ff8c25ca5ef22d2c9ed228edb3dc,
+  manifest.json aeed74cf2a7225bedb539bb9d99a2420342425e77454ac4259766a389ee9e9b6.
+- **KASA6 (pi seat, structurally independent — no production imports)
+  → PASS.** Primary trace 2026-04-13 hand-computed from raw inputs:
+  OHLC 6780.0/6928.25/6767.0/6927.5 (n=1380), range 645 ticks, VAP
+  vol=1470840/trades=458999/bins=646 (bar-sum == VAP), prior 04-10
+  OHLC 6858/6888/6846.25/6863.75, prev_range 167, gap −335,
+  range_ratio 645/167=3.8622754…, VAP(04-10) absent ⇒ prev_volume +
+  volume_ratio_prev NULL (NO_VAP_PRIOR_SESSION) — the oracle reproduced
+  independently; exactly-2 refusal block. S5 non-identity: KASA
+  arithmetic 5000+12.25=5012.25 + live-leg refusal (T=05-03 in
+  [05-01,05-06) ⇒ REFUSE, no partial offset). S2/S6/S7 highest-severity,
+  all CONFIRMED non-vacuously (106 later FA rows + 2026-06-15 roll row
+  present in inputs, excluded; S6 bit-identical at 3 cuts). 32-cell
+  re-derivation: 0 mismatches. Ledger 0 BLOCKER / 0 MAJOR / 0 MINOR.
+  Harness verify/pm_kasa6_rederive.py; receipt
+  receipts/kasa6_adjudication.md; transcript
+  verify/kasa6-adjudication.20260909T184227Z.txt.
+- **PHASE 6 CLOSED / PASS WITH CLEAN KASA ADJUDICATION (operator, 2026-09-09).**
+  Freeze record: receipts/phase6_freeze_record.md (pinned artifact set:
+  context_v1.parquet 0d6e5dc1… 20×32; manifest aeed74cf…; spec rev 3
+  62ea5bf8…; builder 0320d804…; checker de72832a…; PM battery
+  f3346948…; KASA harness 8e9ef2d9…). Operator points carried verbatim
+  in substance: KASA6 S1–S7 all CONFIRMED; ledger 0/0/0; primary trace
+  04-13 (BAR-present / prior-VAP-absent selective-refusal oracle);
+  S2/S6/S7 non-vacuously confirmed highest-severity; S6 = G2+G3b
+  jointly; S5 real window = identity (non-identity +12.25 & live-leg
+  refusal fixture-adjudicated); M1/M2/M3 = closed-finding provenance
+  (NOT current limitations); banked m2/m5/m6/m7b (none blocks);
+  antecedent-state layer only (no outcomes, no regimes); v1 scope =
+  17:00 ET session-close PIT context for NEXT-SESSION studies —
+  same-session/intraday studies require a NEW context version.
+- Study state: Phases 0–6 ALL CLOSED. Next (operator-driven):
+  next-session studies on the context_v1 conditioning set; or context
+  v2 if intraday scope is ever ruled.
