@@ -172,3 +172,37 @@ prior session in substrate — expected). Refusal reason codes live in the
 manifest refusal block (field list has no reason columns). Next: D1 builder
 → qwen-coder; D2 gates (G0–G6 incl. truncation invariance, 3 cut points) →
 qwen38-collab; KASA pi; :8012 review before canonical run.
+
+### 2026-09-09 — PHASE 6 SPEC REV 2 (four operator corrections, commit 42839bfa)
+Operator named 4 defects in frozen spec v6 — all masked by the all-ESM6
+identity window (C*=source, front≡native, roll out of window ⇒ every
+coordinate/roll code path numerically invisible on the real battery):
+(1) "exact-bar source admitted" was never in the input contract:
+vap_atomic is minute × price-bin × volume ⇒ no first/last trade ⇒ no
+exact session open/close. FIX: bar source = `/data/parquet/es_1min_live/`
+Databento per-contract 1-min bars, 21 pinned files (trade_date=D file
+holds the full atomic session D−1 18:00→D 16:59, 1380 bars), sha256 in
+manifest (live sqlmesh pool). Closed per-field ownership: BAR SOURCE →
+O/H/L/C + prev O/H/L/C; VAP → total_volume/trade_count/n_distinct_
+price_bins. Grounded: bar-sum volume == VAP totals EXACTLY (04-13
+1,470,840; 04-14 1,241,952); ESM6 window coverage incl. prior session
+04-10 present; instrument_id 42140864. (2) S6 too weak: atomic-only
+truncation invariance passes while builder reads future
+front_assignment rows (05-11+) or the ESM6→ESU6 roll row (trigger
+2026-06-15, status data_gap — a post-asof fact inside a declared
+input). FIX: S6 = Context_D(I_≤T_D) = Context_D(I_full) with as-of
+reconstruction per time-bearing input (VAP rows / exact bars / front
+assignment / roll state / session universe), 3 truncation points, ≥2
+test dates. (3) D3 needed Phase-2 mapping semantics: P_front =
+Map_P2(P_source → C*(T), T) (chained settled roll offsets, spec_v2 §3);
+front_delta = mapping RESULT, not a Phase-6 roll calc; S5 needs a
+synthetic NONZERO fixture (oracle 5000/A/B/+12.25 → 5012.25 +
+unresolved/live-leg refusal) — S5 is unprovable on the identity
+battery. (4) source_instrument_id must be the generation-aware
+instrument ID (UINTEGER 42140864 = ESM6@2026, consistent across
+es_1min_live + roll_table), never the reusable symbol "ESM6".
+Side-effect correction: 2026-04-13 prev block — prior session IS in the
+bar source ⇒ prev OHLC + prev_range_ticks FILLED; only prev_volume +
+volume_ratio_prev = NULL (NO_VAP_PRIOR_SESSION). Spec now rev 2
+(42839bfa); gates renumbered G0–G7 + G-consistency. Next dispatch
+unchanged: D1 builder → qwen-coder.
