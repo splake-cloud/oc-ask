@@ -206,3 +206,21 @@ bar source ⇒ prev OHLC + prev_range_ticks FILLED; only prev_volume +
 volume_ratio_prev = NULL (NO_VAP_PRIOR_SESSION). Spec now rev 2
 (42839bfa); gates renumbered G0–G7 + G-consistency. Next dispatch
 unchanged: D1 builder → qwen-coder.
+
+### 2026-09-09 — PHASE 6 D1 BUILT + VERIFIED (48ffca7d); D2 dispatched
+Operator confirmed the field-by-field distinction (prior existence/prices ≠
+VAP availability) and added the binding 04-13 oracle → spec rev 3
+(139c0d72). GO for the dispatch chain given.
+D1 (qwen-coder, 1 bounce): scripts/build_context_v1.py. PM-verified
+(verify-run d1r2-build/d1r2-checks): full build sha256
+0d6e5dc1a123ad6ca75dec7ca3af3fb99d02ff8c25ca5ef22d2c9ed228edb3dc,
+deterministic; self-test leaves canonical byte-identical (bounce fixed a
+self-test clobber of the canonical 20-row output with its 2-row build);
+36-check PM battery (verify/check_context_v1.py) ALL PASS — schema,
+04-13 oracle cell-for-cell (prev OHLC populated 6858/6888/6846.25/6863.75,
+range 167, gap −335, ratio 3.8622754…; prev_volume + volume_ratio_prev
+NULL w/ NO_VAP_PRIOR_SESSION only), bar↔VAP anchors exact. Bounce also
+fixed 6-decimal rounding of ratios (full DOUBLE now). Manifest = 43 inputs
++ sha256 (21 bars, FA, RT, 20 VAP). D2 (G0–G7 + G-consistency battery,
+incl. per-input future-deletion w/ 3 truncation points and synthetic
+Map_P2 fixtures) dispatched to qwen38-collab (:8011).
