@@ -224,3 +224,33 @@ fixed 6-decimal rounding of ratios (full DOUBLE now). Manifest = 43 inputs
 + sha256 (21 bars, FA, RT, 20 VAP). D2 (G0–G7 + G-consistency battery,
 incl. per-input future-deletion w/ 3 truncation points and synthetic
 Map_P2 fixtures) dispatched to qwen38-collab (:8011).
+
+### 2026-09-09 — PHASE 6 D1+D2 COMPLETE, :8012 REVIEW LOOP CLOSED (pre-canonical)
+Full dispatch arc executed under the operator's GO chain:
+- D1 builder (qwen-coder, 2 bounces) → 48ffca7d, then bounce-2 provenance
+  fixes (total_volume VAP-sourced + in-build bar==VAP invariant; instrument
+  IDs resolved from bar file + roll-table cross-validation) —
+  value-identical, canonical sha256 0d6e5dc1… unchanged. Final: 48e595c5.
+- D2 gate battery (qwen38-collab) → scripts/check_context_v1.py: G0–G7 +
+  G-consistency, sandbox injection of the builder's own code, per-input
+  future-deletion (5 inputs × 2 dates + 3 truncation points), synthetic
+  Map_P2 fixtures (5012.25 + live-leg refusal), G7 join 384/384, tamper
+  suite. 10/10 gates, 3/3 tampers, exit 0.
+- :8012 review (qwen38-reviewer, read-only) → **NO-GO** with 2 blocking
+  MAJORs the per-chunk verification could not see (all dormant on the
+  identity window — the loop working as designed): M1 unconditional
+  `front_mapping_status="resolved"` overwrite killed the AMBIGUOUS_FRONT
+  refusal branch; M2 live_leg_required filter inverted (selected settled
+  rolls; fixed to the closed window test trigger ≤ asof < settlement +
+  synthetic self-test); M3 vacuous ID cross-validation bracket (fixed to
+  latest-generation row + asserts). All fixes PM-verified in source first,
+  then value-identical (hash unchanged), commits 48e595c5/a2e68f22
+  (G4 synthetic world + m3/m4/m7a minors). Banked for the freeze record:
+  m2 (registry gate-side, not manifest-pinned), m5 (prev_volume float64 =
+  D5 NULL consequence), m6 (trade_count isna relaxation, sha-pinned),
+  m7b (manifest path cosmetics). Reviewer's caveat: S6 coverage = G2+G3b
+  JOINTLY (G2 alone has no FA/roll teeth). Review outcome appended to
+  review/context_v1_canonical_run_review_package.md (00782598).
+- Remaining chain: diff-only re-review (expected GO) → canonical
+  verification run (formal receipts) → KASA6 (S1–S7, ≥1 hand-traced date,
+  S2/S6/S7 highest severity) → Phase-6 freeze record.
