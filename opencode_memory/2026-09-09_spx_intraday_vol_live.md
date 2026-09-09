@@ -107,12 +107,67 @@ and pushed (`4626d695`, see "uw_gamma re-certification" below).
   production out-dir and adding the cron entry is a PM/ops step, not done.
 - `rv_daily_spx` not yet registered/added to the warehouse plan (no `sqlmesh plan/apply`
   run — would touch the real warehouse state). Backfill to live is a separate, PM-gated step.
-- **Deferred (user-ordered: after data work):** RAG/seat-config updates — commit-rule in
-  the sqlmesh-builder seat config, its smoke test, and the stale RAG activation card
-  (wrong #3 pre-flight path; documents helm.py flow but the seat was staged via
-  `scripts/oc_seat_stage.experiment.py`).
-- Pre-existing ES test `test_warehouse_rv_daily_equivalence.py` still broken
-  (references `warehouse/config.yaml`); left alone (not this thread's scope).
+- **DONE (this thread, commit `4734ea89`):** the deferred seat-tightening work — broken
+  seat default unblocked, fail-fast activation smoke added, 3 binding rules into the
+  builder contract, and the "broken house test" root-caused + fixed (was a misdiagnosis —
+  see "SQLMesh builder seat tightening" below).
+- **STILL OPEN (PM-gated, not this session):** the stale RAG activation card (wrong #3
+  pre-flight path; documents `helm.py` flow but the seat is actually staged via
+  `scripts/oc_seat_stage.py`). A RAG reseed needs the GPU + host vantage, so it's held.
+
+## SQLMesh builder seat tightening (third thread, same session) — commit `4734ea89`
+The "burn should be on complicated models, not on getting the agent to work" thread. Two
+separate compute burns found + fixed, plus the durable guard.
+
+**Burn #1 — the broken SEAT default (the agent layer).** The live builder seat config
+(`/var/tmp/oc_sqlmesh-builder/opencode.json`, a relic of the deleted
+`scripts/oc_seat_stage.experiment.py`) pointed `qwen3.8-27b-fp8` @ :8012 at
+`output: 16000` with **no `reasoningEffort`** → a thinking model burned its whole 16k output
+budget reasoning and emitted **0 tool calls** (the "goes in circles" failure that cost 3
+dispatches to discover; the build only completed on a 3rd dispatch with a `coder-ask`
+override). Fix: patched the live config to the working `coder38-ask` values
+(`output: 32768`, `reasoningEffort: low`, `temp 0.8`), proven by a 0.5s tool-call probe
+(`finish_reason=tool_calls`, 42 tokens). **Durable guard:** `scripts/oc_seat_smoke.py` —
+a fail-fast activation probe (one ~0.5s chat request; PASS iff the model emits a tool
+call; exit 0/1/2) so a mis-staged seat costs ONE probe, not 3 failed builds. Run it right
+after staging, before dispatching.
+
+**Burn #2 — the hour-long `rv_daily` TEST (the test layer).** A running
+`tests/test_warehouse_rv_daily_equivalence.py` had pegged ~7 cores for 60+ min. NOT the
+compute: the `rv_daily` model's SQL alone runs in **0.2s** (1.6M ES rows → 4,177 days).
+Defect = `ctx.plan(auto_apply=True, no_prompts=True)` with **no `select_models`**: line 26
+`copytree`s the ENTIRE 33-model warehouse, so the unscoped plan materialized ALL 33 models
+from `start: 2020-08-03`, incl. heavy option-pool models globbing
+`spx_intraday_strikes/**/*.parquet`. Fix: `select_models=["warehouse.rv_daily"]`
+(sqlmesh 0.236.1 has this kwarg) → scoped run **2.46s, 2 passed**.
+
+**Misdiagnosis corrected.** Earlier this session I flagged
+`test_warehouse_rv_daily_equivalence.py` as "broken, references `warehouse/config.yaml`".
+That was WRONG — the file already used `sqlmesh.yml`. The real defect was the unscoped
+`plan`. (A concurrent cancelled qwen-coder edit had left a partial `config.yaml`→`sqlmesh.yml`
+hunk in the working tree, which is why the diff showed both changes; they're now consistent.)
+
+**Contract rules added** (`local-ai/seed_author/production_delta/TASK_sqlmesh_builder.md`):
+- **R1** equivalence tests must be self-contained (no transient/scratch DB path — the
+  seat's original hardcoded `/var/tmp/.../scratch_warehouse.duckdb`, wiped between sessions).
+- **R2** query the view `warehouse.<table>` (NOT `warehouse.warehouse.<table>` doubled
+  names, NOT the raw `sqlmesh__warehouse...` physical table).
+- **Schema KAs:** column LIST is canonical, count is derived (a spec that says "24 columns"
+  while listing 26 is wrong; the list wins, mismatch reported to PM not silently "fixed").
+
+**The three-bug pattern (durable).** Three independent bugs are the SAME failure class —
+a staged seat/config knob silently diverged from the working model settings:
+`0d59df26` (09-06, window silently 98304→262144), `cf9dd2a8` (08-29, temperature missed by
+the staged lane), and this session's (16000 output + no reasoningEffort). `oc_seat_smoke.py`
+is the general guard against that class.
+
+**Commits touching the builder seat/agent (for re-orientation):**
+`4734ea89` (this fix), `e3948604` (Route Immutability invariant I5), `d0ace7fd` (raw
+curl/search gate), `8c6676aa` (ka_validation out of receipt schema), `50bf096e` (fix 7
+workflow gaps), `82d682c7` (kasa_verify + builder_autopilot), `2ed2881c` (D1
+artifact-contract gate). Platform seat-infra that shaped it: `0d59df26`, `0d08609a`,
+`4078b787`, `76cc188a`, `cf9dd2a8`, `234b41ef`, `7446a27f` (committed oc_dispatch — "stop
+rewriting the dispatcher"), `0fd2da28`, `2fe5a73e`, `92bbc9b5`.
 
 ## uw_gamma re-certification (second thread, same session)
 - EOD SQLMesh build red-lined on `uw_gamma` alone (all 12 health checks green otherwise).
@@ -153,6 +208,11 @@ and pushed (`4626d695`, see "uw_gamma re-certification" below).
 - `/data/agentic_trading/local-ai/seed_author/production_delta/rv_daily_spx/` — receipt + report.
 - `/data/agentic_trading/verify/refresh_vol_live_verify.20260909T113723Z.txt` — verify-run transcript.
 - `/data/agentic_trading/warehouse/models/rv_daily.py` — ES RV reference (roll logic the SPX model omits).
+- `/data/agentic_trading/scripts/oc_seat_smoke.py` — fail-fast seat activation probe (commit `4734ea89`).
+- `/data/agentic_trading/tests/test_warehouse_rv_daily_equivalence.py` — ES rv_daily house test; scoped `select_models` (commit `4734ea89`).
+- `/data/agentic_trading/local-ai/seed_author/production_delta/TASK_sqlmesh_builder.md` — builder contract; R1/R2 + column-canonical rules (commit `4734ea89`).
+- `/var/tmp/oc_sqlmesh-builder/opencode.json` — the live builder seat config (patched to 32768/low/0.8; NOT git-tracked, /var/tmp).
+- `/data/agentic_trading/verify/house_rv_daily_scoped.20260909T181504Z.txt`, `verify/seat_smoke_live.20260909T172741Z.txt`, `verify/builder_contract_rules.20260909T172754Z.txt` — verify-run deposits (commit `4734ea89`).
 - `/data/agentic_trading/warehouse/models/atm_iv_daily.sql` — canonical ATM formula + tie-breaker.
 - `/data/parquet/spx_1min/spx_1min.parquet` — EOD RV source (Massive, 15-min delayed).
 - `/data/parquet/stg_spx_options_live/current_session.parquet` + `status.json` — live IV + stockPrice-for-RV (5-min, 0DTE PM slice).
