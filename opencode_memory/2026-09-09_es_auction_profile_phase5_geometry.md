@@ -291,6 +291,23 @@ Full dispatch arc executed under the operator's GO chain:
   antecedent-state layer only (no outcomes, no regimes); v1 scope =
   17:00 ET session-close PIT context for NEXT-SESSION studies —
   same-session/intraday studies require a NEW context version.
-- Study state: Phases 0–6 ALL CLOSED. Next (operator-driven):
-  next-session studies on the context_v1 conditioning set; or context
-  v2 if intraday scope is ever ruled.
+- Study state: Phases 0–6 ALL CLOSED.
+- **Study A (HVN attraction, next-session form) scoped — operator ratified
+  the first-study choice 2026-09-09.** Blueprint
+  specs/blueprint_v7_study_a_hvn_attraction.md + build spec
+  specs/spec_v7_study_a_hvn_attraction.md (DRAFT, same shape as spec_v4/v5,
+  committed). Key scoped facts: primary definition = asof session's own
+  complete_trade_date profile (1 per session); 20/20 asof pairs have a
+  complete next-session ESM6 bar file (05-08→05-11 complete in the bar
+  source; the 05-11 partial is VAP-only); arm-A k=1 internal share 90/192
+  (47%) — internal-band rule D2 is load-bearing; ~1,950 primary event rows.
+  Chunks: D1+D3 qwen38-collab (:8011 semantic core + independent gates),
+  D2 qwen-coder (:8081 assembly), KASA = pi seat (App. A: S1/S3/S6 highest
+  severity; K3 = real weekend pair 04-17→04-20 hand trace from the raw bar
+  file). Fixtures F-a..F-f hand-derived + mechanically checked (caught a
+  defective F-f pin + an F-e band that would have been 'internal' — both
+  fixed pre-commit). **PENDING: operator ratification of D1–D8** (next
+  session rule / internal handling / native coordinate / bin4+hi4_excl /
+  MAE-MFE / primary definition+T1-T4 protocol / context_v1-only
+  conditioning / study-package deliverable) — spec freezes on ratification,
+  then dispatch D1→D2→D3 → KASA7 (kasa7_adjudication.md) → study receipt.
