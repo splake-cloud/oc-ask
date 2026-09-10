@@ -1,4 +1,4 @@
-# 2026-09-10 — ES auction profile **Study C (LVN traversal): chain complete, VERDICT YES (completion), pending operator closure ruling**
+# 2026-09-10 — ES auction profile **Study C (LVN traversal) CLOSED / YES (completion) final**
 
 Thread continues `2026-09-09_es_auction_profile_phase5_geometry.md` (Phases 0–6, Study A CLOSED/NO, Study B CLOSED/NO).
 
@@ -32,6 +32,6 @@ spec `ba04f791…57221` · core `9e9360ad…4109` · build `a27303e5…9ff0` · 
 
 ## Open / next
 
-- **Operator closure ruling PENDING** (A/B pattern: CLOSED/<verdict> final + per-MINOR dispositions; ruling goes to a closure-ruling receipt). Receipt already written (closure PENDING header).
-- If Study D or any protocol v3 study is started: F2's T1 selection fix (first margin-0 completion bar) is the natural carry-forward; the 97-instant-row K5 wording and the K8b2 vacuity are banked spec-wording items.
-- Study sequence status: A (CLOSED/NO) → B (CLOSED/NO) → C (chain complete, pending ruling).
+- **Operator closure ruling RECEIVED (2026-09-10): CLOSED / YES (completion) final.** M1 banked; M2 recorded (spec wording); M3 recorded VACUOUS (banked-M3, structural proof); M4 recorded (boundary convention); M5 accepted; M6 recorded. Ruling: receipts/study_c_closure_ruling.md (commit 3f23caa4).
+- If a future study repeats the T1-family tamper: select a margin-0 completion bar (F2 carry-forward, banked). The 97-instant-row K5 wording and the K8b2 vacuity are banked spec-wording items for any spec revision.
+- Study sequence status: A (CLOSED/NO) → B (CLOSED/NO) → **C (CLOSED/YES completion)** — all three pre-registered studies closed; D/E/F only on a new operator-driven start.
