@@ -1,0 +1,37 @@
+# 2026-09-10 — ES auction profile **Study C (LVN traversal): chain complete, VERDICT YES (completion), pending operator closure ruling**
+
+Thread continues `2026-09-09_es_auction_profile_phase5_geometry.md` (Phases 0–6, Study A CLOSED/NO, Study B CLOSED/NO).
+
+## What happened this session (operator: "proceed" 2026-09-10)
+
+1. **Spec v9 frozen** (commit c1fba0d0, sha `ba04f791…57221`): operator round-2 ruling "no additional amendments, proceed" closed all D-items (D1/D2/D3/D5/D6c/D7/D8/D9/D10 ratified as proposed; D4 AMENDED multi-bar completion; D6 AMENDED per-subclaim evaluability). Mechanical pin check PASS (11 fixture sub-cases; caught + fixed one drafting defect: F3 control parenthetical).
+2. **D1** `study_c_core_v1.py` (qwen38-collab, commit ef7d1ec4, sha `9e9360ad…4109`): pure traverse/control_band/next_hvn core, stdlib-only, selftest 11/11.
+3. **D2** `build_study_c_v1.py` (qwen-coder, commit 4721f15d → post-F1 `9c066798`, sha `a27303e5…9ff0`): 812×38 event (sha `eabfcc91…dcf`, stable across runs + X7 /tmp-copy byte-identical), manifest with 29 input pins + T1 census pre-outcome.
+4. **D3** `check_study_c_v1.py` (qwen38-collab, first attempt harness-terminated mid-flight → file deleted, re-dispatched clean; commit 784d5a84 → post-F1-pins `3b3a8615`, sha `0133ca3e…c434`): G0–G10 PASS, T1–T6 all OBSERVED-FAIL, analysis runner + decision rule, `analysis_c_v1.json` (sha `15b3d953…ac1b` post-F1).
+5. **PM canonical verification** of every step (fresh verify-runs, independent re-derivations: census, M medians to 1e-12, T2 cell C k=8 exact match, X7).
+6. **Two findings raised to operator** (2026-09-10 report):
+   - **F1 (D2)**: manifest census key `contrast_population` counted touched∧side-entry = 456, but spec §3.6 defines touched∧constructible∧side-entry = 377. Root cause: spec drafting inconsistency (K6 "812/456-style anchor" carried my scoping-probe number, contradicting §3.6). Verdict-irrelevant (D3 used the spec definition throughout; G6 disclosed the drift). **Operator: "yes to the F1 fixes"** → fixed (D2 census expression + anchor assert; event byte-unchanged; manifest `5f389b4f…a28`; D3 pin update; G6 drift → 0; analysis re-pinned `15b3d953…ac1b`).
+   - **F2 (D3)**: T1 tamper target row 38 has margin 2 on its completion bar → target cell correctly invariant (detection via 3 sibling rows); spec parenthetical wants the target cell to change; 73 margin-0 rows exist (row 68 flips time 6→7 — PM verified). **Operator authorized F1 only → F2 BANKED as documented MINOR (M1).**
+7. **KASA9 (pi seat, own code, `verify/pm_kasa9_a.py` + `pm_kasa9_b.py`): 10/10 CONFIRMED, 0 BLOCKER, 0 MAJOR, 6 MINOR** (receipts/kasa9_adjudication.md, commit c3d9f056). Highlights: K2 truncation 377+287 rows 0 mismatches + 18 next-next boundary files clean; K4 own exact-rational S3 812/812; K5 reversal re-derived 377/377, 280 multi-bar vs 97 instant (D4 effect), 97 instant full-span rows structurally identical under mirrored test (spec "100% differ" wording unsatisfiable — M2); K8 all liveness cases incl. the D6-amendment example (completion-NO + speed-dead ⇒ INDETERMINATE) — and the spec's SECOND example (completion-YES + speed-dead ⇒ YES) is **structurally unconstructible** (completion-YES forces n_cL>0 ⇒ speed denom>0) → recorded VACUOUS per banked-M3 (M3); K8e pre_registered byte-equal with 2-trailing-newline boundary convention (M4); K9 T2b refs exactly {gap_ticks, range_ratio_prev} + sentinel; K10 label scan 0 real hits.
+
+## THE RESULT (Study C)
+
+**VERDICT: YES — completion subclaim.** LVN corridors (arm B prominence-troughs + arm C level-pooled runs) are crossed **more completely** than the matched constructed control band — both arms, all 4 scales, exact counts (B: 32>20, 26>16, 21>17, 17>12; C: 103>79, 60>47, 42>35, 30>20; contrast pop 377) — but **not faster** (B lvn-slower at k4/k8: 153>45, 197>60; C tie at k2, slower at k8: 35>32). T3 volume gradient fails both arms → plain YES, not REDUNDANT. T4 arm-A readout: 141 rows, median time between B and C (mixed, descriptive). The pre-registered hypothesis is **half-confirmed**: completeness yes, speed no.
+
+## Process notes (durable)
+
+- **Master was rebased twice mid-chain by other seats** (node-field line 06:22–06:51, node-value line later): my commits replayed with new hashes (c1fba0d0/ef7d1ec4/4721f15d/784d5a84/9c066798/3b3a8615/c3d9f056); content integrity verified by sha each time. No action taken on other seats' history.
+- **qwen38-collab harness termination**: first D3 dispatch died mid-flight with a partial uncommitted file; deleted the partial, re-dispatched clean with an explicit "starting fresh" note in the envelope.
+- **Bar file schema gotcha**: `next_session`/`asof_session` in event tables are DATE type (pandas datetime.date) — `.replace()` on them raises "'str' object cannot be interpreted as an integer" (date.replace is (year,month,day)); stringify first. Files are keyed by session END date: ES_ESM6_20260415.parquet holds session 04-14 (18:00 04-14 → 16:59 04-15 ET, 1380 bars).
+- **Spec drafting-discipline lesson (F1 class)**: illustrative numbers in K-blocks ("812/456-style anchor") can contradict the normative definition (§3.6) and silently steer implementers; KASA's independent census check is what caught it. K8's unconstructible example is the second instance of the banked-M3 pattern (declare existence-checked selectors only).
+- **KASA9 vacuity adjudication precedent**: a spec example that no fabrication can satisfy is recorded VACUOUS with the structural proof, not failed (banked-M3, first full application).
+
+## Pinned artifact set (post-F1, all sha256-verified)
+
+spec `ba04f791…57221` · core `9e9360ad…4109` · build `a27303e5…9ff0` · check `0133ca3e…c434` · event `eabfcc91…dcf` · manifest `5f389b4f…a28` · analysis `15b3d953…ac1b` — full set in receipts/study_c_lvn_traversal_receipt.md.
+
+## Open / next
+
+- **Operator closure ruling PENDING** (A/B pattern: CLOSED/<verdict> final + per-MINOR dispositions; ruling goes to a closure-ruling receipt). Receipt already written (closure PENDING header).
+- If Study D or any protocol v3 study is started: F2's T1 selection fix (first margin-0 completion bar) is the natural carry-forward; the 97-instant-row K5 wording and the K8b2 vacuity are banked spec-wording items.
+- Study sequence status: A (CLOSED/NO) → B (CLOSED/NO) → C (chain complete, pending ruling).

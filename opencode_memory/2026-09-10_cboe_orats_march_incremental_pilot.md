@@ -211,10 +211,63 @@ node-materiality line: rank-1 node, body/top1, persistence across captures).
       features the learner adds); the stronger "all 12 features" question = a new version.
     - MINOR-9/12 folded in: n=22 cluster limitation declared (permutation robustness);
       concentration readout labeled **CROSS-OUTPUT** (not like-for-like).
-  - **NEXT (awaiting PM RATIFICATION of v3.2):** on ratify, transcribe the ruling into the
-    frozen spec (the D1–D9 rulings + MDE floors + G0–G12 + KASA), then dispatch D1→D2→D3 → KASA
-    (adjudicator = pi seat). The MDE floor values (D6) are the one substantive open call PM may
-    tighten/loosen before the run.
+   - **v4.0 — PM RE-ARCHITECTURE (2026-09-10, committed `5812db4c`, AWAITING PM RATIFICATION):**
+     PM rejected v3.2 on three grounds and issued a full re-architecture. v4.0 implements all of it:
+     - **Object renamed "node field" → "signed strike field"** (sign classification pos/neg/flat +
+       dominant extrema argmax/argmin). "Node" terminology dropped everywhere (was undefined).
+     - **`ORATS + λ·CboeFlow` sum DELETED** (dimensionally arbitrary). Direct fields are now
+       SEPARATE contract-grain arms compared directly to UW, never summed: F-ORATS = Σ_c Γ^{ORATS};
+       F-Cboe-Δt = Σ_c Γ^{ORATS}·Δt(MMbuy−MMsell); F-Cboe-cum = Σ_c Γ^{ORATS}·(MMbuy−MMsell)_{session}.
+     - **D10: combined learned field `Γ = y_pred_sign · |y_pred_mag|`** — sign/membership from
+       classifier, magnitude/ranking from regressor. REVERSES v3.2's D9 (`pred_gamma = y_pred_mag`).
+       Flat-behavior diagnostic required (near-zero ε, frozen in manifest).
+     - **Three arms / three questions:** Q1 direct (no UW, absolute-fidelity gate — fixes v3.2's
+       invalid relative floor), Q2 learned OOS (transfer; Δ_Cboe=M2-S−M1′, Δ_sign=M2-S−M2-U),
+       Q3 extracted topology (concentrations a historical study consumes) via a **frozen,
+       parameter-free extractor** (G13) applied identically to UW + each field.
+     - **Q1 gate fixed** to a pre-declared absolute-fidelity threshold (not a circular increment MDE).
+     - D1–D10, G0–G13, KASA S1–S9 all present. 561 lines, sha `d375911e`.
+   - **v5.0 — NARROW EXECUTION SPEC (2026-09-10, committed `69941355`, AWAITING PM RATIFICATION):**
+     PM ordered: STOP revising the 561-line blueprint; replace it with a narrow execution spec for
+     the EXISTING March OOS predictions. v5.0 (163 lines, sha `e49c1944`) implements exactly that:
+     - **One run** on the existing M₁′/M₂-U/M₂-S March OOS predictions (re-derived by re-running the
+       FROZEN models — NOT a new learner, NOT a new feature set). The pilot computes per-strike
+       `y_pred_sign`/`y_pred_mag` in memory but persists only pooled metrics, so §3 re-derives and
+       persists `predictions_v2.parquet` (498,492 rows). Integrity gate G1: pooled metrics must
+       reproduce `model_comparison.json` to 1e-9.
+     - **Object:** predicted signed strike field `Γ = y_pred_sign · |y_pred_mag|`; truth = `uw_gamma`.
+     - **Four node-value metrics** (per (day,capture), within-day mean): M1 top-5 positive overlap,
+       M2 top-5 negative overlap, M3 dominant-positive location (identity), M4 dominant-negative
+       location (identity), M5 signed-field Spearman, M6 secondary-transition persistence (supporting,
+       not verdict-driving).
+     - **Paired daily deltas:** Δ_Cboe = M₂-S − M₁′; Δ_sign = M₂-S − M₂-U.
+     - **Verdict:** NODE VALUE / DIFFUSE ONLY / AMBIGUOUS (pre-declared, exhaustive, first match wins;
+       Maj = 14/22 day-majority floor, NOT tuned to the observed increment).
+     - **EXCLUDED (non-goals):** direct-field arm, in-sample build, new learner, feature development,
+       production mutation. P&L and fly inputs SEALED.
+     - Grounded facts (verified from disk): pilot `run_model_comparison.py` persists only metrics;
+       `signed_state_model.py` (sha f6813985) has `derive_sign`/`normalize_magnitude`/GBM(50,3,0.1,0.8,42);
+       matched frame (sha 64dddeab) 166,164 March rows / 22 days / grain (day,cap,strike) unique /
+       32–38 captures/day / uw_gamma 45.3% zero.
+   - **v5.1 — PM REVISION (2026-09-10, committed `e8f7a3b3`, AWAITING PM RATIFICATION):** PM fixed
+     three v5.0 defects:
+     - **Failed predictions scored, not refused.** A model with no predicted positive/negative member
+       scores **0** on M1–M4 (a miss, not a refusal); refusal is reserved for the **truth** being
+       undefined (no true positive/negative). §4 "Refusal vs failure" paragraph + the per-metric
+       "refused when" column now say "no true positive/negative" only.
+     - **M6 (rank-2 transition persistence) DELETED** — PM: it "appeared without rationale, unrelated
+       to the dominant concentrations, a seam for argument"; persistence removed entirely (not the
+       alternative "secondary dominant transition agreement" — PM recommended removal).
+     - **Decision rule made JOINT.** v5.0 counted Δ_Cboe and Δ_sign clearances separately (could
+       declare NODE VALUE when 3 metrics beat M₁′ and a *different* 3 beat M₂-U). v5.1: the SAME
+       metric must clear BOTH. `cboe_clear(m) = mean Δ_Cboe ≥ 0.05 AND pos_days ≥ 14`;
+       `sign_clear(m) = mean Δ_sign ≥ 0.05 AND pos_days ≥ 14`; `joint_clear = #{M1..M4 : cboe_clear
+       AND sign_clear}`. **NODE VALUE = joint_clear ≥ 3**; **DIFFUSE ONLY = joint_clear < 3 AND M5
+       improves both M₁′ and M₂-U on ≥ 14/22 days**; **AMBIGUOUS** otherwise. Constants: `floor = 0.05`
+       (5pp — appropriate, M1–M4 bounded 0–1) + `Maj = 14`.
+   - **NEXT (awaiting PM RATIFICATION of v5.1):** on ratify, dispatch the §3 re-derivation + §4-§7
+     scoring (qwen-coder BUILD of the field_v2 runner) → G1 integrity check → run → return the verdict
+     + the exact 22-day evidence.
 - Pilot STOPPED at the purchase verdict per PM (SIGNED_FLOW_ADDS, sealed P&L).
 - The 0DTE key-mapping 22-day frozen run remains staged (run_22day_frozen.sh, logic hash
   75c9d62f…) but is explicitly not the pilot's answer — launch only if PM wants the
