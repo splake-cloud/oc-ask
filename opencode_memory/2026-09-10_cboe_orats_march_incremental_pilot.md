@@ -91,31 +91,103 @@ flow improves reconstruction of the *body node* (the object that carries keeper 
 node-materiality line: rank-1 node, body/top1, persistence across captures).
 
 ## Open / next
-- **Blueprint WRITTEN (2026-09-10, DRAFT — D1–D8 PROPOSED, awaiting operator ruling):**
-  `/tmp/opencode/investigation1/SPEC_node_body_persistence_blueprint.md` — shape follows
-  `studies/es_auction_profile/specs/blueprint_v7_study_a_hvn_attraction.md` (mission/non-
-  mission → hash-pinned upstream contracts → pre-registered question → measured baseline →
-  proposed design → decision items → gate draft → KASA block → data-access → open
-  questions). Load-bearing discovery: the frozen pilot persists ONLY per-fold metrics, NOT
-  per-strike predictions — the node test needs them ⇒ **D1 = a hash-pinned prediction-
-  persistence extension** that MUST reproduce the pilot's pooled strike metrics to 1e-9
-  (G1) before the node target is trusted (proves value-identity, pure target change not a
-  re-fit). Body node = rank-1 POSITIVE-gamma strike per (day,capture); 804/804 March captures
-  have ≥1 positive (body always defined in-window); 14/22 March days are touch days
-  (persistence T4 is touch-only, PIT 3 pre-touch captures, MAX(rank)≤1 not min). Success
-  states BODY-CONFIRMED / STRIKE-ONLY / BODY-NULL / INDETERMINATE. Gates G0–G9, KASA S1–S7
-  (S1 value-identity + S6 outcome-isolation highest severity). Open: D5 scope (all-22
-  primary vs touch-14 primary) + T1-identity vs T4-persistence as the primary.
-- **Node/body/persistence-level test (the decisive follow-up, NOT started):** re-run the
-  three-model comparison with the target moved from strike-level sign to the BODY-NODE
-  state. Concretely: (a) identify the body strike per day (node_materiality.parquet
-  body_strike for touch days; the rank-1 positive-gamma strike per capture otherwise),
-  (b) derive the body-node state from each model's predicted strike-level signed gamma
-  (body sign, body rank among positive nodes, body/top1 ratio, persistence across the
-  captures before the touch — the M1/M2/M4 measures), and (c) test whether M2-S improves
-  body-node fidelity over M1' / M2-U. The load-bearing question is whether the weak
-  strike-level sign increment concentrates on / is visible at the body node — if it does
-  not, Cboe flow is not the missing reconstruction piece.
+- **Blueprint (the node-field follow-up) — CANONICAL PATH + TRUE STATE (verified from disk 2026-09-10):**
+  **`/data/agentic_trading/analysis/sml_fly_verify/gamma_topology/SPEC_node_body_persistence_blueprint.md`**
+  (git-tracked; sha `57fa4fb5`, 359 lines). A STALE copy also exists at
+  `/tmp/opencode/investigation1/SPEC_node_body_persistence_blueprint.md` (sha `1865dbc7`, 331
+  lines, mtime 05:19:30) — **do NOT red-team or cite the /tmp copy; the repo file is canonical.**
+  - **Provenance — the original session DIED but a RESUME session continued it:**
+    `ses_f77e3263cffezxRRT9eIeWJRNG` ("Gamma data run mid-session evaluation") died at
+    compaction 01:45:48 (ContextOverflowError). Resume session
+    `ses_f7700aaebffeUYiBobVVSbCftC` ("Resuming blocked session after context overflow",
+    started 01:47:09) picked it up and drove the blueprint through **3 committed rewrites**:
+    `6ed9d7cb` (v1.0 body-node, red-team pass applied) → `d096bf6f` (v2.0 fixed-fly-body) →
+    `ecc59036` (v3.0 re-anchor to the UW node field, drop the fly). Then **uncommitted edits**
+    (`git status` = ` M`) at 05:45–05:46 added the **paired in-sample readout**.
+  - **v3.0 object = the UW signed-gamma NODE FIELD (NOT the fly body).** v1.0 conflated the
+    dominant positive node with the fly body; v2.0 re-anchored to the fixed fly body — both
+    REJECTED by PM. The fly belongs to the separate node-materiality/fly-runner study and is
+    OUT of scope. Primary population = all 22 March days, all 804 captures. Metrics = N1–N8
+    node-field estimands (pos/neg-node detection, dominant-pos/neg identity, rank of true
+    nodes in predicted surface, top-K retrieval, strike-location error, signed magnitude &
+    prominence, node persistence through time). Success states NODE-CONFIRMED / NODE-MARGINAL
+    / NODE-NULL / NODE-INDETERMINATE. Models M1′/M2-U/M2-S REUSED VERBATIM from the pilot.
+  - **In-sample readout (committed in v3.1 `ca598592`):** the study produces the in-sample fit
+    (the diagnostic that bounds the OOS gap: variance vs missing information) alongside the OOS
+    verdict. D1 persists it as `predictions_v1_insample.parquet` (~10.46 M rows, required
+    diagnostic); the in-sample file is wall-offed from the learned decision rule (D6-B is
+    OOS-only). (Was uncommitted in the resume session; folded into the v3.1 commit.)
+  - **RESUMED + APPLIED (2026-09-10, this session):** the resume session
+    `ses_f7700aaebffeUYiBobVVSbCftC` was ALSO cut off mid-turn (05:46:28, empty final message)
+    before applying its last user instruction (05:46:25):
+    > *"the corrected study should report both: **Untrained reconstruction**: raw Cboe×ORATS
+    > node fidelity over all March. **Learned reconstruction**: day-held-out incremental
+    > fidelity versus ORATS alone. The first answers whether the primitives directly
+    > calculate the nodes. The second answers whether UW can teach a mapping suitable for
+    > historical backfill."*
+    I applied it as **v3.1** and committed+pushed **`ca598592`** (just the blueprint file,
+    Agent-Print trailer). v3.1 = the in-sample readout (from the resume session, previously
+    uncommitted) **+ the untrained readout**: §1 mission reframed to **three required readouts**
+    (untrained / learned-OOS / in-sample); new §5.0 untrained (model-free, raw `orats_agg_gamma`
+    ± Cboe flow, no learner/CV) definition; §3/§5.4 carry it; D1 third artifact
+    `untrained_surface_v1.parquet` (166,164 rows); **D6 split into two verdicts** — D6-A
+    untrained (UNTRAINED-DETECTABLE / NOT-DETECTABLE, model-free) + D6-B learned (NODE-CONFIRMED
+    / MARGINAL / NULL / INDETERMINATE, OOS-only); D7/D8 carry the untrained artifact; new **G11**
+    gate (untrained integrity: model-free re-derivation); §9 scale + v3.1 changelog +
+    seven→eight count fix. **The two verdicts read together:** the backfill question (D6-B) is
+    only interesting if the untrained baseline (D6-A) is NOT already sufficient.
+  - **RED TEAM v3.1 (2026-09-10, :8011 gpu0 Qwen3.8-27B, clean run, finish=stop):**
+    transcript `/data/agentic_trading/.ai/staging/cboe_node_field_redteam/redteam_8011_canonical_response.json`.
+    **VERDICT = NEEDS-REVISION — 1 BLOCKER + 7 MAJOR + 4 MINOR + 1 RESOLVED + 3 SOUND.**
+    - **BLOCKER-1 (D1/G1):** `pred_gamma` (the node field's load-bearing object, defined by
+      `pred_gamma>0`/`<0`/argmax/argmin) is **never defined**; the pilot emits `y_pred_sign`
+      (classifier) + `y_pred_mag` (regressor) separately and no `pred_gamma`. G1(b)'s
+      per-strike value-identity is on an undefined object ⇒ the "pure target change, not a
+      re-fit" proof is vacuous; the node field could be driven by the regressor's sign (not the
+      classifier's sign the pilot validated). FIX: define `pred_gamma` (e.g. = `y_pred_mag`)
+      and re-point G1(b) at the pilot's actual `y_pred_sign`+`y_pred_mag`.
+    - **MAJOR-2 (D6-B):** decision rule not exhaustive — `Δ_sign≥floor AND Δ_Cboe≤0 AND
+      CI-excl-0 AND stable` falls through all four states. FIX: add NODE-SIGN-ONLY or fold
+      into MARGINAL.
+    - **MAJOR-3 (D1/D7/G8):** the in-sample file (~10.46 M rows) has **no integrity gate**
+      (no row-count, no fold-composition assert = complement of G10) and G8 lists it as a
+      declared input, so the "never used in the verdict" wall-off is prose-only, not
+      gate-enforced. FIX: add G12 (in-sample integrity) + a gate that the D6-B computation's
+      inputs exclude the in-sample file.
+    - **MAJOR-4 (D6-B/N8):** the six floors' conjunctive-vs-disjunctive is unspecified; if
+      disjunctive, N8 persistence agreement can carry a stable-wrong NODE-CONFIRMED (a model
+      always predicting the modal wrong strike scores ~81.3% on N8 = same as a correct model).
+      FIX: make floors conjunctive AND require N3/N1 accuracy to accompany N8.
+    - **MAJOR-5 (N3/§4):** the dominant node persists 81.3% ⇒ N3 is low-entropy, near-constant;
+      a single-fixed-strike predictor scores ~80% without reconstructing. FIX: report N3
+      conditional on the true node changing, or a margin-aware (top-2 overlap) measure.
+    - **MAJOR-6 (D6/§10):** the 1pp recall floor is tuned between the pilot's observed
+      sign_acc Δ (0.786pp, below) and pos_recall Δ (2.175pp, above) ⇒ calibrated to make
+      CONFIRMED reachable, not from a pre-declared MDE. FIX: derive from MDE + power on n=22.
+    - **MAJOR-7 (§5.0/G11):** the untrained baseline uses only `orats_agg_gamma` (1 of 12 ORATS
+      features) ± Cboe, so the learned-minus-untrained gap is confounded by the 11 features the
+      learner adds — it answers "does the quoted-gamma column alone detect nodes?", not "do the
+      primitives (all 12 + Cboe)". FIX: re-scope the claim, or build the untrained surface from
+      all 12 features model-free.
+    - **MAJOR-8 (G1(b)):** the "reference re-run of the frozen pilot" is **not hash-pinned**
+      (the frozen `run_model_comparison.py` discards per-strike predictions in-memory), so
+      G1(b) compares against an un-pinned modified script ⇒ circular. FIX: pin the reference
+      script by sha256, or re-point G1(b) at `y_pred_sign`/`y_pred_mag`.
+    - MINOR: (9) n=22 clusters is below the bootstrap-CI reliability threshold (~40-50);
+      (10) "node field" is really the sign field (53.5/59.5 strikes) + 1 dominant node — rename
+      N1/N2 to sign-field detection; (11) the 10.46M+498k prediction artifacts are reusable
+      substrates despite "not a layer"; (12) the §5.4 concentration ratio is
+      regressor-vs-classifier-driven, not like-for-like.
+    - **RESOLVED:** the v3.1 in-sample readout DOES produce the diagnostic that bounds the OOS
+      gap (variance vs missing information) — that prior concern is resolved (but the wall-off
+      gating in MAJOR-3 remains). SOUND: G10 (OOS purity), G11 (untrained integrity), D1
+      three-artifact separation.
+  - **NEXT (awaiting operator ruling):** resolve the BLOCKER + 7 MAJORs in v3.1 — (1) define
+    `pred_gamma` + re-point G1(b) at `y_pred_sign`/`y_pred_mag` (BLOCKER-1, MAJOR-8); (2) make
+    D6-B exhaustive (MAJOR-2); (3) add G12 in-sample integrity + gate-enforce the verdict
+    wall-off (MAJOR-3); (4) conjunctive floors + N3/N1 accuracy precondition for N8 (MAJOR-4,5);
+    (5) MDE-derived floors (MAJOR-6); (6) re-scope or enrich the untrained surface (MAJOR-7);
+    then transcribe the ruling into the frozen spec and dispatch D1→D2→D3 → KASA.
 - Pilot STOPPED at the purchase verdict per PM (SIGNED_FLOW_ADDS, sealed P&L).
 - The 0DTE key-mapping 22-day frozen run remains staged (run_22day_frozen.sh, logic hash
   75c9d62f…) but is explicitly not the pilot's answer — launch only if PM wants the
