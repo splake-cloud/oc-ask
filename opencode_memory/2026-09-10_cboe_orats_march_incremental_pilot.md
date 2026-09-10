@@ -182,12 +182,39 @@ node-materiality line: rank-1 node, body/top1, persistence across captures).
       gap (variance vs missing information) — that prior concern is resolved (but the wall-off
       gating in MAJOR-3 remains). SOUND: G10 (OOS purity), G11 (untrained integrity), D1
       three-artifact separation.
-  - **NEXT (awaiting operator ruling):** resolve the BLOCKER + 7 MAJORs in v3.1 — (1) define
-    `pred_gamma` + re-point G1(b) at `y_pred_sign`/`y_pred_mag` (BLOCKER-1, MAJOR-8); (2) make
-    D6-B exhaustive (MAJOR-2); (3) add G12 in-sample integrity + gate-enforce the verdict
-    wall-off (MAJOR-3); (4) conjunctive floors + N3/N1 accuracy precondition for N8 (MAJOR-4,5);
-    (5) MDE-derived floors (MAJOR-6); (6) re-scope or enrich the untrained surface (MAJOR-7);
-    then transcribe the ruling into the frozen spec and dispatch D1→D2→D3 → KASA.
+  - **v3.2 — BLOCKER + 7 MAJORs RESOLVED (2026-09-10, committed `246a4f5f`, AWAITING PM
+    RATIFICATION):** all eight red-team findings resolved on the blueprint (spec authoring is
+    the acting seat's, not routed). Fixes:
+    - **BLOCKER-1 + MAJOR-8:** `pred_gamma^m_k = y_pred_mag` DEFINED (the signed normalized-
+      magnitude regressor output — the frozen pilot's OWN convention, `signed_state_model.py:394`
+      `"pred_gamma": y_pred_mag_full`). New **D9** freezes it (classifier sign + the product
+      rejected). G1(b) re-pointed at the pilot's actual `y_pred_sign`/`y_pred_mag` via a
+      **sha256-pinned reference re-run script** (circularity closed).
+    - **MAJOR-2:** D6-B decision rule made **exhaustive + mutually exclusive** via new
+      **NODE-SIGN-ONLY** (Δ_sign material/significant/stable but Δ_Cboe ≤ 0). Five states
+      (INDETERMINATE/NULL/CONFIRMED/SIGN-ONLY/MARGINAL) partition the outcome space (first match
+      wins); §3 success-states list synced.
+    - **MAJOR-3:** new **G12** (in-sample purity — exact complement of G10: every row's day was
+      IN its scoring fold's training set, row count 166,164×3×21, 21 folds/row) + **G8** now
+      gate-enforces the verdict wall-off (D6-B decision-rule input set excludes the in-sample +
+      untrained files, a gate not prose). New G7 tamper tests.
+    - **MAJOR-4:** floors **CONJUNCTIVE** (F = every metric floor AND stability); N8
+      persistence counts toward F **only if** N3-conditional-identity ≥ base rate (stable-wrong
+      node can't carry the verdict).
+    - **MAJOR-5:** **N3 made conditional** on the true node changing (flip pairs ~18.7% of 782)
+      + top-1/top-2 margin diagnostic; raw identity no longer a floor metric.
+    - **MAJOR-6:** floors **MDE-derived** (pre-declared MDE + power analysis on n=22
+      day-clusters; if power < 80% declared UNDERPOWERED, NOT floor-lowered), not
+      observed-increment-derived.
+    - **MAJOR-7:** untrained readout **re-scoped** to "ORATS quoted-gamma column alone (± Cboe)"
+      + the **11-feature confound** stated (learned-minus-untrained gap also reflects the 11 ORATS
+      features the learner adds); the stronger "all 12 features" question = a new version.
+    - MINOR-9/12 folded in: n=22 cluster limitation declared (permutation robustness);
+      concentration readout labeled **CROSS-OUTPUT** (not like-for-like).
+  - **NEXT (awaiting PM RATIFICATION of v3.2):** on ratify, transcribe the ruling into the
+    frozen spec (the D1–D9 rulings + MDE floors + G0–G12 + KASA), then dispatch D1→D2→D3 → KASA
+    (adjudicator = pi seat). The MDE floor values (D6) are the one substantive open call PM may
+    tighten/loosen before the run.
 - Pilot STOPPED at the purchase verdict per PM (SIGNED_FLOW_ADDS, sealed P&L).
 - The 0DTE key-mapping 22-day frozen run remains staged (run_22day_frozen.sh, logic hash
   75c9d62f…) but is explicitly not the pilot's answer — launch only if PM wants the
