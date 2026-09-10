@@ -82,7 +82,40 @@ valid paired baseline.
   all 4 metrics to 1e-9 (no train/test leak); determinism (byte-identical JSON); bootstrap
   CIs exclude 0.
 
+## PM ratification (2026-09-10)
+PM ratified the conclusion: **the pilot discovered a real but weak incremental signal.**
+Whether it is the *missing reconstruction puzzle piece* remains **UNANSWERED** until that
+signal is shown at the **node / body / persistence level**. The strike-level sign-fidelity
+increment (the purchase verdict) is only the entry test — it does not establish that Cboe
+flow improves reconstruction of the *body node* (the object that carries keeper value in the
+node-materiality line: rank-1 node, body/top1, persistence across captures).
+
 ## Open / next
+- **Blueprint WRITTEN (2026-09-10, DRAFT — D1–D8 PROPOSED, awaiting operator ruling):**
+  `/tmp/opencode/investigation1/SPEC_node_body_persistence_blueprint.md` — shape follows
+  `studies/es_auction_profile/specs/blueprint_v7_study_a_hvn_attraction.md` (mission/non-
+  mission → hash-pinned upstream contracts → pre-registered question → measured baseline →
+  proposed design → decision items → gate draft → KASA block → data-access → open
+  questions). Load-bearing discovery: the frozen pilot persists ONLY per-fold metrics, NOT
+  per-strike predictions — the node test needs them ⇒ **D1 = a hash-pinned prediction-
+  persistence extension** that MUST reproduce the pilot's pooled strike metrics to 1e-9
+  (G1) before the node target is trusted (proves value-identity, pure target change not a
+  re-fit). Body node = rank-1 POSITIVE-gamma strike per (day,capture); 804/804 March captures
+  have ≥1 positive (body always defined in-window); 14/22 March days are touch days
+  (persistence T4 is touch-only, PIT 3 pre-touch captures, MAX(rank)≤1 not min). Success
+  states BODY-CONFIRMED / STRIKE-ONLY / BODY-NULL / INDETERMINATE. Gates G0–G9, KASA S1–S7
+  (S1 value-identity + S6 outcome-isolation highest severity). Open: D5 scope (all-22
+  primary vs touch-14 primary) + T1-identity vs T4-persistence as the primary.
+- **Node/body/persistence-level test (the decisive follow-up, NOT started):** re-run the
+  three-model comparison with the target moved from strike-level sign to the BODY-NODE
+  state. Concretely: (a) identify the body strike per day (node_materiality.parquet
+  body_strike for touch days; the rank-1 positive-gamma strike per capture otherwise),
+  (b) derive the body-node state from each model's predicted strike-level signed gamma
+  (body sign, body rank among positive nodes, body/top1 ratio, persistence across the
+  captures before the touch — the M1/M2/M4 measures), and (c) test whether M2-S improves
+  body-node fidelity over M1' / M2-U. The load-bearing question is whether the weak
+  strike-level sign increment concentrates on / is visible at the body node — if it does
+  not, Cboe flow is not the missing reconstruction piece.
 - Pilot STOPPED at the purchase verdict per PM (SIGNED_FLOW_ADDS, sealed P&L).
 - The 0DTE key-mapping 22-day frozen run remains staged (run_22day_frozen.sh, logic hash
   75c9d62f…) but is explicitly not the pilot's answer — launch only if PM wants the

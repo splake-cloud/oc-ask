@@ -384,3 +384,42 @@ Full dispatch arc executed under the operator's GO chain:
   (idea.md: APPROACH → TOUCH → REJECT/ACCEPT/TRAVERSE).
 - Commits: 66aa9464 (closure receipt) → 606448c8 (ruling + addendum).
 - Study A artifact set pinned in receipts/study_a_hvn_attraction_receipt.md.
+
+### Study B (first encounter, next-session form) — CHAIN COMPLETE, VERDICT NO, pending operator closure ruling (2026-09-10)
+- **Spec v8** frozen pre-build (d39161d7) with operator rulings: D1–D4/D7/D8
+  RATIFIED, **D5 AMENDED** (in_band = bar-CLOSE membership in
+  [lo4,hi4_excl), not bar-range overlap; retreat/pass retain frozen
+  excursion/extrema arithmetic; final-bar touch ⇒ all three stats = 0),
+  **D6 AMENDED** (T2 = REJECT-vs-ACCEPT only, denominator n_R+n_A;
+  TRAVERSE reported not contrasted; cell with touched rows but zero
+  R+A ⇒ INDETERMINATE per addendum §7).
+- **Errata:** E-5 (spec wrongly claimed pinned A-core exports x4 — it
+  exports band_position; D2 build defines x4=round(p×4) with the same
+  on-grid assert; transcription defect, no semantic change). E-6 (census
+  total 97 nontouch = drafting error; blueprint's own per-cell rows sum
+  116; 212+181+97=490≠509). Two more drafting defects caught pre-freeze
+  by PM mechanical fixture check (F1 bar-7 close outside range; F5c
+  pass=408−408=0 not 1).
+- **Chain:** D1 core 73a7b52a (qwen38-collab :8011; F1–F8 16/16 self-test)
+  → D2 build 8e933487+de59dfc4 (qwen-coder :8081; 509×36, census
+  212/181/116 printed pre-outcome, X7 /tmp-copy byte-identical) →
+  D3 16e5a2cf (qwen38-collab :8011; G0–G9 PASS, 6/6 tampers observed-
+  FAIL) → **KASA8 (pi seat) 10/10 CONFIRMED, 0 BLOCKER / 0 MAJOR**, 4
+  MINOR recorded (D5 amendment observable on 204/212 touched rows;
+  arm C has 0 ACCEPTs at all scales — vacates the declared first-
+  ACCEPT trace, adapted to arm B; D2 census n_RA stdout line; KASA
+  throwaway-script display artifact).
+- **VERDICT: NO** (PM + KASA independently re-derived): step 0
+  untriggered (8/8 required cells n_RA>0: B 7/6/3/3, C 25/15/6/4);
+  arm C reject-dominant ALL scales (50R/0A, 108 TRAVERSE — a TRAVERSE-
+  heavy arm, carried to Study C as provenance only); arm B inconsistent
+  (k=2 tie 3=3, k=4 accept-dominant 2>1); no CONDITIONAL half where B
+  and C both consistent; arm A (redundancy control) tie at k=8.
+- **Pinned artifacts** (sha256 in receipts/study_b_first_encounter_receipt.md):
+  spec 5b19ba58, blueprint 8bb1c4b6, core 619c1398, build 62fc55f6,
+  check 5d2a2224, event e919712e (509×36), manifest 8a7018ea, analysis
+  f395f1c6, errata 09a99f84.
+- **Open:** operator closure ruling (bank/dismiss 4 MINORs); Study C
+  (LVN traversal) next in queue.
+- Commits: d39161d7 → 73a7b52a → 27d819e3 (E-5) → 8e933487 → de59dfc4 →
+  81f725a7 (E-6) → 16e5a2cf → 6566c441 (KASA8 + closure receipt).
