@@ -385,7 +385,7 @@ Full dispatch arc executed under the operator's GO chain:
 - Commits: 66aa9464 (closure receipt) → 606448c8 (ruling + addendum).
 - Study A artifact set pinned in receipts/study_a_hvn_attraction_receipt.md.
 
-### Study B (first encounter, next-session form) — CHAIN COMPLETE, VERDICT NO, pending operator closure ruling (2026-09-10)
+### Study B (first encounter, next-session form) — CLOSED / NO final (2026-09-10)
 - **Spec v8** frozen pre-build (d39161d7) with operator rulings: D1–D4/D7/D8
   RATIFIED, **D5 AMENDED** (in_band = bar-CLOSE membership in
   [lo4,hi4_excl), not bar-range overlap; retreat/pass retain frozen
@@ -423,3 +423,15 @@ Full dispatch arc executed under the operator's GO chain:
   (LVN traversal) next in queue.
 - Commits: d39161d7 → 73a7b52a → 27d819e3 (E-5) → 8e933487 → de59dfc4 →
   81f725a7 (E-6) → 16e5a2cf → 6566c441 (KASA8 + closure receipt).
+
+- **Closure ruling (operator, 2026-09-10, commit 4a280cc2): Study B =
+  CLOSED / NO, final, not reopened.** KASA8 MINOR dispositions: D2
+  census n_RA stdout line BANKED (reporting provenance); K3 first-
+  ACCEPT selector vacuity BANKED (future KASA trace declarations must
+  be existence-checked against the pinned table or recorded vacuous);
+  D5 amendment effect (204/212 rows) RECORDED AS COVERAGE /
+  NON-DEFECT; KASA throwaway-script artifact DISMISSED. Findings
+  preserved: arm C 0 ACCEPTs all scales (50R/108 TRAVERSE/158 touched,
+  TRAVERSE-heavy — provenance for Study C only); arm B flips with
+  scale. **Next queue item: Study C (LVN traversal), operator-driven
+  start.**
