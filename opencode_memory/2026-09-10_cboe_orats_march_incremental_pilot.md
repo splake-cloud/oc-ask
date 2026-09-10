@@ -312,9 +312,14 @@ node-materiality line: rank-1 node, body/top1, persistence across captures).
         reconstruction at **0.0e+00 on ALL FIVE metrics** (M1 0.0199→0.1716; the true-top5 fix also
         closed the prior M2 0.2 tie diff); predictions byte-identical (model code untouched, 0 diffs /
         498,492); G1 PASS (12/12 within 1e-9); decision rule recomputed → **DIFFUSE ONLY** (unchanged).
-    - **NEXT:** thread closed at the verdict (DIFFUSE ONLY, now on correct M1 evidence). If reopened, the
-      binding constraint is the 5pp floor on the SIGN increment (max node-metric sign increment +3.5pp);
-      a stronger node claim needs more Cboe months (regime stability) or a different node target. None started.
+     - **NEXT:** thread closed at the verdict (DIFFUSE ONLY, now on correct M1 evidence). If reopened, the
+       binding constraint is the 5pp floor on the SIGN increment (max node-metric sign increment +3.5pp);
+       a stronger node claim needs more Cboe months (regime stability) or a different node target. None started.
+     - **DURABLE RECORD COMMITTED (2026-09-10):** this card committed+pushed `6505645` (oc-ask); the 11
+       verify receipts (`pilot_A_feat_indep`, `pilot_B_{main,indep_refit,bootstrap_ci}`, `field_v2_run*`,
+       `field_v2_run_m4fix`, `field_v2_m1fix`) committed+pushed `b9ef203b` (main repo, verify/). The
+       field_v2 code + heavy parquets live in `/tmp/opencode/investigation1` (local-only repo, no remote,
+       not git-operable from the oc-ask seat) — receipts + card are the durable record.
 - Pilot STOPPED at the purchase verdict per PM (SIGNED_FLOW_ADDS, sealed P&L).
 - The 0DTE key-mapping 22-day frozen run remains staged (run_22day_frozen.sh, logic hash
   75c9d62f…) but is explicitly not the pilot's answer — launch only if PM wants the
