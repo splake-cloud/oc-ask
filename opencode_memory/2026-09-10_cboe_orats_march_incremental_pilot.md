@@ -265,9 +265,56 @@ node-materiality line: rank-1 node, body/top1, persistence across captures).
        AND sign_clear}`. **NODE VALUE = joint_clear ≥ 3**; **DIFFUSE ONLY = joint_clear < 3 AND M5
        improves both M₁′ and M₂-U on ≥ 14/22 days**; **AMBIGUOUS** otherwise. Constants: `floor = 0.05`
        (5pp — appropriate, M1–M4 bounded 0–1) + `Maj = 14`.
-   - **NEXT (awaiting PM RATIFICATION of v5.1):** on ratify, dispatch the §3 re-derivation + §4-§7
-     scoring (qwen-coder BUILD of the field_v2 runner) → G1 integrity check → run → return the verdict
-     + the exact 22-day evidence.
+   - **RUN EXECUTED (2026-09-10) — VERDICT: DIFFUSE ONLY.** Dispatched to qwen-coder (BUILD + run,
+     then an EDIT re-run for the M4 symmetry fix). G1 integrity gate PASSED (all 12 pooled metric/model
+     comparisons reproduce model_comparison.json to 0.0 delta). Artifacts under
+     `/tmp/opencode/investigation1/pilot/field_v2/` (predictions_v2.parquet 498,492 rows; node_metrics_v2;
+     daily_deltas_v2; analysis_v2.json; manifest.json g1_pass=true, sealed_pnl=true, fly_sealed=true).
+     Per-metric (mean_cboe / pos_days_cboe | mean_sign / pos_days_sign):
+     - M1 top-5 pos:  -0.0053 / 10 | -0.0091 / 7   (neither clears)
+     - M2 top-5 neg:   0.0787 / 19 |  0.0348 / 16  (cboe_clear only)
+     - M3 dom-pos:     0.0673 / 17 | -0.0058 / 13  (cboe_clear only)
+     - M4 dom-neg:     0.0355 / 21 |  0.0344 / 17  (neither — under the 0.05 floor)
+     - M5 field spear:  0.0268 / 15 |  0.0198 / 15  (m5_improves: pos_days>=14 both)
+     **joint_clear = 0** (no node metric clears BOTH comparisons) → **DIFFUSE ONLY** (M5 improves over
+     both M1' and M2-U on >=14 days; the nodes do not jointly clear).
+     - **M4 symmetry defect found + fixed (v5.1.1, commit `2eff5b4a`):** first run's M4 was structurally
+       ZERO — the predicted dominant negative used `argmin |y_pred_mag|` (least-negative predicted), not
+       symmetric to the true side's `argmin uw_gamma` (most-negative true). Fixed to `argmax |y_pred_mag|`
+       (most-negative predicted). Verdict UNCHANGED by the fix (M4 clears neither comparison under either
+       reading). Independently verified from the parquet, not the delegate's report.
+     - Verify transcripts: `/data/agentic_trading/verify/field_v2_run.20260910T110232Z.txt` (initial),
+       `field_v2_run_m4fix.20260910T110623Z.txt` (M4 fix).
+    - **FORMAL RECORD (PM ruling 2026-09-10, CORRECTED post-adjudication):**
+      - **Formal verdict: DIFFUSE ONLY** under the frozen ≥5 pp / 3-of-4 joint gate. **UNCHANGED** by the
+        M1 fix (independently re-verified: joint_clear=0, m5_improves=True).
+      - **Substantive finding (CORRECTED): BOTH-NODE ENRICHMENT (Cboe leg) BELOW/AT FLOOR; SIGN LEG NULL
+        ON ALL NODE METRICS.** The original "POSITIVE-NODE NULL" was an artifact of the M1 bug (below).
+      - Corrected evidence (post-fix, independently verified): M2 top-5 neg Δ_Cboe +7.9pp/19 (cboe_clear),
+        Δ_sign +3.5pp/16; M3 dom-pos Δ_Cboe +6.7pp/17 (cboe_clear), Δ_sign −0.6pp/13; M1 top-5 pos
+        Δ_Cboe +3.3pp/13, Δ_sign +2.1pp/13; M4 dom-neg Δ_Cboe +3.6pp/21, Δ_sign +3.4pp/17. So the Cboe
+        ACTIVITY leg enriches nodes on BOTH polarities (M2+M3 clear the 5pp floor; M1+M4 below), while the
+        participant-side SIGN leg is below the 5pp floor on EVERY node metric (max M2 +3.5pp; M3 negative).
+        M5 diffuse field improves over both baselines (Δ_Cboe +2.7pp/15, Δ_sign +2.0pp/15).
+    - **ADJUDICATION + M1 FIX (2026-09-10):** Independent adjudication (scratch
+      `/tmp/opencode/adjudication_cboe/`, no builder code imported) found the builder's **M1
+      (top-five positive overlap) computed WRONG** — a double-permutation at `run_field_v2.py:202–208`
+      (`pred_pos_indices[order[sorted_idx[:5]]]`) selects ~100×-smaller magnitudes. Independently
+      confirmed: builder M1 pred-top5 wrong on **772/804** captures; month M1 **0.0199 (builder) vs
+      0.1716 (correct)**; isolation proved the pred-top5 double-permutation is the sole cause. This made
+      the published M1 Δ_Cboe read −0.5pp (should be +3.3pp) and overstated "positive-node NULL."
+      - **PM RATIFIED the fix** (M1 pred-top5 → single `np.lexsort((pred_pos_indices, -pred_pos_abs_mag))`,
+        mirroring the already-correct M2; PLUS the optional MINOR true-top5 tie-break fix on M1+M2 →
+        lexsort smallest-strike instead of unstable argsort).
+      - Applied by qwen-coder (EDIT, exact 3-block diff), re-run via
+        `verify-run field_v2_m1fix` → transcript `/data/agentic_trading/verify/field_v2_m1fix.20260910T140645Z.txt`.
+      - **Independently verified (not the report):** regenerated node_metrics match my independent
+        reconstruction at **0.0e+00 on ALL FIVE metrics** (M1 0.0199→0.1716; the true-top5 fix also
+        closed the prior M2 0.2 tie diff); predictions byte-identical (model code untouched, 0 diffs /
+        498,492); G1 PASS (12/12 within 1e-9); decision rule recomputed → **DIFFUSE ONLY** (unchanged).
+    - **NEXT:** thread closed at the verdict (DIFFUSE ONLY, now on correct M1 evidence). If reopened, the
+      binding constraint is the 5pp floor on the SIGN increment (max node-metric sign increment +3.5pp);
+      a stronger node claim needs more Cboe months (regime stability) or a different node target. None started.
 - Pilot STOPPED at the purchase verdict per PM (SIGNED_FLOW_ADDS, sealed P&L).
 - The 0DTE key-mapping 22-day frozen run remains staged (run_22day_frozen.sh, logic hash
   75c9d62f…) but is explicitly not the pilot's answer — launch only if PM wants the
