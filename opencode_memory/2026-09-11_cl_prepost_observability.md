@@ -9,18 +9,18 @@ Thread: pi session, `studies/cl_prepost_observability/`. Spec v1.2 (frozen, amen
   (4 files), `verify/verification.md` (operator CLAIM|METHOD|PROOF), execution receipt
   `verify/clprepost_v121.20260910T181057Z.txt` (exit 0, SELF-CHECK PASS, 60.7 s, 43.5M CL_FUT rows,
   deterministic re-run byte-identical).
-- **Committed, independently-verified answer:**
-  - **E2 (04-07, ~2,400 WTI + 6,200 Brent)**: CL pre-post signal — A3 S-class 60s-gross USEFUL
-    alert **18:28:21** (8,231 ≥ 8,200) → **4 h 02 m before the 22:30 post**, 77 min before the
-    reported window. Largest exec 182 lots ≈ Reuters ~150-lot order. Unconfirmed (T_confirmed null).
-  - **E4 (04-21, Brent-reported 4,260)**: A3 USEFUL **18:55:35** (8,203, margin 3 lots,
-    operator-unverified) → 74 min before post. WTI legs active despite Brent-only report.
-  - **E1 (03-23, 5,100 Brent+WTI)**: no pre-post alert (max A1 2,385 / A3 4,432 / A2|net| 714,
-    all < LOOSE). CL_CONFIRMATION_ONLY: post-5m 17,418 ≈ 16× baseline max.
-  - **E3 (04-17, Brent-only +100% surge)**: NO_DISTINGUISHABLE_CL_SIGNAL (post-5m 1,725 <
-    baseline max 1,877). Brent-only ⇒ invisible in the CL pool.
-  - Portfolio: CL-only USEFUL-burden monitor (≤1 alert/5 sessions) alerts pre-post for WTI-active
-    events (E2, E4) only; **blind spot = Brent-only episodes**. LO_OPT corroborated nothing.
+- **Committed, independently-verified answer (correct statement, operator 2026-09-11):** A CL-only
+  monitor produced a **useful pre-post alert on E2** and a **provisional alert on E4** (3-lot
+  threshold margin, independently unverified). It produced **no pre-post alert on E1 or E3**.
+  The E2/E4 alerts occurred **materially before** the Reuters-reported transaction windows (77 min
+  and 58 min), so **the current evidence does not establish that those alerts captured the same
+  transactions described by Reuters** — aggregate CL volume cannot attribute participant identity,
+  and pre-window alerts may reflect other flow on the same news.
+  Supporting facts: E2 A3 S-class USEFUL 18:28:21 (8,231 ≥ 8,200, 4h02m before post); E4 A3 USEFUL
+  18:55:35 (74m before post); E1 CL_CONFIRMATION_ONLY (post-5m 17,418 ≈ 16× baseline max, no
+  pre-post alert — maxima A1 2,385 / A3 4,432 / A2|net| 714 all < LOOSE); E3 NO_DISTINGUISHABLE
+  (Brent-only +100% surge; CL footprint ≤ baseline). WTI-leg pattern holds (alerts only where WTI
+  legs were active) but is an observation, not a capture claim. LO_OPT corroborated nothing.
 
 ## Key facts pinned (reusable)
 
