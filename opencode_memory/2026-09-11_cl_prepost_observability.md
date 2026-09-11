@@ -79,3 +79,15 @@ Thread: pi session, `studies/cl_prepost_observability/`. Spec v1.2 (frozen, amen
   frame uses non-PIT definition join (28–31-lot deltas at E2 T_first; alert stands either way).
 - Self-check block now asserts canonical values directly from raw parquet (8,231/1,901/8,203/
   4,858/4,450) → a future frame regression fails the run (rc≠0).
+
+## Bankable conclusion (operator-approved, 2026-09-11 — authoritative headline, commit 6f5037f6)
+
+> A CME CL-only monitor would have clearly observed the April 7 WTI component, including its
+> concentration, selling direction and large execution. It would not have produced a useful
+> pre-post alert for March 23 or April 17. April 21 contains an earlier provisional CL
+> spread-flow anomaly, but the reported transaction itself remains a Brent event with no
+> attributable CL counterpart.
+
+Headline of `studies/cl_prepost_observability/outputs/ADJUDICATION.md`; the alert-level
+"correct statement" (E2 useful 8,231/4h02m; E4 provisional 8,203/74m; no alerts E1/E3;
+no same-transaction capture established) is retained below it as detail.
