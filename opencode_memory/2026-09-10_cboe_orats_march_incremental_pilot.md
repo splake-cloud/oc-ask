@@ -315,11 +315,47 @@ node-materiality line: rank-1 node, body/top1, persistence across captures).
      - **NEXT:** thread closed at the verdict (DIFFUSE ONLY, now on correct M1 evidence). If reopened, the
        binding constraint is the 5pp floor on the SIGN increment (max node-metric sign increment +3.5pp);
        a stronger node claim needs more Cboe months (regime stability) or a different node target. None started.
-     - **DURABLE RECORD COMMITTED (2026-09-10):** this card committed+pushed `6505645` (oc-ask); the 11
-       verify receipts (`pilot_A_feat_indep`, `pilot_B_{main,indep_refit,bootstrap_ci}`, `field_v2_run*`,
-       `field_v2_run_m4fix`, `field_v2_m1fix`) committed+pushed `b9ef203b` (main repo, verify/). The
-       field_v2 code + heavy parquets live in `/tmp/opencode/investigation1` (local-only repo, no remote,
-       not git-operable from the oc-ask seat) — receipts + card are the durable record.
+      - **DURABLE RECORD COMMITTED (2026-09-10):** this card committed+pushed `6505645` (oc-ask); the 11
+        verify receipts (`pilot_A_feat_indep`, `pilot_B_{main,indep_refit,bootstrap_ci}`, `field_v2_run*`,
+        `field_v2_run_m4fix`, `field_v2_m1fix`) committed+pushed `b9ef203b` (main repo, verify/). The
+        field_v2 code + heavy parquets live in `/tmp/opencode/investigation1` (local-only repo, no remote,
+        not git-operable from the oc-ask seat) — receipts + card are the durable record.
+  - **METHODOLOGY CORRECTION v2 (2026-09-10/11) — SUPERSEDES the "DIFFUSE ONLY / needs more Cboe months"
+    NEXT above.** Operator-directed adjudication of whether v1 used the Cboe Open-Close data correctly.
+    All 4 methodological defects CONFIRMED from the code: (1) stock-vs-flow — all 6 v1 Cboe features are
+    10-min interval deltas, no cumulative field; (2) non-nested signed — `CBOE_S` replaced `CBOE_U`
+    (abs→net swap), so `M2-S−M2-U` never isolated sign; (3) synthetic field — `sign×|mag|` is a hybrid
+    post-model construction; (4) MM-only scope. Corrected features add the **signed session-cumulative
+    MM gamma flow** (an **accounting state-change feature** — temporally valid, economically connected to
+    position changes; **correlation with UW does NOT establish causality and does NOT recover opening
+    inventory**). The cumulative is a state the 10-min interval was structurally blind to.
+    - **CORRECTED DISPOSITION (operator ruling 2026-09-11): MARCH DEVELOPMENT PILOT: SUCCESS. APRIL
+      FROZEN CONFIRMATION PURCHASE JUSTIFIED.** (Replaces my initial "CORRECTED METHOD MATERIALLY
+      STRONGER" — operator narrowed the claim.) **Narrow claim (the only one supported):** March shows
+      C1 session-cumulative signed MM flow can **distill the contemporaneous UW all-expiry signed node
+      field**; April must determine whether that mapping **transports out of month**.
+    - **Result (day-equal, independently re-derived, not from the delegate report):** D3 total
+      (M2-US-C−M1-C) top-5 exact **+0.474** / dominant-exact **+0.521** / Spearman **+0.350** / distance
+      48.4→21.2 pts; D2 signed increment (horizon controlled) **+0.443**/+0.492/+0.336; D1 unsigned
+      cumulative ~0 (+0.003/+0.006); OLD v1 non-nested signed +0.028 (~16× smaller). **Model-free
+      readout** (raw `net_session_gamma`, zero learning) already scores top-5 **0.627** / Spearman
+      **0.324** (vs ORATS alone 0.129/−0.036) — the signal is in the data, not the learner. M1-C
+      reproduces v1 **exactly** (7372/7372 sign, 0.000e+00 mag diff); M2-US-C jump reproduced to 4
+      decimals from a from-scratch re-fit.
+    - **2 delegate bugs caught + corrected** in `run_nested_model_comparison_v2.py`: (a) `_tolerance_match`
+      applied ±5/±10 to index positions, not strike values (overstated pm5/pm10; load-bearing exact/
+      dominant/spearman unaffected); (b) `_diff` hardcoded "hybrid" so the stored "direct" comparisons
+      were actually hybrid (recomputed correctly). The delegate's "different sklearn version" excuse is
+      FALSE (env is deterministic; fresh M1-C matches v1 exactly). 12-item semantic verification PASS.
+    - **Deliverables** `/data/agentic_trading/analysis/sml_fly_verify/gamma_topology/cboe_orats_march_v2/`
+      (committed+pushed `8212cc1f`): METHOD_AUDIT_v2.md, CORRECTED_MARCH_REPORT_v2.md,
+      build_cboe_orats_features_v2.py, run_nested_model_comparison_v2.py, verify_v2_{independent,final}.py,
+      nested_model_comparison_v2.json, v2_independent_recompute.json, feature_manifest_v2.json,
+      three_series_trace.json, v2_execution_log.jsonl. The 6.9MB `cboe_orats_features_march_v2.parquet`
+      stays in `/tmp` (heavy binary, regenerable from the committed builder). v1 preserved byte-for-byte.
+    - **NEXT: April frozen confirmation purchase is JUSTIFIED + RECOMMENDED but NOT executed** (no April
+      data bought, no production mutation, no live integration in this session). April's job: does the
+      session-cumulative→UW mapping transport out of month?
 - Pilot STOPPED at the purchase verdict per PM (SIGNED_FLOW_ADDS, sealed P&L).
 - The 0DTE key-mapping 22-day frozen run remains staged (run_22day_frozen.sh, logic hash
   75c9d62f…) but is explicitly not the pilot's answer — launch only if PM wants the
