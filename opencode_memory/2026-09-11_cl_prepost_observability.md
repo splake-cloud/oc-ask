@@ -91,3 +91,13 @@ Thread: pi session, `studies/cl_prepost_observability/`. Spec v1.2 (frozen, amen
 Headline of `studies/cl_prepost_observability/outputs/ADJUDICATION.md`; the alert-level
 "correct statement" (E2 useful 8,231/4h02m; E4 provisional 8,203/74m; no alerts E1/E3;
 no same-transaction capture established) is retained below it as detail.
+
+## Detection latency, Apr 7 burst (operator-approved canonical, 2026-09-11, commit 23a02da2)
+
+Corrected latencies (per-second A2 trigger at 19:45:50, front 5-min rolling |A−B| ≥ 1,100 with
+A/(A+B) ≥ 0.6): **50 s from reported window open (19:45:00); ≈72–80 s from earliest observed
+selling (19:44:30–38); same grid interval from the 182-lot execution (19:45:49)**. Trigger was
+rolling net-selling (|A−B| = 1,164, dom 92.7%), not cumulative A-side alone; pre-window 5m |net|
+was 96 (normal). 182-lot print consistent in size with reported ~150-lot order; identity not
+establishable. Canonical wording banked: LOOSE-setting per-second monitor = sub-minute detection
+(50 s from window open), USEFUL not cleared. Full table in ADJUDICATION.md.
