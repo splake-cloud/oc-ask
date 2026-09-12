@@ -1,4 +1,27 @@
-# 2026-09-10 — All-expiry March Cboe×ORATS incremental-information pilot
+# 2026-09-10 — March Cboe×ORATS incremental-information pilot
+
+> ## ⚠ SCOPE CORRECTION (2026-09-12, post 0DTE-semantics resolution) — both verdicts below are CROSS-SCOPE.
+> Every conclusion in this card (the v1 **SIGNED_FLOW_ADDS** and the v2 **SUCCESS / April-purchase-justified**
+> disposition) was designed on the assumption the UW target was the *full gamma profile*. It is not:
+> `gamma_research` is **0DTE-only for its entire history** (bronze census 7,538 records, `min_dte=max_dte='0'`
+> on 100%). The predictor features are **all-expiries** — the Cboe builder applies no expiry filter
+> (`build_cboe_orats_features.py` / `_v2.py`, per-series over every `exp_date`; aggregation sums across all
+> series at each strike) and the ORATS input `orats_agg_gamma` is likewise all-expiries. Measured: **0DTE is
+> only ~4% of total |gamma|** (median 0.0412 across the 22 March days; 0.0406 at the matched fly strikes),
+> i.e. the predictor's ORATS ingredient is ~96% the wrong scope for the 0DTE target. **The "all-expiry" label
+> throughout (incl. `matched_frame_all_expiry.parquet` and `arm='all_expiry'`) is the old `expiry` capture-echo
+> artifact, not the data.** So the pilot measured an **all-expiry-predictor → 0DTE-target cross-scope
+> correlation** (strike-level *shape/rank*), NOT a same-scope reconstruction of the 0DTE node field. The
+> **SIGNED_FLOW_ADDS** verdict and the v2 **SUCCESS / April-purchase-justified** disposition are therefore
+> **withdrawn as reconstruction claims** and re-scoped as: *"all-expiry Cboe session-cumulative flow predicts
+> the 0DTE UW node field (cross-scope shape correlation)"* — a real signal, but it does NOT establish that 0DTE
+> Cboe flow reconstructs 0DTE UW gamma (what the fly studies depend on) and does NOT justify the April
+> confirmation purchase on 0DTE grounds. **The correct confirmation is the 0DTE-RESTRICTED recompute** (same
+> pipeline, Cboe `exp_date==tradeDate` + ORATS `expirDate==tradeDate` filters, teacher unchanged, nested
+> D1/D2/D3 identical; raw survives — 2,772 zips + trivial ORATS 0DTE slice). If it holds same-scope → April
+> justified; if it collapses → the March result was an all-expiry cross-scope artifact, April NOT justified.
+> **Do NOT cite the v1/v2 March result as a successful 0DTE reconstruction.** Original text preserved unchanged
+> below for provenance.
 
 Continues the Cboe gamma thread (see 2026-09-09_cboe_orats_uw_0dte_join_adjudication card).
 Pivot: PM redefined the pilot. The 0DTE key-mapping 22-day run (staged, not launched) is

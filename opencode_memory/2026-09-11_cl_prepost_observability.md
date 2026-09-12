@@ -101,3 +101,20 @@ rolling net-selling (|A−B| = 1,164, dom 92.7%), not cumulative A-side alone; p
 was 96 (normal). 182-lot print consistent in size with reported ~150-lot order; identity not
 establishable. Canonical wording banked: LOOSE-setting per-second monitor = sub-minute detection
 (50 s from window open), USEFUL not cleared. Full table in ADJUDICATION.md.
+
+## CL unusual-flow monitor — design spec v1.0 banked (2026-09-11, commit c1034ab6)
+
+`studies/cl_unusual_flow_monitor/idea.md` — revised draft, freeze ruling pending. Objective:
+notify on off-scale bursts of the Apr 7 type, ranked by unusualness. Channels: LOOSE =
+rate-limited low-priority flag; USEFUL = high-priority push; STRONG = push + auto
+event-study pin. Key architecture: signals S1 |A−B| net flow (dual gates max(A,B)/(A+B)≥0.6
+AND (A+B)/(A+B+N)≥0.6, direction a label) / S2 gross (60s+5min) / S3 S-class / S4 print size
+(empirical, no z) / S5 rate; ranking = level > empirical q > exceedance tag (value/baseline_max,
+labeled exceedance NOT percentile); duration reported, never multiplied; calibration on the
+UNION of merged episodes (≤1/session, ≤1/5, ≤1/20); baselines per TOD × catalyst regime
+(R1 EIA / R2 other scheduled / R3 ordinary) × roll state; front frozen at session open (5
+completed sessions, no lookahead), dual-track at roll, roll = tagged + roll-matched baseline
+(no demotion); feed gaps on transport evidence only; exchange calendar per-date TZ (CME halt
+04–05 UTC CDT / 03–04 UTC CST — never hard-coded); E3 negative case = no monitor-level USEFUL
+episode (not per-stat LOOSE); P0 replay calibration on cl_tick_v1 → P1 shadow (live, no alerts,
+after TBBO-vs-MBP-1 field-parity proof) → P2 live. Cost: unresolved pending plan/licensing/terms.
