@@ -118,3 +118,23 @@ completed sessions, no lookahead), dual-track at roll, roll = tagged + roll-matc
 04–05 UTC CDT / 03–04 UTC CST — never hard-coded); E3 negative case = no monitor-level USEFUL
 episode (not per-stat LOOSE); P0 replay calibration on cl_tick_v1 → P1 shadow (live, no alerts,
 after TBBO-vs-MBP-1 field-parity proof) → P2 live. Cost: unresolved pending plan/licensing/terms.
+
+## Successor: CL unusual-flow monitor — spec FROZEN v1.0 (2026-09-11, commit 12b5f3ea)
+
+`/data/agentic_trading/studies/cl_unusual_flow_monitor/idea.md` — FROZEN per operator ruling.
+Ranked all-session detector for off-scale CL flow (Apr 7 class), direction-agnostic (G1
+max(A,B)/(A+B) ≥ 0.6 + G2 (A+B)/(A+B+N) ≥ 0.6; direction = SELL if A>B else BUY). Signals S1–S5
+(each with own gate); baselines = 60-day same-TOD × catalyst regime (R1 EIA/R2 scheduled/R3
+ordinary) × roll state; rank key = level → q → exceedance (E = value/baseline_max, above-max
+labeled, no inferred percentiles; no persistence or consistency multipliers); LOOSE/USEFUL/
+STRONG calibrated on the UNION of merged episodes (≤1/session, ≤1/5, ≤1/20); front frozen at
+session open from prior 5 completed sessions, dual-track across rolls (no look-ahead, no
+automatic demotion — roll-matched baseline instead); feed gaps only on transport evidence;
+CME calendar with per-date TZ (no hard-coded UTC halt). Notifications: LOOSE = rate-limited
+desktop flag; USEFUL = push; STRONG = push + automatic event-study pin. Cost UNRESOLVED
+(excluded from freeze). E2 trigger pinned from raw data: 5-min (19:40:50,19:45:50] A=1826
+B=662 N=197, |A-B|=1164, G1=0.734, G2=0.927; 182-lot print @19:45:49 verified in-window
+(S4 anchor). E3 acceptance = no monitor-level USEFUL (individual floors not pre-declared).
+Live-parity gate (TBBO vs live MBP-1 field-level) before P1. **P0 authorized** (no new
+funding): anchors + union thresholds + false-alert burden + replay acceptance on cl_tick_v1,
+before any live build.
