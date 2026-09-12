@@ -352,11 +352,15 @@ node-materiality line: rank-1 node, body/top1, persistence across captures).
     MM gamma flow** (an **accounting state-change feature** — temporally valid, economically connected to
     position changes; **correlation with UW does NOT establish causality and does NOT recover opening
     inventory**). The cumulative is a state the 10-min interval was structurally blind to.
-    - **CORRECTED DISPOSITION (operator ruling 2026-09-11): MARCH DEVELOPMENT PILOT: SUCCESS. APRIL
-      FROZEN CONFIRMATION PURCHASE JUSTIFIED.** (Replaces my initial "CORRECTED METHOD MATERIALLY
-      STRONGER" — operator narrowed the claim.) **Narrow claim (the only one supported):** March shows
-      C1 session-cumulative signed MM flow can **distill the contemporaneous UW all-expiry signed node
-      field**; April must determine whether that mapping **transports out of month**.
+    - **⚠ WITHDRAWN as a reconstruction claim (2026-09-12, see SCOPE CORRECTION banner at top): the
+      predictor is all-expiries and the UW teacher is 0DTE-only (0DTE ≈ 4% of |gamma|), so this is a
+      cross-scope shape correlation, not a same-scope 0DTE reconstruction.** —
+      **CORRECTED DISPOSITION (operator ruling 2026-09-11, as-written): MARCH DEVELOPMENT PILOT: SUCCESS.
+      APRIL FROZEN CONFIRMATION PURCHASE JUSTIFIED.** (Replaces my initial "CORRECTED METHOD MATERIALLY
+      STRONGER" — operator narrowed the claim.) **Narrow claim (as-written):** March shows C1
+      session-cumulative signed MM flow can **distill the contemporaneous UW signed node field** [the
+      "all-expiry" qualifier in the original is a misnomer — the UW field is 0DTE-only; the *predictor*
+      is the all-expiry side]; April must determine whether that mapping **transports out of month**.
     - **Result (day-equal, independently re-derived, not from the delegate report):** D3 total
       (M2-US-C−M1-C) top-5 exact **+0.474** / dominant-exact **+0.521** / Spearman **+0.350** / distance
       48.4→21.2 pts; D2 signed increment (horizon controlled) **+0.443**/+0.492/+0.336; D1 unsigned
