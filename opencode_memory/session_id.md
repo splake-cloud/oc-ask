@@ -1,5 +1,7 @@
 # session_id
 
+<!-- LLM reasoning strategies: CoT, ToT, ReAct, self-consistency — what the whitepaper suggests and how to invoke them from prompts. -->
+<!-- Session: ses_f62f572d2ffeG86qamqVOHTsrw (opencode, qwen3.6-35b-a3b-q8) -->
 <!-- IV backfill 2021 build spec (studies/iv_weekly_substrate/specs/build_spec_iv_backfill_2021.md): verified + ratified C1–C8. Caught: KA_M2_06 false-alarm (252d window 2024-01-04→2025-01-06 untouched by backfill), §8/§3 drift, DEFECT 1 (Gate-2 KASA must use throwaway backfilled-M1 carrier db, not state DB — virtual layer is old-window 3,192 rows), DEFECT 2 (post_write_verify.py single-model-scoped → C8 --expect-changed + --row-baseline idempotency, carrier verify/<gate3_dir>/00_m1_row_baseline.parquet). Coder assignment: qwen-coder 3.6, transpositional. Dev env: backfill_dev. -->
 <!-- Session: ses_fb2971704ffe6vW6QXvT2S47sj | Spec ratified (DRAFT, uncommitted); Gate-1 envelope staged -->
 
