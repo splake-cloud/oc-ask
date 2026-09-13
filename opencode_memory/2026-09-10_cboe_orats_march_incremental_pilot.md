@@ -70,12 +70,29 @@
 >   `0dte_eval_orats_col_check.*`, `0dte_eval_v2.*` (12/12 semantic PASS),
 >   `0dte_eval_determinism_cmp.*`, `0dte_eval_indep_recheck.*` (from-scratch M2-US-C re-derivation
 >   0.7021 vs ported 0.7018, tie-break noise).
-> - **Open:** (1) commit the study dir to the research repo (small artifacts only) + commit this
->   card — NOT done yet this session; (2) out-of-month (April) confirmation is the next authorized
->   step only if PM re-opens the purchase; (3) the node-field blueprint line
->   (SPEC_node_body_persistence_blueprint, v5.1.1 DIFFUSE-ONLY on the v1 interval method) predates
->   the v2 session-cumulative correction — if reopened, it should be re-posed on the corrected
->   method and is now answerable same-scope.
+> - **Promoted to a registered pool (2026-09-13, same session, PM-approved "full substrate
+>   build run"):** `pools/gamma_reconstruction/` — study-agnostic home per the `uw_gamma`
+>   precedent (raw inputs ARCHIVED + gitignored: 2,772 Cboe zips + 22 ORATS files + frozen v2
+>   refs, all sha-pinned; deterministic committed `build_reconstructed_field.py`; manifest;
+>   README). Artifact `reconstructed_field.parquet` (166,164 × 9): teacher `uw_gamma`;
+>   `orats_agg_gamma_0dte` baseline; `raw_net_session_gamma` (untrained field — the
+>   load-bearing signal); `pred_sign/pred_mag/pred_gamma` (learned IN-SAMPLE M2-US-C field =
+>   the blueprint's "historical backfill" readout). Builder gates G0–G5 + value-identity
+>   anchor (13 feature cols max diff 0.0 vs the verified build) + byte-identical double run
+>   (verify/gamma_recon_build.*, gamma_recon_determinism_cols.*). Registered: POOL_LEDGER row
+>   **PROPOSED (PM classification pending)**, accrual FROZEN + staged RAG card
+>   (docs/data_pools/gamma_reconstruction_rag_card.yaml, refresh pipeline only). The research
+>   artifacts moved to `analysis/gamma_reconstruction/` (git mv, out of the fly-study tree).
+>   NOTE (context from this thread): `registry/substrates/` was proposed as the substrate home
+>   and then RULED DEAD by PM — rig is a failed harness build; the live data-governance path is
+>   data_catalog.yaml + POOL_LEDGER. Do not re-propose the substrate registry.
+> - **Open:** (1) out-of-month (April) confirmation is the next authorized step only if PM
+>   re-opens the purchase (would also move the pool toward PM-RATIFIED); (2) the node-field
+>   blueprint line (SPEC_node_body_persistence_blueprint, v5.1.1 DIFFUSE-ONLY on the v1
+>   interval method) predates the v2 session-cumulative correction — if reopened, re-pose it on
+>   the corrected method; it can now consume the pool's `raw_net_session_gamma` /
+>   `pred_gamma` columns same-scope; (3) RAG card ingestion is pending the documented refresh
+>   pipeline (not a session action).
 >
 
 Continues the Cboe gamma thread (see 2026-09-09_cboe_orats_uw_0dte_join_adjudication card).
