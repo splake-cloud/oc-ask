@@ -177,3 +177,16 @@ My recommendation was (1a)+(1b) as separate tiers and (2a); operator has not rul
 
 Banked: 25aa37c1 (build script + verified core .bak + phase0_gate_stop.md + receipts;
 517 MB replay_persecond/ gitignored as regeneratable). Frozen spec: 12b5f3ea.
+
+## Two-lane monitor: spec v1.1 DRAFT banked (2026-09-13, commit afe87e44)
+
+Operator confirmed the finding is a monitor-calibration issue, not data access (feed is
+sufficient — all pins verified). Advisor's two-lane design adopted: Lane 1 = relative
+anomaly (frozen, its E2 acceptance rewritten to PIN the miss — "relative lane misses
+Apr 7" becomes a tested property); Lane 2 = material flow, absolute thresholds (M1:
+S1-30s |A-B| with G1/G2 gate, test point 1,156 grid SELL; M2: S3-60s gross, 8,231; M3:
+S4 per-print 182, droppable), thresholds chosen by full-pool burden replay INCLUDING
+autumn-2025 regime (operator picks tolerable burden; test points are starting values,
+not contracts), MATERIAL/EXTREME levels, independent of the rarity budget. No new data
+access — Phase-1 arrays suffice; one small build cycle. Open freeze items: per-day
+UNMET (USEFUL-13) treatment, M3 in/out, EXTREME burden target, Lane-2 channels.

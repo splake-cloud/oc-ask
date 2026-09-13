@@ -464,3 +464,46 @@ node-materiality line: rank-1 node, body/top1, persistence across captures).
   a cleaner leave-one-month-out and test regime stability), (b) richer Cboe features
   (per-expiry flow, OI changes, price/quote fields), or (c) a different target (magnitude
   rank rather than sign). None started.
+
+## 2026-09-13: consumer/validation split (pool `pools/gamma_reconstruction/`)
+
+PM: "Run the consumer/validation split" (session ses_f6c6604c9ffeIceuOMK9Xvj1LG,
+recovered after a ContextOverflowError at ~229k tokens interrupted the session
+mid-docs-update; recovery found the build+verify already done, only docs left).
+
+- `build_split.py` (dispatched BUILD to qwen-coder, delivered, verified by PM seat):
+  splits `reconstructed_field.parquet` into
+  **`consumer_field.parquet`** (166,164×8: keys + raw_net_session_gamma +
+  orats_agg_gamma_0dte + cboe_0dte_present/orats_0dte_present INT8 re-derived from
+  RAW inputs by independent code path + raw_abstain; provenance in file metadata;
+  mechanically teacher-free gate G6) and **`validation_evidence.parquet`**
+  (166,164×8: keys + uw_gamma + pred_sign/pred_mag/pred_gamma; never a study input).
+- Verified (verify-run): gates G0–G6+G9 PASS; 3-way key alignment 1:1; consumer
+  value identity max abs diff 0.0; double-run byte-identical (consumer sha
+  dc5cf16c…, validation sha 8249c252…); purity SPLIT-OK. Receipts
+  `verify/gamma_recon_split.20260913T184001Z`,
+  `verify/gamma_recon_split_determinism_purity.20260913T184220Z`.
+- **Known data gap (documented, not a construction error): exactly ONE cell
+  month-wide — (2026-03-19, 1100Z, strike 6000) — has no ORATS 0DTE snapshot**
+  (present at 1050 and 1110 in the vendor feed; the earlier "100% coverage" was a
+  strike-set census as of 12:00Z, not per-capture). Split flags it explicitly
+  (orats_0dte_present=0) instead of zero-filling.
+- Docs updated + committed `90031e41`: README (consumption + artifacts sections),
+  RAG card (split EXISTS; new consumer_field/validation_evidence substrate entries;
+  data-gap contract), POOL_LEDGER (split_builder, contents, verification, notes).
+  .gitignore extended for the two new parquets.
+- Pool remains **PROPOSED** — consumption still gated on PM classification past
+  PROPOSED. RAG card still STAGED (ingestion = refresh pipeline only).
+- Open: PM classification of the pool; April out-of-month confirmation still not
+  purchased/authorized; RAG card ingestion via refresh pipeline.
+- **RAG card SEEDED 2026-09-13 (commit 355999d1):** the hand-authored pool RAG card was
+  STAGED-but-un-ingested (no producer — the 0dte_density_v1 precedent is likewise
+  un-ingested). Its `data_schemas` label can't be honored (that well is harvested from
+  /data/parquet parquet; the pool lives under `pools/`, gitignored, invisible to the
+  harvester), so its prose facts (PROPOSED governance, consumption gate, consumer/
+  validation split, teacher-free consumer_field, 1-cell ORATS gap, result framing) were
+  seeded into the curated **data_contracts** well — the durable home that already carries
+  the analogous `uw_gamma_pool` pool-substrate card. One key added to `CONTRACTS` in
+  `build_contracts.py`; both roots seeded (full via remote-embed on live 8B :8765 since
+  GPU floor unmet / Option 0; small via CPU). data_contracts full:live small:live.
+  Checklist E: #1 result on all 4 on-topic queries (5.88/2.5/5.0/6.0) vs 0 hits pre-seed.
