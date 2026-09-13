@@ -23,6 +23,60 @@
 > **Do NOT cite the v1/v2 March result as a successful 0DTE reconstruction.** Original text preserved unchanged
 > below for provenance.
 
+> ## ✅ 0DTE SAME-SCOPE RECOMPUTE COMPLETE (2026-09-13) — VERDICT: **PASS, the finding ports**
+> The 0DTE-restricted recompute named as "the correct confirmation" in the banner above was
+> built and verified (sessions `ses_f7435b4b…` → `ses_f6fac4d3…`, resumed after mid-run compaction).
+> Per PM directive (2026-09-12): NO new substrate-grade bar; port the frozen v2 methodology /
+> metrics / thresholds / nested comparisons / disposition UNCHANGED; change ONLY the predictor
+> universe; keep the all-expiry v2 result as the cross-scope comparator, side-by-side on identical
+> UW cells; no fly/P&L; no April purchase authorized.
+> - **Source semantics resolved from the data** (probe `/tmp/opencode/source_semantics.py`):
+>   ORATS 0DTE = `expirDate==tradeDate` (covers UW strikes **100%**, all 22 days); Cboe 0DTE =
+>   **SPXW** + `expiration_date==tradeDate` (covers UW strikes 0.839–0.990; SPXW is the only
+>   same-day-expiry SPX-family symbol on all 22 days incl. 03-20). Applied mechanically.
+> - **Result (hybrid, day-equal, 22-fold LOO within March, identical 166,164 cells):** D3
+>   (M2-US-C − M1-C) **0.571 / 0.602 / 0.485** (top5_exact / dominant_exact / Spearman) vs v2
+>   cross-scope **0.474 / 0.521 / 0.349** — the increment is real same-scope, SIGNED (D2 ≈ D3;
+>   D1 ≈ 0), and LARGER than the cross-scope one because the 0DTE ORATS-only baseline is weaker
+>   (M1-C 0.131 vs all-expiry 0.168; raw 0DTE ORATS 0.104). Model-free raw `net_session_gamma`
+>   (0DTE) already scores top5 **0.707** / Spearman **0.548** — the signal is in the data, not the
+>   learner. **The March result was NOT an all-expiry cross-scope artifact.** Disposition = PASS
+>   ("the 0DTE-restricted result also passes the existing bar; the finding ports to the correct
+>   substrate scope"), in-month/development-grade (n=22, single month; out-of-month confirmation is
+>   a separate not-authorized step — **the April purchase remains NOT executed**; this result
+>   re-justifies it on same-scope grounds but authorizes nothing).
+> - **Defect caught in the port (bounce #1):** the first eval delivery wired the all-expiry
+>   `orats_agg_gamma` into `build_features_and_meta` (0DTE column never used) — caught because the
+>   delivered M1-C matched the frozen v2 all-expiry M1-C to 4 decimals (impossible same-scope) +
+>   a 100%-of-cells column-difference check (`verify 0dte_eval_orats_col_check`). One-line fix
+>   (`ddf["orats_agg_gamma"] = ddf["orats_agg_gamma_0dte"]`); post-fix M1-C 0.1309. Lesson: a ported
+>   "ORATS-only" model that EXACTLY reproduces the prior-scope ORATS-only score is a baseline-wiring
+>   tell, not a stable result.
+> - **Faithful-quirk note (for future readers):** the frozen `nested_model_comparison_v2.json`
+>   stores `nested_comparisons` *direct* == *hybrid* (the `_diff` hardcodes hybrid — see the
+>   "2 delegate bugs" bullet below; the fixed direct numbers live only in the v2 report prose).
+>   The 0DTE port inherits the quirk unchanged per "port unchanged"; the *absolute-levels* direct
+>   column IS distinct (M2-US-C direct 0.6999/0.6114/0.5707).
+> - **Spec + artifacts:** `/data/agentic_trading/analysis/sml_fly_verify/gamma_topology/
+>   cboe_orats_march_0dte_substrate/` — `SPEC_same_scope_0dte_substrate.md` (FROZEN 2026-09-13;
+>   supersedes the retracted G1–G4 draft), `SIDE_BY_SIDE_0dte_vs_all_expiry.md`, builder + eval +
+>   indep recheck (copies), `nested_model_comparison_0dte.json`, `feature_manifest_0dte.json`,
+>   `three_series_trace_0dte.json`, `diff_vs_v2.json`. Heavy parquets in
+>   `/tmp/opencode/investigation1/pilot/` (`cboe_orats_0dte_features_march.parquet` sha
+>   `5258a56859…`, byte-identical double-run; 166,164×16; 3 clamps; peak RSS 1.7 GB).
+> - **verify receipts** (`/data/agentic_trading/verify/`): `0dte_build_v1.*` (gates PASS incl.
+>   SPXW-0DTE ground truth 5,638==5,638 cells), `0dte_build_determinism.*` (byte-identical),
+>   `0dte_eval_orats_col_check.*`, `0dte_eval_v2.*` (12/12 semantic PASS),
+>   `0dte_eval_determinism_cmp.*`, `0dte_eval_indep_recheck.*` (from-scratch M2-US-C re-derivation
+>   0.7021 vs ported 0.7018, tie-break noise).
+> - **Open:** (1) commit the study dir to the research repo (small artifacts only) + commit this
+>   card — NOT done yet this session; (2) out-of-month (April) confirmation is the next authorized
+>   step only if PM re-opens the purchase; (3) the node-field blueprint line
+>   (SPEC_node_body_persistence_blueprint, v5.1.1 DIFFUSE-ONLY on the v1 interval method) predates
+>   the v2 session-cumulative correction — if reopened, it should be re-posed on the corrected
+>   method and is now answerable same-scope.
+>
+
 Continues the Cboe gamma thread (see 2026-09-09_cboe_orats_uw_0dte_join_adjudication card).
 Pivot: PM redefined the pilot. The 0DTE key-mapping 22-day run (staged, not launched) is
 explicitly **not** the Cboe pilot's answer. The pilot is: on the same March UW
