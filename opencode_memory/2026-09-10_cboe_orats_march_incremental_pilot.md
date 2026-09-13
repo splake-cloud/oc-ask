@@ -57,8 +57,9 @@
 >   "2 delegate bugs" bullet below; the fixed direct numbers live only in the v2 report prose).
 >   The 0DTE port inherits the quirk unchanged per "port unchanged"; the *absolute-levels* direct
 >   column IS distinct (M2-US-C direct 0.6999/0.6114/0.5707).
-> - **Spec + artifacts:** `/data/agentic_trading/analysis/sml_fly_verify/gamma_topology/
->   cboe_orats_march_0dte_substrate/` — `SPEC_same_scope_0dte_substrate.md` (FROZEN 2026-09-13;
+ > - **Spec + artifacts:** `/data/agentic_trading/analysis/gamma_reconstruction/` (moved
+ >   2026-09-13 out of `analysis/sml_fly_verify/gamma_topology/cboe_orats_march_0dte_substrate/`
+ >   via git mv — it is a substrate, not a fly-study deliverable) — `SPEC_same_scope_0dte_substrate.md` (FROZEN 2026-09-13;
 >   supersedes the retracted G1–G4 draft), `SIDE_BY_SIDE_0dte_vs_all_expiry.md`, builder + eval +
 >   indep recheck (copies), `nested_model_comparison_0dte.json`, `feature_manifest_0dte.json`,
 >   `three_series_trace_0dte.json`, `diff_vs_v2.json`. Heavy parquets in
