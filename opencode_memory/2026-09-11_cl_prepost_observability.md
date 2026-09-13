@@ -138,3 +138,42 @@ B=662 N=197, |A-B|=1164, G1=0.734, G2=0.927; 182-lot print @19:45:49 verified in
 Live-parity gate (TBBO vs live MBP-1 field-level) before P1. **P0 authorized** (no new
 funding): anchors + union thresholds + false-alert burden + replay acceptance on cl_tick_v1,
 before any live build.
+
+## P0 rolling calibration: built, dry-run STOPPED on a data fact (2026-09-13, commit 25aa37c1)
+
+P0 (replay calibration) went through: bounce-#1 (union calibration never ran) → bounce-#2
+(nested floors + self-checks, 13/13 acceptance, verified — core preserved as
+`scripts/p0_replay_calibration.py.bak`, md5 23479cdb) → bounce-#3 (delegate "caching
+optimization" CORRUPTED the stat engine; preserved as `.broken3`, never build on it) →
+qwen-coder :8081 aborted 4× → build sent to **qwen38-collab :8011** after the envelope was
+red-team reviewed by **qwen38-reviewer :8012** (verdict GO-WITH-AMENDMENTS; 8 amendments:
+S4 monotonicity DISPROVEN under gap-merge — a removed bridging second splits a cluster, so
+ascending scan over distinct in-window values, never binary search; warm-start ratchet hole
+→ bidirectional search; baseline look-ahead → per-day causal baselines; one pinned
+cross-stat merged-union definition + golden bridging vector; vectorized union count;
+determinism spec; inherited deviations documented).
+
+**Phase-0 dry-run gate STOPPED the build (exit 3, verified in verify/clp0_phase0.*):**
+under causal rolling-60 floors (window 2026-01-08→04-06), the Apr 7 19:45:50 burst is NOT
+an episode at any level — all 7 stats below that day's LOOSE floor (S1-5min 1160<1952,
+S1-30s 1156<1342, S2-60s 1776<6439, S2-5min 2673<14522, S3-60s 3574<19340, S4 182<2849,
+S5 4114<10379; max ratio 0.59). E3 (04-17) = 0 USEFUL+ (holds). **Data fact: a
+burden-budget-calibrated (≤1/1, ≤1/5, ≤1/20) causal monitor does not alert on the Apr 7
+19:45 burst** — the earlier "STRONG under calibrated floors" claim was an artifact of the
+FIXED-window floors, which were sub-budget (LOOSE 61/60, S1-30s floor 750); the causal
+floors that hit the budget sit at S1-30s 1342 and drop it. Second data fact: USEFUL ≤12 is
+INFEASIBLE on the 04-07 window (union bottoms at 13 with S4 maxed).
+
+Grid vs real-time convention (red-team hand verification): grid [t−300,t) = 1818/658/197,
+|A−B| 1160, G1 0.7342, G2 0.9263; operator real-time (t−300.5,t+0.5] = 1826/662/197, 1164.
+Self-tests pin grid values. S3 pins exact on grid: 8231 @18:28:21, 8203 @18:55:35.
+
+OPEN operator rulings (P0 cannot bank past Phase 0 until resolved):
+1. E2 acceptance line: (a) accept "monitor misses Apr 7" as a tested, banked property;
+   (b) add an absolute-scale tier independent of the relative budget (8,231 lots/60s is
+   off-scale absolutely); (c) loosen the LOOSE budget (runs pinned at 60/60d — saturated).
+2. Per-day UNMET on infeasible windows: documented non-blocking, or budget 12→13.
+My recommendation was (1a)+(1b) as separate tiers and (2a); operator has not ruled.
+
+Banked: 25aa37c1 (build script + verified core .bak + phase0_gate_stop.md + receipts;
+517 MB replay_persecond/ gitignored as regeneratable). Frozen spec: 12b5f3ea.
