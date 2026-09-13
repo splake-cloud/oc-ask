@@ -190,3 +190,26 @@ autumn-2025 regime (operator picks tolerable burden; test points are starting va
 not contracts), MATERIAL/EXTREME levels, independent of the rarity budget. No new data
 access — Phase-1 arrays suffice; one small build cycle. Open freeze items: per-day
 UNMET (USEFUL-13) treatment, M3 in/out, EXTREME burden target, Lane-2 channels.
+
+## Two-lane monitor: spec v1.1 DRAFT banked (2026-09-13, commit afe87e44)
+
+Operator question "monitor or data access?" — committed answer: **the monitor (calibration),
+not data access** (pool captured all Apr 7 activity; pins verified). Advisor review adopted
+with one number correction: 1,156 = 30-s GRID |A−B| (real-time 30-s = 1,043; 5-min = 1,160
+grid / 1,164 real-time).
+
+Spec §15 (v1.1 DRAFT, pending freeze ruling): Lane 1 (relative anomaly, frozen S1-S5 +
+rolling-60 budget) unchanged — acceptance (a) rewritten to PIN the data fact that the
+relative lane misses Apr 7 (value/floor table as pin). Lane 2 (material flow): absolute
+thresholds independent of the rarity budget — M1 S1-30s |A−B| with G1/G2 concentration gate
+(test point 1,156, SELL), M2 S3-60s gross (8,231), M3 S4 per-print (182, droppable);
+thresholds selected by full-pool burden replay INCLUDING autumn-2025 regime (test points ×
+{0.5…2.0} are starting values, not contracts); MATERIAL (push) + EXTREME (push + auto
+event-study pin, ≤1/quarter proposed) levels; lanes independent, higher tier wins on
+overlap. No new data access — Phase-1 arrays suffice. Build = one small cycle (burden
+curves + threshold selection + Lane-2 artifacts).
+
+Open freeze items: (1) Lane-1 per-day UNMET on infeasible windows (USEFUL-12 bottoms at 13
+on 04-07 window) — doc-only vs budget 13; (2) M3 in/out; (3) EXTREME burden target; (4)
+Lane-2 channels. NOTE: my push of afe87e44 also shipped another seat's local commits
+(355999d1 et al.) that sat unpushed on shared master.
