@@ -596,6 +596,22 @@ mid-docs-update; recovery found the build+verify already done, only docs left).
    quantities that happen to be similar — do not conflate; the capture-level sign-AWARE
    top-5 is 0.707338 (the pilot metric). And the 68.3%/20.5% node figure was a discarded
    throwaway matching neither canonical definition.
+   **±5 CORRIDOR BANKED (PM: "did you try testing it at 5 pts instead of 10?" + "bank it
+   this outcome, create receipts, update the session_id log"):** the ±5 values were
+   ALREADY in the banked JSON (exact_plus5_pct=83.2, within_pm5_pct=40.4,
+   dominant-within-5=27.1) but the corridor_interpretation string only stated ±10.
+   Banked explicitly (commit `3b7c1d48`): probe `corridor_interpretation` now states BOTH
+   widths; manifest gained an explicit `corridor_at_pm5` field. **Outcome: the
+   major-node-corridor claim HOLDS AT ±5, not only ±10** — 83.2% of teacher top-5 nodes
+   within ±5 (90.2% within ±10); of the 1,133 non-exact, 40.4% recover within ±5
+   (65.3% within ±10); only 27.1% of the missed DOMINANT nodes are within ±5. So the
+   corridor use case is valid at ±5 (just tighter); the reliable failure stays
+   dominant-node identity + exact topology, at both widths. New receipt
+   `verify/gamma_recon_error_decomp_pm5.20260914T131034Z.txt` (final; supersedes
+   ...T041643Z + ...T033806Z). README / RAG card / POOL_LEDGER / build_contracts.py all
+   reworded to state both widths; RAG well re-seeded both roots (verified card retrieves
+   #1 with the ±5 text). (My first reply to the ±5 question cited the already-banked
+   values directly — the edit just makes that explicit + durable.)
    **FRAMING FIX (2nd user pass, 2026-09-14):** user corrected the node-level framing and
    the residual-attribution claim. (1) MOST top-5 exact misses ARE near-strike
    substitutions (65.3% of the 1,133 non-exact recover within ±10; 34.7% genuine) — the
