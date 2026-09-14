@@ -507,3 +507,112 @@ mid-docs-update; recovery found the build+verify already done, only docs left).
   `build_contracts.py`; both roots seeded (full via remote-embed on live 8B :8765 since
   GPU floor unmet / Option 0; small via CPU). data_contracts full:live small:live.
   Checklist E: #1 result on all 4 on-topic queries (5.88/2.5/5.0/6.0) vs 0 hits pre-seed.
+- **SIGN-FIDELITY PROBE committed 2026-09-14 (commit 0ba3cc38)** — bounded PM
+  directive: "commit the deterministic probe + verify receipt; add hash+results to
+  manifest/README/RAG; keep pool PROPOSED/FROZEN; do NOT alter the field / rerun the
+  learner / authorize April / reopen the substrate design." Delivered exactly that.
+  `sign_fidelity_probe.py` (read-only, deterministic, double-run byte-identical;
+  self-check reproduces the pilot's documented raw top-5 0.7073383084577115 to <1e-9;
+  input sha == manifest output_sha256). Receipt
+  `verify/gamma_recon_sign_fidelity.20260914T023100Z.txt`. Results (manifest
+  `sign_fidelity` block + README + RAG card, all with script+JSON shas):
+  - **70.7% SAME-SIGN top-5 node overlap** (day-equal 70.9%) — the top-5 match
+    requires field+teacher on the same sign side (this is a CORRECTION to my earlier
+    misstatement that "the sign is not in the 0.707" — it IS; I'd misread the two
+    `abs` lines in isolation, missing the sign-filter in `top5_exact_capture`/
+    `_score_capture`).
+  - **~98.3–98.5% of the top-magnitude nodes the field locates carry the correct UW
+    sign** — CONDITIONAL accuracy among location matches, NOT across all nodes.
+  - Same-sign top-5 sits only ~1.1–1.2pp below the sign-blind ceiling (71.8%).
+  - Per-cell (all denominators persisted so 78.5% isn't misread as full-surface):
+    78.5% agreement where both nonzero (43,407/55,303); 77.9% across every
+    field-nonzero cell (teacher-flat = incorrect); 60.9% of teacher-nonzero cells get
+    a nonzero field call; full 3x3 sign confusion matrix in sign_fidelity_probe.json.
+  - Confirmed 100% 0DTE SPX (both legs): Cboe `option_symbol=="SPXW" AND
+    expiration_date==trade_date` (build_reconstructed_field.py:261-266) + ORATS
+    `tradeDate AND expirDate==tradeDate` (:353-356, :496-497).
+   Durable conclusion: March's model-free same-scope 0DTE C1+ORATS field reproduces
+   UW's SIGNED top nodes, not merely unsigned locations. Sign fidelity established IN
+   MARCH; temporal transport UNCONFIRMED. Pool PROPOSED/FROZEN, unchanged. RAG
+   data_contracts card updated + re-seeded (both roots live, #1 on on-topic queries).
+- **ERROR-DECOMPOSITION PROBE committed 2026-09-14 (this session)** — bounded PM
+  directive: reconcile the 0.55 vs 0.753 Spearman numerical inconsistency before
+  committing the error-decomposition analysis; label whether 0.753 is absolute-magnitude,
+  signed, pooled vs day-equal, or a different cell population.
+  `error_decomposition_probe.py` (read-only, deterministic, double-run byte-identical;
+  self-check reproduces sign-aware top-5 0.7073383, sign-agnostic top-5 0.718159,
+  and signed full-surface Spearman 0.548433 to <1e-6). Receipt
+  `verify/gamma_recon_error_decomp.20260914T033806Z.txt`.
+  **Spearman reconciliation (the user's actual request):** the 0.55 figure is **SIGNED
+  Spearman over the FULL surface** (all cells incl shared zeros, per-capture day-equal
+  = the pilot's `raw_readout` definition). The 0.753 figure is **SIGNED Spearman over
+  BOTH-NONZERO cells only** — same sign convention, same aggregation, but a **different
+  cell population** (shared flat cells removed). They are NOT the same metric. Abs-magnitude
+  full-surface = 0.807. All three labeled explicitly in the script and JSON.
+   **Node-level (sign-agnostic strike identity, n=4020 teacher top-5 nodes):**
+   71.8% exact / +5 83.2% / +10 90.2% / 9.8% miss. (My earlier throwaway figure of
+   68.3%/20.5% was a discarded variant matching neither canonical definition; the committed
+   71.8%/9.8% is authoritative.) **CORRECTED FRAMING (2nd user pass, 2026-09-14):** MOST
+   top-5 exact misses ARE near-strike substitutions — of the 1,133 non-exact nodes,
+   **65.3% recover within ±10 SPX**, only 34.7% are genuine >10pt/absent misses; the
+   broad top-5 ZONE is well-reconstructed (90.2% within ±10). The reliable failure is
+   **dominant-node IDENTITY + exact ranking**, not the zone. (My first-pass "mostly
+   genuinely different node states" was WRONG — it carried over from the discarded
+   68.3%/20.5% numbers; corrected in the script + all docs.)
+   **Dominant-node miss:** 45.5% of captures miss the dominant node; field's best is
+   MEDIAN 25 SPX pts away (p75 55, p90 105; only 27% within 5, 49% within 20).
+   **High-confidence EXACT-NODE field-side abstention subset: NONE** — no single-threshold
+   gate (coverage / field top-1 dominance ratio / top-1 share) reaches ≥90% all-5 node
+   precision while passing ≥25% of captures (the ~100%-precision gates cover 0–2%).
+   **Residual attribution (CORRECTED — consistency, not causation):** NOT explained by
+   coverage (covered-vs-uncovered orthogonal, corr ≈ −0.05) and NOT by an obvious
+   construction failure (signed full-surface Spearman ~0.55 stable; sign on located nodes
+   ~98–99%); it is **CONSISTENT WITH** the field's omissions (no opening inventory —
+   cumulative-since-open, |field| grows ~3.2× first→last; C1-only scope) but the
+   decomposition does **NOT uniquely identify the cause** — not proven causation.
+   **Durable verdict: RESEARCH PROXY** — strong for MAJOR-NODE CORRIDORS ("does a major
+   signed node exist within a ±10-pt corridor?"), weak for dominant-node identity /
+   exact-strike topology / fine ranking / small-node topology; no ≥90%-precision
+   exact-node abstention subset; NOT canonical substrate-grade. Pool PROPOSED/FROZEN, unchanged.
+  Docs updated: manifest.json `error_decomposition` block, README (scope + artifacts
+  + receipts), RAG card yaml (`error_decomposition` block + 2 new constraints), POOL_LEDGER
+  (`probes` field + notes verdict).
+  **Committed 2 commits:** `aa130927` (the 7 probe/docs/receipt files) + `dde001e8`
+  (build_contracts.py — the live RAG `data_contracts` well producer — synced to the
+  reconciliation + verdict).
+  **RAG well re-seeded (both roots live):** `build_contracts.py` change → staged
+  `data_contracts.jsonl` changed → `refresh_planner.py scan-stage --groups data_contracts`
+  (CPU) → seed small (dense GPU2, 92 rows) + seed full (co-resident remote-embed on
+  live 8B :8765/embed, GPU-floor-unmet so no local 8B load, 92 rows). Verified:
+  `refresh_planner.py status` shows data_contracts full=live small=live (92 rows, fresh
+  timestamp); `rag-search "…Spearman 0.55 vs 0.753 signed full-surface both-nonzero…"`
+  returns the updated gamma_reconstruction card #1 (score 7.56) with the reconciliation
+  + REMAIN-A-RESEARCH-PROXY verdict. (NOTE: full `scan-stage` — without `--groups` —
+  FAILED on an UNRELATED pre-existing group, harvest_table_cards.py YAML parse error at
+  data-catalog line 661; not my change, left for whoever owns that group. Staged only
+  data_contracts.)
+   **Metric-label note (carried into every record):** the node-level sign-AGNOSTIC exact
+   (71.8%) and the capture-level sign-blind CEILING headline (0.718159) are DIFFERENT
+   quantities that happen to be similar — do not conflate; the capture-level sign-AWARE
+   top-5 is 0.707338 (the pilot metric). And the 68.3%/20.5% node figure was a discarded
+   throwaway matching neither canonical definition.
+   **FRAMING FIX (2nd user pass, 2026-09-14):** user corrected the node-level framing and
+   the residual-attribution claim. (1) MOST top-5 exact misses ARE near-strike
+   substitutions (65.3% of the 1,133 non-exact recover within ±10; 34.7% genuine) — the
+   broad zone is well-reconstructed (90.2% within ±10); the reliable failure is
+   dominant-node identity + exact ranking, NOT the zone. The first-pass "mostly genuinely
+   different node states" was wrong (carried over from the discarded 68.3%/20.5%). (2)
+   "structural because of missing opening inventory and C1-only scope" was an overclaim of
+   CAUSATION — restated as residual attribution CONSISTENT WITH those omissions, not proven
+   causation (the decomposition rules out coverage + construction failure but does not
+   uniquely identify the cause). Applied to: error_decomposition_probe.py (added
+   `node_decomposition.exact_miss_split` + `corridor_interpretation`; reworded
+   `residual_attribution.scope_note` to consistency-not-causation — dispatched to
+   qwen-coder as an EDIT, re-verified via verify-run
+   gamma_recon_error_decomp.20260914T041643Z.txt, supersedes the 033806Z receipt),
+   manifest.json (exact_miss_split + corrected residual_attribution + durable
+   RESEARCH-PROXY verdict + new script/JSON shas), README, RAG card yaml (error_decomposition
+   block + constraint bullet), POOL_LEDGER (probes + notes), build_contracts.py (live RAG
+   well), and this card. The durable verdict is now: RESEARCH PROXY — strong for
+   major-node corridors, weak for dominant-node identity / exact topology, no
+   ≥90%-precision exact-node abstention subset, not canonical substrate-grade.
