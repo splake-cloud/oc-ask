@@ -607,11 +607,31 @@ mid-docs-update; recovery found the build+verify already done, only docs left).
    (65.3% within ±10); only 27.1% of the missed DOMINANT nodes are within ±5. So the
    corridor use case is valid at ±5 (just tighter); the reliable failure stays
    dominant-node identity + exact topology, at both widths. New receipt
-   `verify/gamma_recon_error_decomp_pm5.20260914T131034Z.txt` (final; supersedes
-   ...T041643Z + ...T033806Z). README / RAG card / POOL_LEDGER / build_contracts.py all
-   reworded to state both widths; RAG well re-seeded both roots (verified card retrieves
-   #1 with the ±5 text). (My first reply to the ±5 question cited the already-banked
-   values directly — the edit just makes that explicit + durable.)
+   `verify/gamma_recon_error_decomp_pm5.20260914T131034Z.txt`. README / RAG card /
+   POOL_LEDGER / build_contracts.py all reworded to state both widths; RAG well
+   re-seeded both roots.
+   **CANONICAL SUBSTRATE LABEL BANKED (PM: gave the exact label wording + "that is how the
+   substrate should be labeled"):**
+   > *Research proxy with 83.2% top-five corridor fidelity at ±5, 90.2% at ±10, but only
+   > 66.8% dominant-node fidelity at ±5. Not a canonical exact-node or dominant-node substrate.*
+   This is now the canonical one-line label in manifest.json (`canonical_label` +
+   `canonical_label_provenance`), README, RAG card, POOL_LEDGER, and the live RAG well.
+   **66.8% dominant-node fidelity at ±5 was promoted to a FIRST-CLASS, self-check-anchored
+   metric** (commit `6682beec`; build ses_f5fcc1f0fffemj89eUy42O7WNL): previously only
+   derivable from the banked ints, the probe's dominant-node loop now counts exact/±5/±10
+   per capture and emits `dominant_node_miss.dominant_fidelity` = **54.5% exact /
+   66.8% within ±5 / 71.1% within ±10** (537/804 at ±5); new self-check anchor
+   `dominant_fidelity_pm5 = 0.667910447761194` (=537/804) to 1e-9 — 6 anchors now,
+   self-check PASS, byte-identical. Verified independently before banking: 438/804
+   exact, 537/804 ±5, 572/804 ±10. Receipt
+   `verify/gamma_recon_error_decomp_dominant.20260914T135624Z.txt` (final; supersedes
+   ...T131034Z, ...T041643Z, ...T033806Z). RAG well re-seeded both roots (verified card
+   retrieves #1 with the canonical label + 66.8% + the anchor constant). NOTE: the two
+   dominant-node framings are different quantities — `dominant_fidelity` (54.5%/66.8%/
+   71.1%) is per-CAPTURE over all 804; `fraction_within`/`within_5_pct` (27.1%) is
+   CONDITIONAL on the 366 missed captures; do not conflate. (My commit message for
+   6682beec has one cosmetic typo "66.6%->" that should read "66.8%"; the banked value is
+   66.8%.)
    **FRAMING FIX (2nd user pass, 2026-09-14):** user corrected the node-level framing and
    the residual-attribution claim. (1) MOST top-5 exact misses ARE near-strike
    substitutions (65.3% of the 1,133 non-exact recover within ±10; 34.7% genuine) — the
