@@ -63,12 +63,9 @@ landed and were verified:
 
 ## Open / next
 
-- **`reconcile.yaml` commit BLOCKED by seat permissions**: `/data/research_agent`
-  is a separate git repo and this seat's git permission only allows
-  `git -C /data/agentic_trading` and `git -C /home/user/oc-ask`. Needs a
-  host-side / permitted seat to `git -C /data/research_agent add
-  studies/gamma_node_price_pull_discovery/specs/reconcile.yaml && git commit`
-  (with Agent-Print trailer) + push.
+- **`reconcile.yaml` commit — RESOLVED (user committed, 2026-09-17)**: it lives in
+  `/data/research_agent` (a separate git repo this seat's git permission can't
+  reach), so the user committed it directly. All three repos now committed.
 - **`verify.py` now 48/11** — the 11 failures are the obsolete "seed-only global
   count" assertions (`seed/verify.py:57-63,74`: exactly 1 study, 3 datasets,
   …). They assumed the DB holds only spx_0050; no longer true after backfill.
