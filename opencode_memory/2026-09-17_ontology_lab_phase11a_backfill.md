@@ -3,7 +3,7 @@
 ## What was built/decided
 
 Continuation of the Research Ontology Lab build (session
-`ses_f5acd11ffffeQ8GjFlVmSqLoSN`, resumed after ctx overflow). Three things
+`ses_f5acd11ffffeQ8GjFlVmSqLoSN`, resumed after ctx overflow). Four things
 landed and were verified:
 
 1. **Phase 11a — reconcile manifest** (the "important seat" prereq). The
@@ -15,8 +15,12 @@ landed and were verified:
    `INDETERMINATE`).
 2. **PM decision D1 (option a)** — extended the claim-status vocabulary with
    `INDETERMINATE`.
-3. **research_agent backfill** — all 4 studies brought into the ontology at
-   their faithful states.
+ 3. **research_agent backfill** — all 4 studies brought into the ontology at
+    their faithful states.
+ 4. **RAG card for the study-state ledger** — an authored card
+    `study-state-ledger-lifecycle` added to the `lifecycle_contracts` well
+    (the best fit: the study state machine is a lifecycle), documenting what
+    the ledger is, how it works, and what initiates it.
 
 ## Key facts settled (with paths)
 
@@ -48,9 +52,20 @@ landed and were verified:
 - **Gamma reconcile.yaml** (new, the only file written under `/data/research_agent/`):
   `/data/research_agent/studies/gamma_node_price_pull_discovery/specs/reconcile.yaml`
   — `claim_source.kind: pairs` (no-parquet case), `decision_rule.extract.pattern:
-  "JOINT D1 = ({label})"`. Reconcile on the real study: claim multiset MATCH,
-  decision INDETERMINATE, decision_consistency DRIFT on `status=EXECUTED`
-  (**expected** — mid-flight, flips to MATCH at VALIDATED).
+   "JOINT D1 = ({label})"`. Reconcile on the real study: claim multiset MATCH,
+   decision INDETERMINATE, decision_consistency DRIFT on `status=EXECUTED`
+   (**expected** — mid-flight, flips to MATCH at VALIDATED).
+- **RAG card** `study-state-ledger-lifecycle` (authored, in the well's SOURCE
+  `scripts/rag_verifier/harvest_lifecycle_contracts.py`, so it survives
+  re-stage): documents the study-state ledger — what it is (`study.status` +
+  `audit_log`, 7-state machine in `ontology_actions.py` `STUDY_TRANSITIONS`),
+  how it works (evidence preconditions per transition, audit append per step,
+  reconcile soft convergence meter → hard closure gate), what initiates it
+  (`study_ledger.py` trigger = sole runtime writer; seed is bootstrap). Staged
+  (42 cards), seeded BOTH roots — full via `--remote-embed` on the live 8B
+  (:8765, no GPU floor), small local 0.6B. Verified: both roots missing=0/
+  stale=0/zero_vectors=0, card live, retrieves top-1 (score 5.625) on the live
+  service.
 - **Backup** pre-backfill DB: `/tmp/opencode/ontology_pre_backfill.duckdb` (1 study).
 
 ## Commits (agentic_trading, master)
@@ -58,6 +73,10 @@ landed and were verified:
 - `407c00c9` — Phase 11a reconcile manifest + INDETERMINATE claim status
   (5 files: reconcile.py, schema.yaml, ontology_actions.py, specs/spec,
   specs/fixtures/spx_0050.reconcile.yaml). Pushed.
+- `39c7be80` — RAG card source: the `study-state-ledger-lifecycle` card added
+  to `scripts/rag_verifier/harvest_lifecycle_contracts.py` (1 file, +23).
+  Pushed. (The staged JSONL + indexes are in the RAG's gitignored working area,
+  not committed.)
 - The backfill itself is **not committed** in agentic_trading: `ontology.duckdb`
   is gitignored, the backfill script is in `/tmp/opencode/backfill_gamma.py`.
 
