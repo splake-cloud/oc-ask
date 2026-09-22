@@ -28,13 +28,16 @@ projection hook** fired automatically after relevant state observations;
 ## What was built (4 files)
 - **`/data/agentic_trading/ontology_lab/study_ledger_reconcile.py`** (BUILD,
   qwen-coder) — `study_ledger_reconcile.py <study> [state]`. Reads the latest
-  *usable* state observation, maps 11→7 via a fixed table, advances the ledger
-  one legal 7-state step at a time via the governed `change_study_state` (same
-  precondition machinery as study_ledger.py — no direct SQL, no machine/enum
-  change). Projects only the entities a precondition gate requires, from sealed
-  sha-verified evidence. Always exits 0 (except study-not-found); never retreats.
-  `state` subcommand prints the 3-line Research-Agent / milestone / ledger drift
-  surface.
+  *usable* state observation, which **identifies the candidate workflow
+  milestone** (maps 11→7 via a fixed table). The observation is a pointer, NOT
+  the authoritative workflow state by itself. **Governed evidence establishes
+  projectability**: the ledger advances one legal 7-state step at a time via the
+  governed `change_study_state` (same precondition machinery as study_ledger.py
+  — no direct SQL, no machine/enum change), and projects only the sealed
+  sha-verified entities a precondition gate requires. A milestone that lacks
+  projectable evidence is not advanced (STOPPED finding). Always exits 0 (except
+  study-not-found); never retreats. `state` subcommand prints the 3-line
+  Research-Agent / milestone / ledger drift surface.
 - **`/data/research_agent/tools/state_log.py`** (EDIT, qwen-coder) — post-emit
   hook: after a real-study `emit` (not `_station`), spawns the reconciler
   (subprocess, 120 s, stdlib-only, stderr-only). Emit stdout/exit unchanged.
@@ -63,8 +66,11 @@ projection hook** fired automatically after relevant state observations;
   `reconciler (evidence: SO-00021)`.
 - Entity projection: `blueprint.md SPECIFICATION 2245ad7f…` + method APPROVED.
 - Idempotent NOOP (2nd run, 0 new rows); no-retreat (CLOSED stays CLOSED);
-  drift surface correct; hook non-blocking (emit stdout=JSON only, json.loads OK;
-  `_station` exempt; real-study emit fires reconciler, ledger untouched).
+  drift surface correct.
+- Hook non-blocking — PROVEN ON THE WORKING TREE (scratch `--log`), not the
+  authoritative repo: emit stdout=JSON only (json.loads OK); `_station` exempt;
+  real-study emit fires the reconciler, ledger untouched. End-to-end auto-sync
+  is PENDING the hook's commit to research_agent.
 
 ## Fix applied this session (2nd request): log path from DB dir
 The first build hardcoded `RECONCILE_LOG` to the live dir, so copy-DB dev tests
@@ -80,13 +86,30 @@ Committed + pushed **`08c7dc4f`** to `master` (origin market_data): the two
 `specs/study_ledger_reconcile_spec.md`), Agent-Print trailer present, verified
 on the remote (FETCH_HEAD == 08c7dc4f).
 
-**BLOCKER — 2 of the 4 files NOT committed:** `/data/research_agent` is a
-SEPARATE git repo, and this seat's git permission is denied there (allowlist =
-`git -C /data/agentic_trading` + `git -C /home/user/oc-ask` only). The two
-research_agent files (`tools/state_log.py`,
-`studies/credit_fly/specs/ledger_methods.yaml`) are on disk, verified, but
-uncommitted. Committing them needs a seat with research_agent git access (or a
-PM widening the allowlist). Same applies to any RAG-card follow-up.
+ **Deployment-incomplete (NOT conceptually unresolved) — 2 files, this seat
+lacks repository authority:** `/data/research_agent` is a SEPARATE git repo and
+this seat's git permission is denied there (allowlist = `git -C /data/agentic_trading`
++ `git -C /home/user/oc-ask` only). The two research_agent changes are complete
+and verified in the working tree; they are simply not committed to the
+authoritative repo. Committing them needs a seat with research_agent git access
+(or a PM widening the allowlist). Distinguish the states explicitly:
+
+```
+RECONCILER
+  implementation: LIVE          (study_ledger_reconcile.py, committed+pushed 08c7dc4f)
+  live manual proof: PASS       (credit_fly AUTHORIZED->BLUEPRINTED via SO-00021)
+
+POST-EMIT HOOK
+  local working tree: PRESENT   (tools/state_log.py edited + verified)
+  authoritative repo: NOT YET COMMITTED  (research_agent, no git authority here)
+
+END-TO-END AUTO SYNC
+  activation: PENDING           (fires only once the hook is committed/deployed;
+                                 until then the reconciler runs on manual invocation)
+```
+
+The first two lines are the same synthetic/live conflation class corrected
+elsewhere: the local working tree is NOT the authoritative repo.
 
 ## RAG card updated (4th request, 2026-09-22) — DONE, live both roots
 Amended the `study-state-ledger-lifecycle` card source
@@ -97,22 +120,32 @@ Amended the `study-state-ledger-lifecycle` card source
   state_log.py post-emit hook; spec path cited.
 - Self-heal now **CODE-driven as well as prompt-based**.
 - STATION section: corrected the pre-2026-09-22 "the station never writes to the
-  ledger" → station observations are AUTHORITATIVE, the 7-state ledger is a
-  COARSE PROJECTION synchronized one-way; the write only advances forward, one
-  legal step, as far as evidence preconditions allow, never retreats/skips/overrides.
+  ledger" → the station's latest state observation IDENTIFIES the candidate
+  workflow milestone; the ledger's own governed evidence preconditions ESTABLISH
+  projectability; the 7-state ledger is a COARSE PROJECTION synchronized one-way;
+  the write only advances forward, one legal step, as far as evidence
+  preconditions allow, never retreats/skips/overrides.
 - triggers + citation_refs + severity_hint updated (governed-trigger wording).
 Pipeline: scan-stage --groups lifecycle_contracts → seed full
 (--remote-embed on live 8B, GPU-floor would have refused) + seed small (local
-0.6B) → status full=live small=live. Verified: live :8765 top-1 (score 6.438)
-serves the corrected text.
-**UNCOMMITTED:** the harvester source edit is on disk in `/data/agentic_trading`
-(not yet committed/pushed). The staged+indexed card is live regardless.
+0.6B) → status full=live small=live. Verified: live :8765 top-1 serves the
+corrected text. Committed + pushed `752b97dc`.
+
+## Wording tightening (6th request, 2026-09-22)
+PM: the state observation is NOT by itself the authoritative workflow state.
+Corrected the distinction in all four locations (spec §2, reconciler docstring,
+RAG card, memory card): the observation **identifies the candidate workflow
+milestone**; **governed evidence establishes whether that milestone is
+projectable**. The observation is a pointer, not the proof.
+Also reframed the 2 research_agent changes: they are **deployment-incomplete**
+(this seat lacks repository authority), NOT conceptually unresolved. Three-state
+observability block added (RECONCILER / POST-EMIT HOOK / END-TO-END AUTO SYNC).
 
 ## Open / next
-- Commit + push the 2 research_agent files (needs authorized seat).
-- Commit + push the harvester source edit
-  (scripts/rag_verifier/harvest_lifecycle_contracts.py) — agentic_trading, this
-  seat CAN commit it.
+- Commit + push the 2 research_agent files (needs authorized seat) —
+  deployment-incomplete, not unresolved.
+- Commit + push the wording-tightening edits (spec, reconciler docstring, RAG
+  card harvester source) — agentic_trading, this seat CAN commit.
 - Ruling noted: the live `reconcile_log.jsonl` retains 18 pre-fix lines (incl.
   5 that re-claim the transition) — append-only, left as-is.
 - credit_fly build dispatch is the next real step (ledger now correctly at
