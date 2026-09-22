@@ -88,10 +88,31 @@ research_agent files (`tools/state_log.py`,
 uncommitted. Committing them needs a seat with research_agent git access (or a
 PM widening the allowlist). Same applies to any RAG-card follow-up.
 
+## RAG card updated (4th request, 2026-09-22) — DONE, live both roots
+Amended the `study-state-ledger-lifecycle` card source
+(`/data/agentic_trading/scripts/rag_verifier/harvest_lifecycle_contracts.py:333`):
+- "study_ledger.py is the SOLE runtime writer" → **TWO writers, both governed**
+  (decision-point writer (a) + the one-way non-blocking reconciler (b)); NEITHER
+  direct-SQL-updates study.status; reconciler is the **LIVE TRIGGER** via the
+  state_log.py post-emit hook; spec path cited.
+- Self-heal now **CODE-driven as well as prompt-based**.
+- STATION section: corrected the pre-2026-09-22 "the station never writes to the
+  ledger" → station observations are AUTHORITATIVE, the 7-state ledger is a
+  COARSE PROJECTION synchronized one-way; the write only advances forward, one
+  legal step, as far as evidence preconditions allow, never retreats/skips/overrides.
+- triggers + citation_refs + severity_hint updated (governed-trigger wording).
+Pipeline: scan-stage --groups lifecycle_contracts → seed full
+(--remote-embed on live 8B, GPU-floor would have refused) + seed small (local
+0.6B) → status full=live small=live. Verified: live :8765 top-1 (score 6.438)
+serves the corrected text.
+**UNCOMMITTED:** the harvester source edit is on disk in `/data/agentic_trading`
+(not yet committed/pushed). The staged+indexed card is live regardless.
+
 ## Open / next
 - Commit + push the 2 research_agent files (needs authorized seat).
-- Amend RAG card `study-state-ledger-lifecycle` ("sole runtime writer" → "sole
-  *trigger* writer; reconciler is a 2nd writer via the same governed actions").
+- Commit + push the harvester source edit
+  (scripts/rag_verifier/harvest_lifecycle_contracts.py) — agentic_trading, this
+  seat CAN commit it.
 - Ruling noted: the live `reconcile_log.jsonl` retains 18 pre-fix lines (incl.
   5 that re-claim the transition) — append-only, left as-is.
 - credit_fly build dispatch is the next real step (ledger now correctly at
