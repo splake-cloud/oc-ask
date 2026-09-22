@@ -62,3 +62,42 @@ prose fixed) → canonical re-run (11 PASS/6 OBSERVED-FAIL, NO) → targeted KAS
 Next = new operator decision (banked candidates: D reach replication; E T4-twin / CONDITIONAL
 readouts). Deposits: d2_pins_rerun T031857Z/T031903Z, d3_g0_pins T032258Z, d3_canonical_pinfix
 T032551Z, pm_pincheck T032608Z, kasa_pinfix_clearance3 (13/13).
+
+## Cont. — Program state: C-Replication is the next gate; feasibility surveyed (same day)
+Operator ruling: queue A–E exhausted; next = **confirmatory C-Replication** (protocol-frozen;
+only N↑ via deeper true-VAP history); D-reach/E-twin/CONDITIONAL/gamma/path-topology = banked,
+not promoted (outcome-selection discipline). Feasibility survey (read-only, receipt
+`receipts/c_replication_data_feasibility_2026-09-12.md`, commit above): **classification D —
+acquisition required**. True-T on disk = pilot window only: /data/parquet/es_mbo/
+es_mbo_events_v1.parquet/ = Databento GLBX pull 2026-04-12 09:11ET → 2026-05-10 23:59:59ET,
+ESM6 only, 262.7M rows (T 8.92M). Deeper ES = bars only (es_1min_live 2010-06-06→present,
+4,193 days, 3-5 contracts/day — conservation counterpart). VAP builder deterministic;
+front-month derivable from contract month code; invariant ΣT_size=Σbar_vol testable 2010→
+(pilot: delta=0 ×20 sessions). Acquisition ask: same GLBX product, ES-only, start
+operator-choice (bar-pool-capped 2010-06-06), ~0.09GB/day, ~16GB/5yr, ~43GB/full.
+Program state: FOUNDATION P0-6 CLOSED; A NO / B NO / C YES-completion / D NO / E NO;
+NEXT GATE = C-Replication (pending: operator start-date ruling + acquisition → blueprint).
+
+## Cont. — Program conclusion BANKED (operator statement, canonical)
+"Auction-profile geometry is clearly real, but geometric prominence has not translated into
+reliable next-session destination prediction. The sole positive pilot result concerns what
+happens conditional on interaction: LVN corridors are more likely to be crossed completely than
+matched regions, without being crossed faster. If that result replicates, the economically
+interesting object is likely not 'where price is attracted,' but the transition structure of
+price paths through auction geometry." — **LVN may mean "less likely to stop here," not
+"likely to move fast here."** Banked with record anchors + conditions (replication-pending;
+direction = hypothesis label until C-Replication; leads not outcome-selectable; D-closure
+framing guard binding). Canonical: `receipts/banked_program_conclusion_2026-09-12.md` (commit
+see git log, es-auction: bank program conclusion A-E). RAG sync pending at next documented
+refresh.
+
+## Cont. — Pre-registered C-Replication disposition rule BANKED (6d09a3d8)
+Operator ruling, to be transcribed VERBATIM into the C-Replication spec's decision-rule
+section at blueprint time: **FAIL** (on materially deeper true-VAP history) → "A–E produced
+no replicated behavioral effect" — program closes on that conclusion; banked leads stay
+banked, unjustified as next program. **SURVIVE** (shape replication: LVN completion
+advantage, both arms, four frozen scales, multi-year, year-by-year + leave-era-out, no new
+thresholds/exclusions) → path-topology becomes the justified next program (object = transition
+structure of price paths through auction geometry); banked leads admissible as design inputs
+under that program's own frozen discipline; D-reach replication = candidate sub-question.
+- **Resume brief (2026-09-16 maintenance):** `studies/es_auction_profile/HANDOFF_2026-09-16.md` (commit 3b472759) — read this first on reboot; parked on start-date + GLBX go/no-go.

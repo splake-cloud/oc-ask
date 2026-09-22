@@ -56,3 +56,24 @@ it to persist **zero models**.
   survive reboot/crash (Restart=always, StartLimit* actually in [Unit]).
 - `merged_service.py` / `project_paper_claims.py` remain dormant per §11 (corpus merge still
   rejected; this work is model sharing, not corpus merge).
+
+## Continuation 2026-09-17 — :8090 made persistent (systemd user unit, commit df5460b6)
+
+- Service was down (hand-launched, no unit, no auto-restart). PM: persist it.
+- `scripts/paper_corpus/paper-retrieval.service` (repo copy) — ExecStart = the probed cmdline
+  (`/data/agentic_trading/.venv/bin/python .../serve_retrieval.py --port 8090 --lance-dir
+  /data/parquet/papers_corpus/indexes`); zero resident models, borrows 8B pair from :8765;
+  Restart=always, StartLimit in [Unit] (house style).
+- Installed as a USER unit (`~/.config/systemd/user/`, Linger=yes) — no passwordless sudo for
+  system units; all 7 sibling user units use `WantedBy=default.target`. Two install-time
+  defects caught live: `User=user` in a user unit → exit 216 "Failed to determine
+  supplementary groups" (directive must be absent); `WantedBy=multi-user.target` → no such
+  unit in the user manager. Delegate bounce: first edit also simplified the After= line
+  beyond spec — re-dispatched, restored verbatim.
+- After= refs to system units verifier-rag-full/small are a NO-OP in the user manager
+  (harmless: /search fails closed if :8765 down). Boot state = small RAG (0.6B/1024-dim) →
+  :8090 fails closed until full RAG is requested; by design, no garbage.
+- Old hand-launched pid killed; unit active, `systemctl --user is-active` = active.
+  verify-run: unit-build-paper-retrieval.20260917T155443Z, paper-retrieval-unit-live.20260917T155545Z.
+- RAG runtime card (2026-09-12) now stale on "no systemd unit, hand-launched" — next
+  system_runtime harvest should pick up the unit.

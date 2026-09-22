@@ -100,3 +100,22 @@ landed and were verified:
   **11d** (ledger-guard) still scoped, not built — both PM-gated.
 - **agentic_trading/studies** (15 studies) NOT backfilled — different layout,
   no decision memo / claim verdicts; a separate PM scope decision.
+
+## Amendment — 2026-09-19: card location fix (pi seat)
+
+The card's location text was misleading: it used relative `ontology_lab/...`
+paths next to "/data/research_agent" (the wiring repo), so a reader (and a
+fresh session) could place the code + DB under /data/research_agent. They do
+not live there. Fixed in `scripts/rag_verifier/harvest_lifecycle_contracts.py`
+(entry `study-state-ledger-lifecycle`): absolute paths for the code
+(`/data/agentic_trading/ontology_lab/`), the ledger DB
+(`/data/agentic_trading/ontology_lab/ontology.duckdb`, DEFAULT_DB in
+study_ledger.py), the one-shot seed (`seed/seed_spx_0050.py`), plus an
+explicit "WHERE IT LIVES" sentence stating /data/research_agent holds only
+the phase-transport wiring (commit 7f9dac4 — verified, that claim was
+already correct). Edit dispatched to qwen38-collab (qwen-coder's :8081 was
+down); refresh via documented pipeline (scan-stage → full root
+remote-embed :8765 → small root CPU); both roots missing=0/stale=0/
+zero_vectors=0; live service retrieves the corrected card (score 5.06).
+Verify receipts: verify/ragcard-edit-{diff,compile,harvest}.20260919T1134*.txt,
+verify/ragcard-live-retrieval.*.txt.

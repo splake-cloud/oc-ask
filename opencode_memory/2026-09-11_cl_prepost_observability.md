@@ -213,3 +213,190 @@ Open freeze items: (1) Lane-1 per-day UNMET on infeasible windows (USEFUL-12 bot
 on 04-07 window) — doc-only vs budget 13; (2) M3 in/out; (3) EXTREME burden target; (4)
 Lane-2 channels. NOTE: my push of afe87e44 also shipped another seat's local commits
 (355999d1 et al.) that sat unpushed on shared master.
+
+## Lane-1 full rolling build: FROZEN spec -> mechanism fix -> timeout -> OPTIMIZED + VERIFIED (2026-09-14/15)
+
+Spec v1.1 FROZEN (cebcfb0c) with operator rulings. Lane-2 burden build (4e7f4aef; ST2
+adjudication: duckdb `::BIGINT` epoch cast rounds to nearest second, not floor — 1,156
+grid pin valid). Lane-2 thresholds FROZEN (b6ccd563): M1=1,043 / M2=24,693 (raised from
+16,462 by the combined-union gate: M1+M2 union 39/248 sessions = 15.73% <= 20% PASS);
+M3 OUT; EXTREME off-diagonal 2,400/32,700.
+
+Lane-1 rolling build authorized (0c83e6ac). The 27-hour hang (PID 3474782) CLOSED as
+external (contention/one-off): same script+pool completes ~3 min quiet (receipt
+e07c65bc); residual in-script defect = concurrency-unsafe startup stale-cleanup (fix
+mission spec'd, pending approval).
+
+**Pin adjudication (cf0569a1, :8012 read-only card): VERDICT B** — search is
+seed-dependent (not a window function); WARM (rolling) vector VIOLATES the USEFUL budget
+(18 > 12) and is a locally-stuck infeasible fixed point; two mechanism defects proven
+(hill_climb stops at first feasible point; UNMET kept the stuck floor instead of
+strictest+flag). Operator ruling A: keep banked pin as contract + mechanism fix.
+Causal-satisfiability correction: the old banked 21 values are UNREACHABLE from causal
+seeds. **Pin provenance ruling (2026-09-15)**: acceptance pin must not originate from
+the implementation state it tests -> `ADJUDICATED_0407` = literal from the independent
+adjudication transcript (verify/lane1_pin_adjudication.20260914.txt, sha256
+726a9e5d...). Mechanism fix + pin + **§15.9 SELECTION RULE FROZEN** (two independent
+paths per window; post-nesting feasibility; both->backstop, backstop-only->backstop,
+primary-only->primary, neither->UNMET strictest+flag; no carry-forward) = commit
+5a53fe3f.
+
+**--full verification run TIMED OUT** (exit 124 at 15:00, 120/188 days; environmental
+1.6-2.2x slowdown, two catalog jobs) — reported per operator instruction (no pin/floor/
+selection/criteria changes). Deposit verify/lane1_full_final.20260914T211618Z.txt.
+
+**RUNTIME OPTIMIZATION COMPLETE (2026-09-15, commit d879c66a, pi seat)** — operator
+authorized the optimization + the single deposited --full. Profile first (mandated):
+bottleneck = s4_sweep CPU (88% of search), NOT parquet I/O (496 reads = ~20s); per-day
+3.36s (quiet baseline from lane1_full_fixed deposit). Changes (all equivalence-proven,
+semantics frozen): (1) s4_sweep vectorized — monotone-stack pred/succ -> sparse-table
+range-max binary descent (suffix-max prefilter, -1-padded sentinels; pred = mirror on
+reversed array, non-strict) + K x 60 batch pointer loop -> per-second three-term delta
+reduced by np.bincount over ranks; 3.28x worst-window, bit-identical (distinct, C)
+(60 random multi-day trials + 6 edges + 20k-element stack differential + frozen
+self-test); the first vectorization attempt (jump-pointer doubling) was WRONG (chain
+heads don't compose under doubling) — caught by the differential before any run.
+(2) full_load_once: single pass over the 248 parquets (day derivation + store in one
+read; 496->248 reads); 5208/5208 store arrays verified equal to two-pass.
+(3) union_count_ws memoized per (id(vs), floor tuple) — build_window clears it (CPython
+id reuse of a dead vs list); EVAL_COUNTER lock-protected (deterministic total; the
+report's day-10 eval count is a call count, unchanged by memoization).
+(4) search_day backstop in a worker thread (pure function of (win, INITIAL_FLOORS);
+join before the unchanged §15.9 merge). Equivalence driver (90 scoring days
+2025-12-05->2026-04-17, old vs new module): ALL IDENTICAL — starts/nested/postnest/met/
+per_level/c_day/episodes + all 516 s4 C-arrays. **--full: exit 0, 50/50 acceptance
+(12 grid pins + a1-d3b + abn1-2 + E2 zero-episode/all-7-below-LOOSE + E3 zero USEFUL+
+04-17 + 21/21 ADJUDICATED_0407), 342s (was ~13 min quiet / 15:00 timeout contended);
+verify-run auto determinism re-run 343s, all 4 output files BYTE-IDENTICAL** (receipts
+verify/lane1_full_opt.20260914T223100Z.txt + lane1_full_opt_determinism.20260914T223656Z.txt).
+Canonical outputs committed (lane1_rolling_{floors,burden,top10}.csv + report.md —
+true outputs of the committed code; the 20:45 untracked outputs were the delegate's
+fixed_v2 iteration, whose day-10 eval count 51,185 differs from the committed code's
+39,636/10d — code-version difference, not a regression).
+
+Open: (1) cleanup-fix mission (flock + scoped startup cleanup for the stale-cleanup
+defect) spec'd, awaiting approval; (2) P1 shadow run (live-parity gate: TBBO vs MBP-1
+field equivalence; Lane-1 grid-vs-real-time reconciliation); (3) cost question (Databento
+plan + CME licensing for live GLBX.MDP3 + IFEU); (4) IFEU definition pull ($77) if
+funded.
+
+## 2026-09-16 — cost-gate correction, concurrency fix applied, shadow-run scope DRAFT
+
+**Cost-gate correction (operator challenge, settled).** The "Databento plan + CME
+licensing gate" was STALE for the monitor's core. What is actually running:
+- `cl_tick_ingest.timer` — daily 21:00 UTC T-1 ingest of TBBO CL.FUT + LO.OPT
+  from Databento GLBX.MDP3 -> `/data/parquet/cl_tick_v1` (the monitor's pool;
+  verified current: last run 09-15 21:05 OK, next 09-16 21:00; latest
+  partition ingest_utc_date=2026-09-14 = T-1 semantics).
+- `cl_tick_live.service` — continuous live TBBO CL_FUT + LO_OPT ->
+  `/data/parquet/cl_tick_live_v1` (best-effort; gaps recorded in
+  `cl_tick_live_v1/gaps/`; live bytes never enter frozen study tables,
+  INV-L3/L7). Verified streaming same-day (15:49 UTC flushes).
+- Entitlements (09-09 card): CL futures trades+MBO, CL options
+  trades/mbp-1/ohlcv all OK. Genuinely unresolved cost items are EXTENSIONS
+  only: CL options MBO (L3; the one real entitlement denial), ICE Brent/IFEU
+  (separate venue; ~$4.9k/$20.9k one-shot quotes), deep historical MBO
+  (402 = per-request budget cap, not entitlement).
+- Consequence: the binding constraint on going live is the P1 shadow run
+  (engineering), not money. And the pool grows nightly, so the calibration
+  is a living object: ingest -> 5.7-min --full rebuild keeps floors causally
+  current with zero manual work.
+
+**Concurrency fix APPLIED (PM-approved), commit e31bcd9f.** The default-path
+startup cleanup deleted EVERY outputs/ entry except catalyst_calendar.csv
+(wiped Lane-1/Lane-2 artifacts + phase0_gate_stop.md twice, restored from
+git both times) and there was no instance lock. Fix in
+`scripts/p0_replay_calibration.py` (frozen region 88-273 untouched; gate
+PASS):
+- `acquire_run_lock()`: non-blocking exclusive flock on
+  `studies/cl_unusual_flow_monitor/.run.lock` (OUTSIDE outputs/ so no
+  cleanup can touch it; gitignored). Holder pid+start written for
+  observability; second instance exits 2 with holder identity; kernel
+  releases on death -> no stale-lock mode. Wired into `__main__` before
+  lane1_full()/main() dispatch.
+- `stale_cleanup()` + `STALE_RUN_ARTIFACTS` closed list (11 names:
+  rolling_floors/episodes_rolling/burden_rolling/false_alert_burden/
+  episodes_all/floor_table/.run_fingerprint/acceptance_report/
+  calibration_report/day10_checkpoint_stop/phase0_gate_stop): only this
+  run's own artifacts are removed; everything else preserved.
+  `replay_persecond/` is NOT wiped (fixed 248-day range = deterministic
+  per-day in-place overwrite; the --full input is never destroyed mid-run).
+- `import shutil` removed (now unused); report line updated to the scoped
+  description.
+Verification: unit lock test (holder/challenger exit 2/post-death re-acquire
+OK); cleanup-scope fixture (11/11 stale removed, 10/10 sentinels +
+replay_persecond preserved); REAL contention (second --full during first:
+exit 2, deposit verify/lane1_lock_contention.20260916T163912Z.txt); two
+deposited --full runs (verify/lane1_full_lockfix.20260916T163902Z.txt 323s
++ lane1_full_lockfix_determinism.20260916T170409Z.txt 322s), both exit 0
+50/50, all 4 outputs BYTE-IDENTICAL to the committed canonical (d879c66a)
+— cross-version identity, stronger than run-to-run.
+
+**P1 shadow-run scope — DRAFT §15.10 banked in idea.md (same commit), AWAITING
+PM RATIFICATION (nothing built).** Focus per operator: objectives / runtime
+strategy / success-failure metrics.
+- Objectives: (1) §11 live-parity gate (archive-TBBO vs live-TBBO field
+  equivalence + TBBO-vs-component-streams cross-check; binding, no P1
+  scoring without it); (2) grid-vs-real-time reconciliation (§15.2a/§15.8;
+  M1 Apr-7 1,043 real-time vs 1,156 grid is the known instance); (3)
+  out-of-sample burden observation vs frozen budgets (LOOSE 1/session,
+  USEFUL 1/5, STRONG 1/20; notifications suppressed, telemetry+EOD rank
+  only); (4) production feed-integrity (gap frequency + INV-L3/L7 repair
+  loop).
+- Runtime: two existing pools (cl_tick_live_v1 live best-effort +
+  cl_tick_v1 T-1 authoritative; overlap ~3-4 trading days, +1/night; no new
+  data acquisition). Stage A = offline parity + dual-convention scoring on
+  the overlap (read-only, completes now, gates B). Stage B = nightly batch
+  shadow after T-1 ingest (proposed 21:30 UTC): causal floor refresh ->
+  score both lanes -> §15.9 merge -> telemetry+EOD rank to outputs/shadow/,
+  channels suppressed. Duration proposed >=40 trading days.
+- Metrics: Gate 1 parity (trade rows 100% on intersection; quote rows
+  >=99.9% with every mismatch inside a recorded gap window; mapping 100%;
+  ns precision 100%; FAIL = any unexplained mismatch -> no P1 start).
+  Gate 2 grid-vs-real-time (corpus pins reproduce real-time; USEFUL+ set
+  equality across conventions; material delta = PM decision point, never a
+  silent adjustment). Gate 3 burden (realized <= budgets; sustained breach
+  >=5 consecutive days = FAIL signal -> PM: accept/re-anchor/amend).
+  Standing daily: exit 0, causal truncation checks, byte-identical
+  re-score, zero notification leakage.
+- Open questions for PM: Q1 batch-on-T-1 vs real-time socket shadow
+  (proposed: batch; real-time latency is a P2 concern); Q2 floor refresh =
+  5.7-min full rebuild (proposed) vs incremental day-append (new code, own
+  spec+proof); Q3 auto-pause on sustained breach vs PM-review-only;
+  Q4 horizon (proposed >=40 trading days); Q5 Gate-1 parity-day count
+  (proposed 5 incl. >=1 roll day).
+
+**Governance ruling (PM, 2026-09-16): the flow monitor does NOT use the
+research_agent apparatus.** The PM asked whether the flow monitor's intent
+follows the semantic objectives of the research_agent idea.md template
+(`/data/research_agent/prompts/idea.template.md` + transport `prompts/idea.md`,
+which governs `/data/research_agent/studies/<study>/idea.md` gate artifacts).
+Answer settled: NO — the template's semantic objective is hypothesis-driven
+research (open question -> candidate causal/economic explanation -> material
+alternatives A1.. with distinguishing observables -> decision-relevance
+thresholds; §3 is the core and cannot be stubbed). The flow monitor is a
+contract-verification / instrument-conformance program: its semantics were
+fixed by two months of operator adjudication (FROZEN spec v1.0 + §15.7–15.9),
+and the P1 shadow run's outcome changes beliefs about the INSTRUMENT (parity,
+out-of-sample burden, convention fidelity), not about the market. Its "idea
+phase" was already performed by the frozen monitor spec itself. Consequence:
+the P1 shadow-run scope stays in `studies/cl_unusual_flow_monitor/idea.md`
+§15.10 as its single home (DRAFT, awaiting PM ratification, Q1–Q5 open); do
+NOT create a `/data/research_agent/studies/` entry or a grounding receipt for
+it, and do not re-propose the research_agent machinery for any flow-monitor
+phase. (The research_agent machinery remains the right form for genuinely
+open research questions, e.g. the SPX/gamma studies.)
+
+**2026-09-16 (later): scope RATIFIED + 8011 review instructed + maintenance
+restart.** PM ratified the §15.10 scope (commit 6178d348, pushed); Q1–Q5
+remain open. PM then instructed: send Q1–Q5 to the 8011 seat (pi agent
+`qwen38-collab`) for A/B + COT reasoning + recommendations → deliverable
+`studies/cl_unusual_flow_monitor/outputs/shadow_q1q5_8011_review.md`. The
+dispatch was NOT fired — workstation restart for maintenance pre-empted it
+(firing a multi-minute delegation seconds before a restart risks an orphaned
+half-run). **Resumption brief: `/data/agentic_trading/RESUME_2026-09-16.md`
+(commit a9b97472, pushed)** — contains the full dispatch envelope verbatim,
+verification commands, standing orders, and the resumption protocol. On
+resumption: fire the dispatch, verify, report the five recommendations to the
+PM. Shadow build stays gated on the Q1–Q5 rulings (and a separate PM go for
+the build itself).
