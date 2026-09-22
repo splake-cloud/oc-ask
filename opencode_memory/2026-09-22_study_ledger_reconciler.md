@@ -139,9 +139,31 @@ Also reframed the 2 research_agent changes: they are **deployment-incomplete**
 (this seat lacks repository authority), NOT conceptually unresolved. Three-state
 observability block added (RECONCILER / POST-EMIT HOOK / END-TO-END AUTO SYNC).
 
+## RAG card accuracy review (8th request, 2026-09-22) — DONE
+PM asked to review the `study-state-ledger-lifecycle` card for accuracy +
+completeness. Verified every load-bearing claim against source:
+- **(1) DOMAIN section: ACCURATE** — 7-state chain (ontology_actions.py:30-39),
+  DEFAULT_DB, two-writers-both-governed (only `UPDATE study SET status` is
+  ontology_actions.py:855, inside the governed action), all evidence
+  preconditions (_check_preconditions 193-383), reconcile.py read-only +
+  pre-closure HARD gate + manifest requirement, STUDY_NOT_REGISTERED, floor
+  wiring (5 transports + AGENTS.md:152).
+- **(2) STATION: wiring accurate, but the "CURRENT (2026-09-21)" version block
+  was STALE.** Fixed + re-seeded both roots, committed `e166bb86`:
+  vocabulary 0.17.0→**0.24.0**, 25→**30** categories; objects 1.0.0→**1.6.0**,
+  contracts 1.3.0→**1.5.0**, invariants 1.4.0→**1.5.0** (I1/I2/I5/I6/I7
+  promoted, I4 deferred); 12→**15** JSONL logs. Completeness added: 0.24.0
+  DEPLOYMENT-CERTIFICATION concept (NOT_CERTIFIED/CERTIFIED/REVOKED,
+  deployment_certifications.jsonl), the 4 new logs (family_candidates,
+  family_sidecar_runs, routing_decisions, transition_checks), and validity
+  fold-in S1-S5 delivered (full domain VALIDITY regime still awaits brief
+  ratification). Live :8765 top-1 re-verified (12/12 checks pass).
+
 ## Open / next
 - [DONE 7th request] 2 research_agent files committed + pushed by qwen-coder
   (a34ca42 on master).
+- [DONE 8th request] RAG card review + version-block refresh + completeness
+  (e166bb86), both roots re-seeded, live-verified.
 - Wording-tightening edits (spec, reconciler docstring, RAG card) committed +
   pushed `8ff3f506`; RAG card re-seeded + live-verified.
 - Ruling noted: the live `reconcile_log.jsonl` retains 18 pre-fix lines (incl.
