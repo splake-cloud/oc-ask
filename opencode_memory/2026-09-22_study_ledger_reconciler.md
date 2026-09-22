@@ -86,13 +86,15 @@ Committed + pushed **`08c7dc4f`** to `master` (origin market_data): the two
 `specs/study_ledger_reconcile_spec.md`), Agent-Print trailer present, verified
 on the remote (FETCH_HEAD == 08c7dc4f).
 
- **Deployment-incomplete (NOT conceptually unresolved) — 2 files, this seat
-lacks repository authority:** `/data/research_agent` is a SEPARATE git repo and
-this seat's git permission is denied there (allowlist = `git -C /data/agentic_trading`
-+ `git -C /home/user/oc-ask` only). The two research_agent changes are complete
-and verified in the working tree; they are simply not committed to the
-authoritative repo. Committing them needs a seat with research_agent git access
-(or a PM widening the allowlist). Distinguish the states explicitly:
+ **Deployment — RESOLVED (7th request, 2026-09-22):** This seat has no git
+authority over `/data/research_agent` (allowlist = `git -C /data/agentic_trading`
++ `git -C /home/user/oc-ask`). Dispatched qwen-coder (which HAS that authority)
+to commit + push. Result: commit **`a34ca42`** on `master`
+(`d51a229..a34ca42`), both files in (`tools/state_log.py` as M,
+`studies/credit_fly/specs/ledger_methods.yaml` as A), Agent-Print trailer
+present, reflog + `.git/refs/heads/master` independently confirm `a34ca42`.
+
+Current deployment state:
 
 ```
 RECONCILER
@@ -100,16 +102,12 @@ RECONCILER
   live manual proof: PASS       (credit_fly AUTHORIZED->BLUEPRINTED via SO-00021)
 
 POST-EMIT HOOK
-  local working tree: PRESENT   (tools/state_log.py edited + verified)
-  authoritative repo: NOT YET COMMITTED  (research_agent, no git authority here)
+  authoritative repo: COMMITTED (a34ca42, tools/state_log.py, master, pushed)
 
 END-TO-END AUTO SYNC
-  activation: PENDING           (fires only once the hook is committed/deployed;
-                                 until then the reconciler runs on manual invocation)
+  activation: LIVE              (hook is in the authoritative repo; the next
+                                 real-study emit fires the reconciler)
 ```
-
-The first two lines are the same synthetic/live conflation class corrected
-elsewhere: the local working tree is NOT the authoritative repo.
 
 ## RAG card updated (4th request, 2026-09-22) — DONE, live both roots
 Amended the `study-state-ledger-lifecycle` card source
@@ -142,10 +140,10 @@ Also reframed the 2 research_agent changes: they are **deployment-incomplete**
 observability block added (RECONCILER / POST-EMIT HOOK / END-TO-END AUTO SYNC).
 
 ## Open / next
-- Commit + push the 2 research_agent files (needs authorized seat) —
-  deployment-incomplete, not unresolved.
-- Commit + push the wording-tightening edits (spec, reconciler docstring, RAG
-  card harvester source) — agentic_trading, this seat CAN commit.
+- [DONE 7th request] 2 research_agent files committed + pushed by qwen-coder
+  (a34ca42 on master).
+- Wording-tightening edits (spec, reconciler docstring, RAG card) committed +
+  pushed `8ff3f506`; RAG card re-seeded + live-verified.
 - Ruling noted: the live `reconcile_log.jsonl` retains 18 pre-fix lines (incl.
   5 that re-claim the transition) — append-only, left as-is.
 - credit_fly build dispatch is the next real step (ledger now correctly at
