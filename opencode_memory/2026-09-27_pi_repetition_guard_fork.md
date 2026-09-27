@@ -113,6 +113,22 @@ things were true at once:
   `~/.pi/agent/extensions/loop-guard.ts`. Commit `5d43f684` (Agent-Print
   trailer). Re-enable: `git mv` back + re-symlink (commands in the commit
   message). The repetition guard is now the SOLE loop intervener.
+  **Follow-up (same PM): the disable was initially incomplete** —
+  `/data/research_agent/.pi/extensions/loop-guard.ts` is a SEPARATE older
+  project-level copy (Sep 12 calibration, 6659 B, pre-density-gating) that
+  still loaded for seats with cwd=/data/research_agent (the failing seat's
+  cwd!). Moved to `.pi/extensions-disabled/`, committed + pushed to
+  splake-cloud/research_agent as `0af9809` (Agent-Print). Full load-path
+  census: only 3 extension dirs on the box — ~/.pi/agent/extensions
+  (global), /data/agentic_trading/.pi/extensions, /data/research_agent/.pi/
+  extensions; all loop-guard copies now out of load paths.
+  **fwg sandboxed seat: nothing flows there** — its piagent is a separate
+  700 mount (/data/seat/fwg/piagent → /root/.pi/agent in container); the
+  host ~/.pi/agent is invisible to it, and the image/install script seed
+  no extensions at all → the fwg seat has NO loop guard of any kind today.
+  To give it the fixed guard: copy the fork to /data/seat/fwg/piagent/
+  extensions/ (as root/frontline-wg — `user` can't write there); next pi
+  process in the container picks it up, no image rebuild.
 - **Stale seats need restart** to pick up the fixed guard (extensions load at
   startup). At audit time (Sep 27 ~14:50Z): task_agent:0 (25248, Sep 27
   10:40), spx_0050_gamma:0 (2632027, Sep 26), :2 (641771, Sep 18),
