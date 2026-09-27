@@ -80,5 +80,49 @@ one-at-a-time until this fix).
   000); the build was dispatched to qwen38-collab (:8011) instead.
 - Upstream (capdiem) should get the two fixes (steer at agent_settled;
   tail-concentrated near-dup + distinct-char tape gate) — not filed yet.
-- The local `loop-guard.ts` (separate, steer-only, calibrated 2026-09-14) is
-  unchanged and coexists fine.
+## PM (afternoon): "both guards still causing the issue" — root-caused + resolved
+
+User reported the run-stopping was still happening (capture: "Operation
+aborted" → loop-guard warning → [自动护栏] steer → run dead). Two distinct
+things were true at once:
+
+1. **The failing seat was running PRE-FIX code.** Pi loads extensions only at
+   process startup. The failing TUI (`/data/research_agent` session
+   `2026-09-22T23-34-59-359Z`, pid 3067202) started **Sep 22 23:32:53** — 4.5
+   days before the fork landed (Sep 27 11:24). Its transcript proves the old
+   behavior exactly: abort 14:32:17 → 4 min idle → user types "resume" 14:36:12
+   → stranded steer drained 2 ms later. The fork code itself is correct.
+2. **The fix was re-verified end-to-end with the REAL extension file** (not a
+   clone): SDK repro loading `~/.pi/agent/extensions/pi-repetition-guard.ts`
+   via `additionalExtensionPaths`, model on jett-8012, repetition-inducing
+   prompt. Observed: fire → `stopReason=aborted` → `agent_settled` →
+   `[自动护栏]` steer → `agent_start #2` (model continues, no stranding) →
+   second fire → steer retry 2 → `agent_start #3` → third fire → budget
+   exhausted → `triggering auto-compact (1/1)` → give-up. Full retry budget
+   ran, zero human input. (Mechanism note: `prompt()` during an active
+   `agent_settled` emit is deferred via `_deferredSettledActions` in
+   agent-session.js — the deferred re-invocation is what starts the fresh
+   turn; it works, verified.)
+
+**Action taken:**
+- **`loop-guard.ts` DISABLED** (user flagged both guards as the problem; its
+  revision detector false-warned on normal multi-step thinking — 10–11
+  revisions in an uneventful session — and its steers double-intervened with
+  the repetition guard). `git mv .pi/extensions/loop-guard.ts
+  .pi/extensions-disabled/loop-guard.ts` + removed global symlink
+  `~/.pi/agent/extensions/loop-guard.ts`. Commit `5d43f684` (Agent-Print
+  trailer). Re-enable: `git mv` back + re-symlink (commands in the commit
+  message). The repetition guard is now the SOLE loop intervener.
+- **Stale seats need restart** to pick up the fixed guard (extensions load at
+  startup). At audit time (Sep 27 ~14:50Z): task_agent:0 (25248, Sep 27
+  10:40), spx_0050_gamma:0 (2632027, Sep 26), :2 (641771, Sep 18),
+  spx_0050_gamma:3 (1951039, Sep 19), ontology_builder:2 (3067202, Sep 22 —
+  the one that failed). Already on new code: task_agent:1 (291968, Sep 27
+  14:31). User to restart at their convenience.
+
+## Notes / open (updated)
+
+- Upstream (capdiem) should get the two fixes (steer at agent_settled;
+  tail-concentrated near-dup + distinct-char tape gate) — not filed yet.
+- If loop-guard's shingle/revision logic is ever wanted back, it's in
+  `.pi/extensions-disabled/loop-guard.ts` (git history intact).
