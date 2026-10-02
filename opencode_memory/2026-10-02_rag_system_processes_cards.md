@@ -1,4 +1,6 @@
-# 2026-10-02 — RAG system evaluation → 4 system_processes cards shipped; :8765 cutover blocked on sudo
+# 2026-10-02 — RAG thread: mid-tier cutover → P1 :8090 fix → ~35-item drift sweep → all audit items resolved
+
+**Session:** pi `01a0faa9-ef53-75e7-820c-ba576a6684fe` (pi-coding-agent, qwen3.8-27b-fp8, jett-8012, /data/agentic_trading; JSONL `~/.pi/agent/sessions/--data-agentic_trading--/2026-10-02T03-30-35-987Z_01a0faa9-ef53-75e7-820c-ba576a6684fe.jsonl`)
 
 **Mission:** PM asked to evaluate the RAG and author system-process cards (update / new well / seed /
 service mgmt), then approved: (a) systemd re-adoption, (b) dispatch card EDIT mission, (c) replace the
