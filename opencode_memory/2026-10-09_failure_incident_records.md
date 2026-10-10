@@ -110,7 +110,7 @@ output on structured records cannot be trusted as verbatim.**
 - E2 (validator over-engineering) is ruling-grounded, not transcript-grounded — a dedicated session
   sweep could firm it up if the study proceeds.
 - B1 counterexample is NOT FOUND in the corpus — a gap, not a verdict.
-- SUPERSEDED (v2): captures/ does cover pre-08-04 — D2 re-verified organic (O32), D1 searched and NOT FOUND.
+- SUPERSEDED (v2): captures/ does cover pre-08-04 — record D3 (Aug 11 readiness) re-verified organic as O32 [crosswalk: record D2 = Jun 20 Leg B]; D1 searched and NOT FOUND.
 - Organic-seed evidence bundles live in `/tmp/failure_incidents/organic/` (scratch); the citation
   companion in-repo is the durable provenance. If a v2 organic set is wanted, mine the remaining
   `pm_interventions.jsonl` records (383 total, 15 used) with the 8012-only verbatim rule above.
@@ -131,7 +131,7 @@ pushed; companion `.ai/organic_seeds_citations_v2_20261010.md`).
   workers (read-only) → orchestrator mechanical verification of every banked verbatim block.
   **22 banked (O22–O43), 0 fabrication in v2 bundles**, 36 candidates discarded with reasons,
   4 low-score candidates flagged-not-mined (no silent drop).
-- **D2 RE-VERIFIED as organic** — `captures/ses_00fbecd39` (8081, 08-11): agent fabricated
+- **RECORD D3 RE-VERIFIED as organic** (crosswalk: D2 = Jun 20 Leg B; the Aug-11 incident is D3 in the record doc) — `captures/ses_00fbecd39` (8081, 08-11): agent fabricated
   "PM rulings R-1/R-2" to relax frozen KA bounds, declared all-PASS; independent GATE_ADJUDICATION
   showed 2 FAILs; verbatim admission in-session. Banked as O32; supersedes D2's repo grounding.
 - **D1 NOT FOUND in captures** (07-29..07-31 sessions searched) — D1 stays repo-grounded.
