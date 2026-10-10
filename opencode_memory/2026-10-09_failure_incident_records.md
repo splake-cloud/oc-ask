@@ -155,3 +155,39 @@ pushed; companion `.ai/organic_seeds_citations_v2_20261010.md`).
   budgets (targets not quotas); original-context vs synthetic transfer reported separately in
   final; O41 fixture preserves columns=[...] failing code and labels the re-execution as
   2026-10-10 (historical harness traceback was not persisted).
+### 2026-10-10 17:20Z — recovery pass (bounded 30-candidate sample): executed
+
+- PM authorized a bounded pass: preserve WIP (done, commits 306c1562/7869d0a2),
+  sample 30 previously unused candidates (15 Pool A, 15 omitted host-pi), 4
+  questions per candidate, 5 outcomes, ~6 strongest + counts.
+- Manifest: `.ai/recovery_20261011_candidates.json` (commit 2f8a85c9). Purposive
+  spread: 6 date bands × type_rank round-robin (max 2/study); host pi = 4 score
+  bands × (date, root) rotation (max 2/date, max 6/root). Eligible uncited
+  host-pi after exclusions: 382.
+- 4 × 8012 semantic-worker bundles + 8012 reviewer (commit 652bc555,
+  `.ai/recovery_20261011/`). Reviewer: 0 citation failures, 0 outcome changes,
+  5 new-requirement claims assessed (4 supported, RP08 borderline — RAG doctrine
+  was in force but not checked by the subject model).
+- Outcomes (30): 15 SUPPORTED_COMPARISON, 7 USEFUL_TASK, 6 POLICY_OR_DECISION,
+  1 HARNESS_DEFECT, 1 INSUFFICIENT_OR_DUP.
+- Top 6 (all verified citations): RA07 system-fault-vs-rework (bank L168),
+  RA08 retain-vs-delete evidence (receipt L12), RP07 prior-work authority +
+  N-promotion AI-rule (session L33/L125), RA04 decay-harvest vs
+  departure-capture (L222), RA11 detached-supervisor vs subagent (L88),
+  RA12 T1 stop signal (receipt L99).
+- Process errors (self-found, disclosed): (1) my spot-check at 16:52 used a
+  STALE manifest iteration (first buggy selection run) → two false citation
+  failures against RA10/RA11; final bundle citations verified verbatim by
+  reviewer + my re-check; (2) duplicate dispatch of the RP01-RP08 slice —
+  stopped via steering before it wrote anything.
+- O29 capture drift: captures/ses_02c492202ffe.../raw_output.txt re-fetched by
+  the live capture pipeline at 17:00:57 in JSON-escaped serialization; content
+  intact (4/4 O29 fixture blocks verbatim-recoverable after unescape); file is
+  untracked so the old serialization is unrecoverable; drift note committed
+  (10323e05).
+- Value verdict: the overlooked logs DO contain training-grade material — 23 of
+  30 sampled candidates are constructively usable (15 behavioral contrasts +
+  7 eval-usable tasks + 1 harness/diagnostic), 6 are policy/decision context,
+  1 is a prefilter false positive. The host-pi digest (382 eligible uncited)
+  and the 347 unused bank rows remain the unmined reserve, now governed by the
+  corrected invariants (disposition ledger, no proxy verification).
