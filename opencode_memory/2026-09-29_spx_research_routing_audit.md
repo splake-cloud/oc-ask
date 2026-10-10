@@ -49,10 +49,14 @@ candidate), but the routing layer is where the contract lived and was broken.
 
 ## Named, not applied (need PM go)
 
-1. **Resolver default patch** (port event per runbook §5): auto-decomposed
-   researchers default to 8081, 8012 reserved for explorer/router/lead — so a
-   bare call degrades gracefully instead of silently. Needs PM approval +
-   Gate A re-run; script home `/home/user/seat-fwg/patches/`.
+1. **Resolver default patch — APPLIED 2026-09-29T06:45Z** (live-tree mtimes;
+   pre-patch backup `config.ts.bak.20260929-fast-default`): auto-decomposed
+   researchers default to 8081 via `resolveResearcherModel`
+   (`src/core/llm/research-model-resolver.ts`), `PI_RESEARCH_FAST_MODEL` config
+   key added to `src/config.ts` and pinned in `~/.pi/research/config.env`; 8012
+   reserved for explorer/router/lead. REMAINING: fold into the port inventory
+   (`staging/pi-research-verify/apply-port.py` embedded diff, 12→16 files,
+   dispatched 2026-09-30) + Gate A re-run.
 2. **Re-run the SPX-verticals query under Gate-B routing** to regenerate the
    answer on the designed pipeline (cost: one ~2-min run).
 3. Cosmetic: report footer prints provider/model, not bare model id.
