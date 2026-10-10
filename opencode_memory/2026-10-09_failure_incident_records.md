@@ -71,11 +71,47 @@ with counterexamples and family groupings.
   clamp → silent unconstrained generation (1,139 failing grammars; INT-0196 fix); the Sep 29 routing
   incident has its counterexample 30 minutes later in the next session (explicit researchers[]).
 
+## Extended thread (2026-10-09/10): training seeds
+
+- **Synthetic seeds v1:** `training_data/seeds_v1.jsonl` (6 PM-adapted teaching examples, synthetic
+  adaptations of A1, B2, C1, D3, E1, F2; 7-field schema prompt/chosen/rejected/class/
+  source_family/rationale/origin=`synthetic_adaptation`). Format conversion only — no rewriting,
+  expansion, training, or train/test split. Commits `ff6ff2f6` + rationale fix `c2bc32ee`.
+- **Organic seeds v1:** `training_data/organic_seeds_v1.jsonl` — **36 organic (non-synthetic)
+  failure/success cases** from session transcripts, the PM intervention bank
+  (`/data/research_agent/telemetry/pm_interventions.jsonl`, 383 records surveyed in full), memory
+  cards, opencode.db, and repo docs. O1–O21 from transcripts/repo + N1–N15 mined from the
+  intervention bank (the corrective context carries the color). Same 7-field schema,
+  `origin="organic"`, class distribution 6/8/5/4/5/8 across the six classes. All independent of the
+  14 recorded incidents. Citation companion: `.ai/organic_seeds_citations_20261010.md` (per-record
+  key citations + cross-check against `reasoning_precedents.jsonl` — 9 patterns, no conflicts;
+  RP-00001/RP-00004 PM-ratified both align). Commit `ab7b29bd`, pushed.
+- **Success cases included:** O3 (PM-directed exception logged, not silent substitution) and O11
+  (reviewer-error rejected on on-disk evidence) — `chosen` = what the agent actually did.
+
+### Bank-fabrication lesson (8081 reliability)
+
+The three **8081 (qwen-coder)** extraction bundles for the N-cases **fabricated**
+`pm_interventions.jsonl` JSON wrappers on 5 of 15 records (N6, N9, N11, N13, N15): correct IDs and
+line numbers, but wrong ruling text, wrong study_id/phase/timestamps; N13 was an entirely
+different incident (a Q2 station-defect record) pasted under the INT-0193 label. The 8012
+(semantic-worker) bundles were clean. Fix: all bank content replaced by a mechanically rebuilt
+canonical bank (`/tmp/failure_incidents/organic/evidence/n_canonical_bank.md`) regenerated from
+verified raw JSON of the 15 bank lines; transcript side verified separately (N13's real arc found at
+session `01a0eb87` L3719–3948). **Rule: verbatim extraction from a JSONL-of-record store is 8012
+work, or must be mechanically regenerated + line-checked against the source; 8081's "extraction"
+output on structured records cannot be trusted as verbatim.**
+
 ## Open / next
 
-- Both reports committed (records `37f0571f`; contrasts `09c383cc` + revision-2 precision pass `a41d7c90`); nothing pushed (no remote for this lane).
+- All deliverables committed and **pushed** to origin (`git@github.com:splake-cloud/market_data.git`):
+  records `37f0571f`, contrasts `09c383cc`→`064d3393`→`c76e6d62`, seeds_v1 `ff6ff2f6`/`c2bc32ee`,
+  organic seeds `ab7b29bd`.
 - E2 (validator over-engineering) is ruling-grounded, not transcript-grounded — a dedicated session
   sweep could firm it up if the study proceeds.
 - B1 counterexample is NOT FOUND in the corpus — a gap, not a verdict.
 - Session-transcript evidence for D1/D2 remains unrecoverable (store gaps); if those sessions surface
   (opencode backup rotation), the two repo-grounded records should be re-verified against them.
+- Organic-seed evidence bundles live in `/tmp/failure_incidents/organic/` (scratch); the citation
+  companion in-repo is the durable provenance. If a v2 organic set is wanted, mine the remaining
+  `pm_interventions.jsonl` records (383 total, 15 used) with the 8012-only verbatim rule above.
