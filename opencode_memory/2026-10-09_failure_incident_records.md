@@ -224,3 +224,13 @@ pushed; companion `.ai/organic_seeds_citations_v2_20261010.md`).
 - **Origin marking (PM)**: all six records carry `origin: "synthetic_adaptation"` + `provenance.batch: "recovery_20261011"` — teacher-constructed comparisons grounded in organic incidents, not verbatim historical response pairs.
 - **Family crosswalk complete** (7 families, in the construction doc). All six records `assignment: pending` — PM assigns before any enters training or evaluation. Binding constraints: F-RP04's two comparisons + any eval derived from that episode are assigned together; F-RA07/F-RA08 share work item BPV-00020 (siblings); RA12 (if ever constructed) may not be placed in a different split than N15, which is already in the TRAINING split; F-RA11 is mechanism-sibling of F-RA12-N15 (note, don't merge).
 - Commit `112eab83`, pushed.
+
+### Round 3 (2026-10-10): six records are usable text comparisons
+
+- **RA08**: removed "do not assume 8 …" from chosen (prompt doesn't supply that fact); chosen now ends "take the Q3 case count from Q3's own stage-10A output."
+- **RA04**: accepted, no edits.
+- **RA07**: accepted; final recurrence-threshold explanation removed from chosen (it lives in construction metadata, not the model's response).
+- **RA11**: accepted as a supplied-documentation comparison; the doc is now described as an **excerpt with formatting normalized**, not byte-verbatim.
+- **RP04-exp / RP04-log — substantive fix**: round-2 answers leaked later findings (disclosed historical results without performing the checks). Converted to **next-action comparisons**: prompts now end "What is the next action before reporting?"; chosen = PM's verbatim next-action text; historical results moved to `provenance.historical_result` until actual tool-call/result sequences are built. Also: removed the blanket claim that positional CSV reading can't identify a column (it can when column order is known; the error was guessing the mapping without establishing it); removed the inference that an old log proves the cron stopped (absence of later entries ≠ absence of execution — the session's L163 claim is retained as the model's own inference, not an established fact).
+- **All six**: usable text comparisons; **none count toward the pilot's tool-use coverage yet** (no tool-call/result sequences). Batch note encoded in every record's construction_boundaries.
+- Commit `ef5aae31`, pushed. 29/29 mechanical checks from disk.
