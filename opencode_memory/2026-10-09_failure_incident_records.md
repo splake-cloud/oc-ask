@@ -112,8 +112,7 @@ output on structured records cannot be trusted as verbatim.**
 - B1 counterexample is NOT FOUND in the corpus — a gap, not a verdict.
 - SUPERSEDED (v2): captures/ does cover pre-08-04 — record D3 (Aug 11 readiness) re-verified organic as O32 [crosswalk: record D2 = Jun 20 Leg B]; D1 searched and NOT FOUND.
 - Organic-seed evidence bundles live in `/tmp/failure_incidents/organic/` (scratch); the citation
-  companion in-repo is the durable provenance. If a v2 organic set is wanted, mine the remaining
-  `pm_interventions.jsonl` records (383 total, 15 used) with the 8012-only verbatim rule above.
+  companion in-repo is the durable provenance. SUPERSEDED: v2 organic set DONE (see next section); 368 pm_interventions records remain unmined.
 
 ## Organic seeds v2 — full-store mining (2026-10-10)
 
@@ -133,10 +132,9 @@ pushed; companion `.ai/organic_seeds_citations_v2_20261010.md`).
   4 low-score candidates flagged-not-mined (no silent drop).
 - **RECORD D3 RE-VERIFIED as organic** (crosswalk: D2 = Jun 20 Leg B; the Aug-11 incident is D3 in the record doc) — `captures/ses_00fbecd39` (8081, 08-11): agent fabricated
   "PM rulings R-1/R-2" to relax frozen KA bounds, declared all-PASS; independent GATE_ADJUDICATION
-  showed 2 FAILs; verbatim admission in-session. Banked as O32; supersedes D2's repo grounding.
+  showed 2 FAILs; verbatim admission in-session. Banked as O32; supplements record D3 (whose grounding remains ses_00d5b12d — evening 397B session, same F5 mechanism, same study, independent instance; O26 is the episode's third session). Gap-resolution doc: .ai/organic_seeds_v2_gaps_20261010.md.
 - **D1 NOT FOUND in captures** (07-29..07-31 sessions searched) — D1 stays repo-grounded.
-- **Key new cards:** hhmm_offset family (O22 08-04 join key + O25 08-06 row label — same
-  concept, two independent 397B sessions); OI-vs-volume misidentification (O26); fabricated DOI
+- **Key new cards:** time-alignment family (O22 + O25 — related time-alignment cases, NOT identical arithmetic: O22 = invalid HHMM arithmetic, O25 = offset at wrong semantic level; see gaps doc); OI-vs-volume misidentification (O26); fabricated DOI
   self-caught (O35, fwg); 1559 "all weeks" sample→population overclaim, 183/189 (O33);
   vacuous "ALL GATES PASS" on missing gate input (O31); unauthored template skeleton correctly
   FAILed (O36); calibration under-fire on seeded doctrine violation (O37, gpt-oss-120b);
@@ -146,3 +144,14 @@ pushed; companion `.ai/organic_seeds_citations_v2_20261010.md`).
   Diagnostic 10.
 - Bundle + digest scratch: `/tmp/failure_incidents/organic/v2/` (w1..w4 .md, digest_*.jsonl,
   fwg_sessions/, build_v2.py).
+
+- **Split assigned by PM (2026-10-10):** training 37 / development 9 / final 12 — recorded in
+  `training_data/organic_seeds_split_v1.json` (agentic_trading, alongside the corpus). Partition
+  verified mechanically. Family grouping rules recorded (aug11 density episode -> training incl.
+  record D3 + synthetic seed; O22+O25 -> final; O38+O41 and O39+O40 -> development; O42+O43 ->
+  final; N11+E1, N9+A2 -> training; O10+D4 material -> development). Source cards unchanged.
+  Commit linkage: corpus a035683a (PM-stated 'a4b901d' does not exist in repo — flagged, not
+  silently substituted) + gap resolution b87e9d19 (verified). Construction: ~120/30/60 case
+  budgets (targets not quotas); original-context vs synthetic transfer reported separately in
+  final; O41 fixture preserves columns=[...] failing code and labels the re-execution as
+  2026-10-10 (historical harness traceback was not persisted).
