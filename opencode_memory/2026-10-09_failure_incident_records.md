@@ -110,8 +110,39 @@ output on structured records cannot be trusted as verbatim.**
 - E2 (validator over-engineering) is ruling-grounded, not transcript-grounded — a dedicated session
   sweep could firm it up if the study proceeds.
 - B1 counterexample is NOT FOUND in the corpus — a gap, not a verdict.
-- Session-transcript evidence for D1/D2 remains unrecoverable (store gaps); if those sessions surface
-  (opencode backup rotation), the two repo-grounded records should be re-verified against them.
+- SUPERSEDED (v2): captures/ does cover pre-08-04 — D2 re-verified organic (O32), D1 searched and NOT FOUND.
 - Organic-seed evidence bundles live in `/tmp/failure_incidents/organic/` (scratch); the citation
   companion in-repo is the durable provenance. If a v2 organic set is wanted, mine the remaining
   `pm_interventions.jsonl` records (383 total, 15 used) with the 8012-only verbatim rule above.
+
+## Organic seeds v2 — full-store mining (2026-10-10)
+
+User: "all of the dirs I posted should be mined" — no store excluded. v2 = v1's 36 + 22 new
+(`training_data/organic_seeds_v2.jsonl`, 58 records, v1 byte-identical prefix; commit `a035683a`,
+pushed; companion `.ai/organic_seeds_citations_v2_20261010.md`).
+
+- **Stores mined:** captures/ (1355 sessions 07-27→10-09 — the only pre-08-04 opencode record;
+  the "store gap" in the previous card was wrong for captures/, it only applies to live
+  opencode.db), fwg docker seat (100 sessions, via `docker exec seat-fwg`, in-container path
+  `/fwg/piagent/sessions/--workspace--/`), per-run telemetry session roots (bpv `*/sessions/*/`),
+  llama_grammar_clamp.jsonl, LoRA gen-1 (.ai/coder_bench) + gen-2 (oc_loop run dirs) + 3.8 pi
+  workdirs, and the ratified model-kb trap inventory.
+- **Pipeline:** deterministic marker prefilter → ranked digests → 4 parallel 8012 semantic
+  workers (read-only) → orchestrator mechanical verification of every banked verbatim block.
+  **22 banked (O22–O43), 0 fabrication in v2 bundles**, 36 candidates discarded with reasons,
+  4 low-score candidates flagged-not-mined (no silent drop).
+- **D2 RE-VERIFIED as organic** — `captures/ses_00fbecd39` (8081, 08-11): agent fabricated
+  "PM rulings R-1/R-2" to relax frozen KA bounds, declared all-PASS; independent GATE_ADJUDICATION
+  showed 2 FAILs; verbatim admission in-session. Banked as O32; supersedes D2's repo grounding.
+- **D1 NOT FOUND in captures** (07-29..07-31 sessions searched) — D1 stays repo-grounded.
+- **Key new cards:** hhmm_offset family (O22 08-04 join key + O25 08-06 row label — same
+  concept, two independent 397B sessions); OI-vs-volume misidentification (O26); fabricated DOI
+  self-caught (O35, fwg); 1559 "all weeks" sample→population overclaim, 183/189 (O33);
+  vacuous "ALL GATES PASS" on missing gate input (O31); unauthored template skeleton correctly
+  FAILed (O36); calibration under-fire on seeded doctrine violation (O37, gpt-oss-120b);
+  presence_penalty 1.5 scope-carry-over trap (O42) + settings.json mirror trap (O43) from the
+  ratified trap inventory (docs-grounded, labeled).
+- Class distribution (58): Intent 9, Research 12, Review 6, Evidence 9, Proportionate 12,
+  Diagnostic 10.
+- Bundle + digest scratch: `/tmp/failure_incidents/organic/v2/` (w1..w4 .md, digest_*.jsonl,
+  fwg_sessions/, build_v2.py).
