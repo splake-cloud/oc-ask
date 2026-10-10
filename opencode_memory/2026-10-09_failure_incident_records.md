@@ -191,3 +191,28 @@ pushed; companion `.ai/organic_seeds_citations_v2_20261010.md`).
   1 is a prefilter false positive. The host-pi digest (382 eligible uncited)
   and the 347 unused bank rows remain the unmined reserve, now governed by the
   corrected invariants (disposition ledger, no proxy verification).
+
+### 2026-10-10 18:05Z — PM construction boundaries applied (commit 71e8efe5)
+- PM rejected "six verified comparisons" as a yield claim: citations verified,
+  several lessons over-claimed. Per-candidate boundaries recorded: RA08 (build —
+  proposed not executed; refuse-on-unset separated), RA04 (build — legs/credit/
+  exit specified; reversion-harm scoped to near-body case), RA07 (correct
+  before build), RA11 (usable with context packet), RP07 (one episode for
+  splitting; separate the two contrasts), RA12 (HOLD the stop-action label).
+- RA07 count resolved from the pulled log (runner.log): "7 of 11" correct;
+  actual budget failures = attempts 1,2,3,4,6,9,10; receipt enumeration
+  (1-3,5,6,9,10,11) mis-transcribed (incl. 5,11 non-budget; omits 4).
+  "Two recurrences = system fault" = later reusable_rule_candidate, not
+  in-force at the time.
+- RP04 re-graded: corrected eligibility rule (self-discovered errors count if
+  original evidence supports) — both errors pass at-time grounds (positional
+  CSV guess + internal contradiction; daily.log stopped Aug 16 vs ledger Aug
+  31 = different paths).
+- Crosswalk: RA12 ↔ N15 = same episode (bank 131/132, BPV-00014,
+  credit_fly_fat_premium, 2026-09-23/24). RP07 kept whole.
+- Deliverables: .ai/recovery_20261011_construction_20261010.md (clarifications
+  + crosswalk), training_data/derived/pilot03_recovered_constructions_v1.jsonl
+  (2 records under boundaries: RA08, RA04).
+- Lesson banked: verbatim citation check ≠ training-label validation; a
+  correct count can sit inside a mis-transcribed enumeration in the same
+  source sentence; reviewer labels are screening, PM boundaries adjudicate.
