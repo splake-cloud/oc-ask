@@ -290,3 +290,45 @@ report** (full deduplicated SFT examples + supervised-token counts) to fix the s
 real-SFT config (accumulation/lr/total updates). Then: fresh adapter over untouched base →
 post-SFT dev run (hash-check comparison_anchor inputs) → post-SFT serving smoke (this same
 test with the trained adapter) → frozen final set.
+
+## 2026-10-11: Full training manifest + token-mask report (commit 0ebe2acca) — the LR/batch/update-budget numbers
+
+Read-only analysis over the frozen 58-record pool; establishes the 4 PM items to finalize the
+real-SFT config (LR / effective batch / update budget). Report:
+`.ai/full_training_manifest_and_token_mask_report_20261011.md`; spec
+`.ai/token_mask_report_data_spec_20261011.md`; driver `training/token_mask_report_data.py` +
+data `training/token_mask_report_data.json`. Reuses the PROVEN conversion-gate chunked-templating
+(`derive_spans_chunked`; M-c' partition complete for all 58) — the tokenization is the one the
+trainer will use, not a re-derivation. Independently re-run + invariants via verify-run
+(`verify/token_mask_final_dists.*`).
+1. **Clean split PROVEN** (3 levels: card + manifest-family + raw record content): zero dev/final
+   leakage into any of the 9 training files. (9 training files carry 47 raw family labels vs the
+   manifest's 41 independent families — grouping, not a violation.)
+2. **SFT composition: 11 tool trajectories + 47 chosen-text = 58 examples, 41 families.** Hot
+   families O20=6, O29=4, eight families =2, rest =1. 13 SFT-counterpart pairs (5 pilot02 sub-span +
+   4 wave1 full-split + 4 wave2 non-verbatim); the 4 wave1 pairs are content-identical to their
+   trajectories → dedup 58→54. The 9 pilot02/wave2 same-incident pairs = a WEIGHTING decision, not
+   a byte-dedup. (Data detail: wave2 SFT record + wave2 pair SHARE the same record id, e.g.
+   wave2_o13 — build id-keyed maps separately for SFT vs pairs.)
+3. **SFT token accounting:** total supervised **14,247** (raw) / **12,724** (dedup); max full-seq
+   **4363** (thinking-on) → NO truncation at max-seq-len ≥ 4400 (canary used 8192). Tool-call tokens
+   included in supervised; tool results + failed-probe prefix masked (known-answer
+   pilot02_o20_probe_recovery full=2692/supervised=602 = recovery msg3+msg5, not the 410-token
+   failed probe msg1). Thinking-on adds only wrapper overhead to full length, NOT supervised
+   (authored trajectories have no reasoning content).
+4. **DPO accounting (47 pairs):** chosen branch total 9,792 (max 1,085) vs rejected 2,279 (max 89) =
+   4.3× asymmetry (correct full action-tail vs brief wrong claim); continuation-only masks; DPO
+   pair max-length must be ≥ 1,085 (chosen arm).
+
+**Pair-mask BUG found + fixed (delegate EDIT):** pilot02 pairs store chosen/rejected as bare
+assistant messages with NO `loss` field (unlike wave1/wave2) → the script's over-strict
+`loss is not None and loss` counted them 0 supervised. Fix: `loss is None or bool(loss)` (supervised
+by role unless explicit loss=False); wave1/wave2 unchanged. Caught because SFT chosen-text supervised
+min was 0 (a red flag) — the update-budget total would have been undercounted.
+
+**Config implication (the point of the report):** a SMALL LoRA SFT set (~13–14K supervised
+**tokens/epoch**). → moderate-low LR (avoid overfitting), gradient-accumulation to set effective
+batch (raw total / (eff_batch × seq_len) = updates/epoch ≈ 2 at 1×8192; grad-accum → effective 8×8192
+≈ 17–20 updates/epoch), low epoch count (2–3), monitor the DEV set (not final) each epoch. Master now
+`0ebe2acca`. Remaining gate: PM sets LR/batch/epochs on the token counts → SFT on a FRESH adapter
+over the untouched base (canary stays an engineering artifact).
