@@ -152,8 +152,10 @@ set (10 families + freeze).
   — receipt `training/canary_result_4bit_oom.json` (sha256
   2d5d7d74b35f…). **DIAGNOSIS CORRECTED (PM)**: this does NOT establish a
   Blackwell/bnb incompatibility; the 54GB-upcast explanation was retracted as
-  speculation. The actual cause: the canary had NO gradient checkpointing and
-  no use_cache=False — full 4325-token activations for all layers. After the
+  speculation. Missing gradient checkpointing + use_cache enabled are ESTABLISHED
+  CONFIGURATION DEFECTS in the canary; their exact contribution to the 4-bit OOM
+  is NOT isolated by the bf16 retry (precision changed too), and the 94.9GB must
+  not be labelled entirely as saved activations. After the
   fix (checkpointing ON + use_cache=False, asserted in `config_verification`;
   OOM handler now captures full traceback + memory_summary + requested alloc),
   the **bf16 canary PASSED**: 10/10 steps, peak 58.28GB (≈36GB headroom on
@@ -183,15 +185,29 @@ set (10 families + freeze).
   Qwen3_5 supported (SupportsLoRA + packed mapping incl. in_proj_qkvz),
   blockwise FP8 handled by Fp8LinearMethod, LoRA wrappers delegate to the
   quant method's apply + punica delta post-quant (correct for fp8 dynamic
-  act); VLM name-mapping machinery present. UNPROVEN until a real
-  `--lora-modules` smoke load (needs the trained adapter + reserved GPU):
-  full 256-target mapping through the VLM wrapper, and LoRA + MTP k=3 spec
-  decode (live endpoints run it).
+  act); VLM name-mapping machinery present. **Serving compat test PASSED
+  2026-10-11**: vLLM 0.30.0 (explicit .venv-vllm-0.30.0 interpreter),
+  reserved GPU1, temp port 8911, the 8011 deployment config + --enable-lora:
+  FP8 blockwise checkpoint + canary LoRA adapter + MTP k=3 all coexist.
+  Adapter targets map without unmapped-target warnings; application PROVEN
+  at serving time (temp-0 greedy divergence at token 27, paired logprob
+  diffs, base determinism control identical, _lora_shrink/expand kernels
+  JIT'd during inference); tool-call request through the adapter returns a
+  well-formed tool_call. 8011 config ratified as intended deployment config,
+  subject to the substantive adapter passing the same test. FP8 copy pinned
+  by full 81-file sha256 manifest (training/fp8_checkpoint_manifest.sha256);
+  fp8<->bf16 ancestry still unresolved (operational compatibility, not
+  ancestry). Real-SFT config stays provisional until the full manifest +
+  token-mask report; working points (bf16, r16, mb1, checkpointing ON,
+  cache off) preserved. Receipt: dev_set/serving_compat_20261011/receipt.md.
 - **Dev baseline (step 4) protocol drafted**: .ai/dev_baseline_protocol_20261011.md
   — 7 dev cases vs untrained model, per-case env copy + pi session on :8011
   (recommended endpoint, PM ratification pending), 3 deterministic via
   check_dev.py + 4 semantic via rubric (different seat scores), receipt to
-  dev_set/baseline_20261011/. Final set + answer keys stay out of training
+  dev_set/baseline_20261011/. :8011 RATIFIED by PM 2026-10-11 as intended
+  deployment config (serving compat test PASSED first); baseline must pin
+  the serving_compat_20261011 receipt's config block (vLLM 0.30.0, fp8 KV,
+  MTP k=3, prefix caching, temperature, max_tokens, thinking default). Final set + answer keys stay out of training
   and dev iteration.
 - **GPU vantage fact (this pi seat)**: NOT sandboxed — net:[4026531833] host
   namespace, Seccomp 0, /dev/nvidia* present, nvidia-smi works directly. The
