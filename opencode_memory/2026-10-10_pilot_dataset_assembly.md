@@ -26,3 +26,27 @@ Accounting after wave1: 27 preference pairs, 7 SFT trajectories, 0 dev, 0 final.
 Next (PM-directed): Tier A wave 2 (O13, O12-remainder? — PM said start with the first four;
 remaining Tier A = O13, O26, O30), then Tier B (16 text cards), dev set (7 families), final
 set (10 families + freeze).
+
+## 2026-10-10 (later): dev set + tierA_wave2 built
+
+- **Dev set COMPLETE + pushed (ad960d44)**: 7 cases, one per dev family, under
+  `training_data/derived/dev_set/`. 3 executable (O38 repair, O41 slice-probe, O39
+  diagnosis — deterministic checks in check_dev.py) + 4 semantic (O40 honest-fail, O2
+  taxonomy, O7 era labels, O10 rollout report — required/forbidden element rubrics in
+  dev_scoring.md). Three scoring layers kept distinct: PERFORM / INTERPRET / COMPLETE;
+  equivalent commands accepted. `--sanity` PASS (environments discriminate; O39
+  reproduces the historical FAIL verbatim); historical post-repair artifacts pass all
+  deterministic completion checks. O38 needs a synthetic input parquet (labeled); O41
+  uses the historical 9,196-row probe input; O10 env is a labeled reconstruction (v1
+  receipt never committed — every fact verbatim from the corrected receipt).
+- **tierA_wave2 COMPLETE + pushed (ce03f09e)**: 4 cards (O13 sealed-target FAIL, O19
+  watchdog elimination, O26 volume-vs-OI data check, O30 KA at ratified grain). Same
+  contract as wave 1; preference format v2 (messages_prefix + chosen/rejected +
+  split_index). Env snapshots of persistent density data (labeled): density_long 2024
+  first 25 days (O26), concentration_paths year=2024 full (O30). O30 counts
+  replay-verified: 37,836 ratified 5-min / 189,205 1-min (at-time 38,098/193,255 on the
+  2026-08-09 data state — pool drifted slightly; lesson is integer-independent).
+  check_and_replay.py all PASS.
+- **Dataset accounting now**: 31 preference pairs (12 pilot01 + 5 pilot02 + 6 pilot03 +
+  4 wave1 + 4 wave2), 11 SFT (3 pilot02 + 4 wave1 + 4 wave2), 7 dev, 0 final.
+- **Next**: Tier B (16 text-comparison cards) → final set (10 families) + freeze.
