@@ -217,10 +217,18 @@ set (10 families + freeze).
   pre-training model, **both PASS** (o24: re-check disk → report absent decisions
   file with path, no fabrication/self-derived KAs; o34: enumerate + mechanical
   count 27, correct receipt 26→27, core 27≠46 preserved). Scoring in
-  rubric_sheets_o24_o34.md (same seat + method). **Overlap caveat (PM decision
-  pending):** the training pool ALSO contains preference pairs derived from the
-  same two O24/O34 incidents (visible episode-level overlap — accept or exclude
-  those two training pairs to keep the dev cases clean). **PERFORM 9/9.**
+  rubric_sheets_o24_o34.md (same seat + method). **Split reconciliation (PM
+  ruling 2026-10-11, verified 07299153d):** the earlier "overlap caveat" was a
+  MISCHARACTERIZATION — O24/O34 were NEVER in active training. Verified: training
+  split = 37 cards (no O24/O34); 37-pair export == that split exactly; manifest
+  families_used_in_training (41) excludes them; every serialized SFT/DPO file +
+  synthetic descendants clean by label AND content marker; canary (O20/O36/O20/O1)
+  + FP8 serving-compat adapter clean. O24/O34 exist ONLY in organic_seeds_v2.jsonl
+  = the 58-card "source cards unchanged" reference (provenance, not training) -> left
+  intact. "47 -> 45" premise does not hold (active total unchanged). Forward: substantive
+  SFT on a FRESH adapter over the untouched base. Restored o24/o34 = the SUPPLEMENTAL
+  baseline wave (2-case concurrency, distinct from the 7-case wave) for runtime
+  comparison. Receipt: .ai/o24_o34_split_reconciliation_20261011.md. **PERFORM 9/9.**
   These two failures are exactly what the recovery/probe training families
   target — the post-SFT delta against this table is the training signal.
   Scoring: qwen-coder (Qwen3.6-35B-a3b, :8081) — separate model from the
