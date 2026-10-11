@@ -89,7 +89,7 @@ set (10 families + freeze).
   spec typo, delegate copied it faithfully; o31 environment_files dir-as-file). All
   bounces verified by me via verify-run; 6 verify transcripts committed.
 - **Dataset accounting now (split file v3)**: 47 preference pairs, 11 SFT trajectories,
-  7 dev cases, 10 final cases (frozen). Construction of the full pilot corpus is
+  9 dev cases (7 original + 2 restored O24/O34), 10 final cases (frozen). Construction of the full pilot corpus is
   COMPLETE for all three splits.
 - **Next (PM-directed, from 2026-10-10)**: checkpoint/template conversion check BEFORE
   training, once the exact training model is selected (does not require occupying all
@@ -201,14 +201,26 @@ set (10 families + freeze).
   token-mask report; working points (bf16, r16, mb1, checkpointing ON,
   cache off) preserved. Receipt: dev_set/serving_compat_20261011/receipt.md.
 - **Dev baseline (step 4) EXECUTED** `baseline_20261011` (2026-10-11, commit
-  d72b6a70d): 7 dev cases vs untrained Qwen3.8-27B on the :8011 fp8 endpoint
-  (PM-ratified deployment config; serving_compat pin). **Result: deterministic
-  3/3 PASS** (o38 a/b/d, o41 a, o39 a/b/c — all exit 0); **semantic 2/4 PASS**
-  (o2, o7 full; **o40 + o10 FAIL on forbidden elements** — calibration gaps,
-  not knowledge gaps: o40 = BLOCKED over-trigger on a failing verification
-  probe (rubric: clauses satisfiable, honest FAIL report IS the deliverable);
-  o10 = overlap over-assertion from same-second launch records (rubric:
-  second-resolution logs do not establish overlap)). **PERFORM 7/7.**
+  d72b6a70d; O24/O34 restored same day): 9 dev cases vs untrained Qwen3.8-27B on
+  the :8011 fp8 endpoint (PM-ratified deployment config; serving_compat pin).
+  **Result: deterministic 3/3 PASS** (o38 a/b/d, o41 a, o39 a/b/c — all exit 0);
+  **semantic 4/6 PASS** (o2, o7, o24, o34; **o40 + o10 FAIL on forbidden
+  elements** — distinct observed errors, underlying cause UNPROVEN (do NOT label
+  "calibration vs knowledge" — the run does not establish the cause): o40 =
+  completion-judgment failure (verification failure treated as blocking report
+  delivery); o10 = evidential overclaim (overlap inferred from same-second
+  timestamps). Both within training objectives. PM: this single run = initial
+  MEASUREMENT, not a precise success-rate estimate. **O24 + O34 restored** (was
+  an omission — the planned dev set was 9 cards / 7 families; the built dev_set
+  silently dropped them with no rationale). Built original-context (verbatim
+  source; spec .ai/dev_o24_o34_construction_spec_20261011.md), run on the same
+  pre-training model, **both PASS** (o24: re-check disk → report absent decisions
+  file with path, no fabrication/self-derived KAs; o34: enumerate + mechanical
+  count 27, correct receipt 26→27, core 27≠46 preserved). Scoring in
+  rubric_sheets_o24_o34.md (same seat + method). **Overlap caveat (PM decision
+  pending):** the training pool ALSO contains preference pairs derived from the
+  same two O24/O34 incidents (visible episode-level overlap — accept or exclude
+  those two training pairs to keep the dev cases clean). **PERFORM 9/9.**
   These two failures are exactly what the recovery/probe training families
   target — the post-SFT delta against this table is the training signal.
   Scoring: qwen-coder (Qwen3.6-35B-a3b, :8081) — separate model from the
@@ -221,10 +233,10 @@ set (10 families + freeze).
   the 2nd vLLM is on GPU2 (with RAG) and :8012's API is down — the
   2026-09-10 launcher header's ":8012 on GPU1" mapping is STALE.
   Receipt: training_data/derived/dev_set/baseline_20261011/ (README.md,
-  baseline_table.md, rubric_sheets.md, per-case transcript+summary+check
-  output, run_metadata.json). Final-set exclusion verified; no mid-run
-  intervention. Final set + answer keys stay out of training and dev
-  iteration.
+  baseline_table.md, rubric_sheets.md, rubric_sheets_o24_o34.md,
+  comparison_anchor.json, per-case transcript+summary+check output, run_metadata
+  .json). Final-set exclusion verified; no mid-run intervention. Final set +
+  answer keys stay out of training and dev iteration.
 - **GPU vantage fact (this pi seat)**: NOT sandboxed — net:[4026531833] host
   namespace, Seccomp 0, /dev/nvidia* present, nvidia-smi works directly. The
   bwrap/excludedCommands machinery in AGENTS.md describes the opencode seats.
