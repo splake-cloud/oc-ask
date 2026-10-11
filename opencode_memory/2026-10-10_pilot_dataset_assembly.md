@@ -200,15 +200,31 @@ set (10 families + freeze).
   ancestry). Real-SFT config stays provisional until the full manifest +
   token-mask report; working points (bf16, r16, mb1, checkpointing ON,
   cache off) preserved. Receipt: dev_set/serving_compat_20261011/receipt.md.
-- **Dev baseline (step 4) protocol drafted**: .ai/dev_baseline_protocol_20261011.md
-  — 7 dev cases vs untrained model, per-case env copy + pi session on :8011
-  (recommended endpoint, PM ratification pending), 3 deterministic via
-  check_dev.py + 4 semantic via rubric (different seat scores), receipt to
-  dev_set/baseline_20261011/. :8011 RATIFIED by PM 2026-10-11 as intended
-  deployment config (serving compat test PASSED first); baseline must pin
-  the serving_compat_20261011 receipt's config block (vLLM 0.30.0, fp8 KV,
-  MTP k=3, prefix caching, temperature, max_tokens, thinking default). Final set + answer keys stay out of training
-  and dev iteration.
+- **Dev baseline (step 4) EXECUTED** `baseline_20261011` (2026-10-11, commit
+  d72b6a70d): 7 dev cases vs untrained Qwen3.8-27B on the :8011 fp8 endpoint
+  (PM-ratified deployment config; serving_compat pin). **Result: deterministic
+  3/3 PASS** (o38 a/b/d, o41 a, o39 a/b/c — all exit 0); **semantic 2/4 PASS**
+  (o2, o7 full; **o40 + o10 FAIL on forbidden elements** — calibration gaps,
+  not knowledge gaps: o40 = BLOCKED over-trigger on a failing verification
+  probe (rubric: clauses satisfiable, honest FAIL report IS the deliverable);
+  o10 = overlap over-assertion from same-second launch records (rubric:
+  second-resolution logs do not establish overlap)). **PERFORM 7/7.**
+  These two failures are exactly what the recovery/probe training families
+  target — the post-SFT delta against this table is the training signal.
+  Scoring: qwen-coder (Qwen3.6-35B-a3b, :8081) — separate model from the
+  running seat; the usual reviewer endpoint (qwen38-reviewer / :8012) was
+  DOWN (http 000) and sits on a GPU the PM keeps clear (PM: don't use it).
+  Author/reviewer separation preserved by model. Harness wrapper documented
+  in run_metadata.json (identical preamble → post-SFT run replicates it).
+  **GPU placement record correction** (discovered during scorer switch):
+  :8011 = GPU0 (91.6GB active); GPU1 = EMPTY (2 MiB, the cleared GPU);
+  the 2nd vLLM is on GPU2 (with RAG) and :8012's API is down — the
+  2026-09-10 launcher header's ":8012 on GPU1" mapping is STALE.
+  Receipt: training_data/derived/dev_set/baseline_20261011/ (README.md,
+  baseline_table.md, rubric_sheets.md, per-case transcript+summary+check
+  output, run_metadata.json). Final-set exclusion verified; no mid-run
+  intervention. Final set + answer keys stay out of training and dev
+  iteration.
 - **GPU vantage fact (this pi seat)**: NOT sandboxed — net:[4026531833] host
   namespace, Seccomp 0, /dev/nvidia* present, nvidia-smi works directly. The
   bwrap/excludedCommands machinery in AGENTS.md describes the opencode seats.
