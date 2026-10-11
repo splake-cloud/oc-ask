@@ -95,3 +95,104 @@ set (10 families + freeze).
   training, once the exact training model is selected (does not require occupying all
   three GPUs). SFT training prep is a parallel thread (see
   2026-10-11_qwen38_27b_sft_training_prep.md — canary built, GPU naming by hand).
+
+## Pre-training gate (2026-10-11, session resumed after the 01a122b5 death)
+
+- **Model selected + downloaded** (stale "once the model is selected" gates
+  unblocked): Qwen/Qwen3.8-27B @ 1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0 at
+  /data/models/qwen3.8-27b-bf16 (prep thread).
+- **TMPLATE CONVERSION GATE COMPLETE + VERIFIED (commit 2568267ab)**:
+  training/template_conversion_check.py — per-token loss-mask gate over ALL 58
+  training records (11 SFT + 47 pairs incl. the 12 pilot01 text pairs) via
+  CHUNKED TEMPLATING + PARTITION IDENTITY (spec v2: .ai/template_conversion_check_spec_v2_20261011.md)
+  against the checkpoint's actual chat template. GATE: PASS, 0 violations,
+  R1 7/7 exact vs the 7-record reference, T3 781/781 argument round-trips, no
+  truncation (max 4325 < 8192). Key template facts discovered: assistant
+  generation prompt = 7 tokens emitted between messages (belongs to the
+  assistant span); template is linear (partition holds exactly); mask tokens
+  = assistant spans only (e.g. binding: full 4325, mask 1593, user 621, tool
+  2111). Independent verification: my own hand-rolled chunked template for
+  pilot02_o20_binding matched the report's spans token-for-token.
+  Verify: verify/final_set_conversion_gate{,_v2}.* (3 transcripts).
+- **v1 spec mechanism withdrawn**: blanking-diff + LCP/LCS span capture is
+  unsound for this template (over-captures structural tokens; all-blank sum
+  cross-check can't hold). v1 spec kept on disk as superseded.
+- **wave2_o26 defect caught by the gate + repaired**: DESCRIBE tool result
+  (SFT msg3 + pair chosen msg1) stored as JSON list of 9 column names instead
+  of the verbatim stdout string → TemplateError. Repaired by re-running the
+  recorded command on env/O26/density_long_2024_sample.parquet (elements
+  asserted identical); git diff surgical (exactly 2 lines); documented in
+  tierA_wave2/README.md §Defect repair. Full-field scan of all 6 batch files:
+  no other non-string content.
+- **M-d amendment**: the gate's strict mask check surfaced
+  pilot02_o20_probe_recovery msg1 (failed probe, assistant, mask=False) —
+  INTENTIONAL, documented in training_pilot/README.md ("the already-failed
+  probe in the recovery prefix is also masked"). Spec M-d amended: direction 1
+  strict (loss ⇒ assistant), direction 2 = documented-exception set
+  {(recovery,1)}; reported informational, not a violation.
+- **TRAINING MANIFEST (training_data/derived/training_manifest.json)**: all 58
+  records enumerated with per-line sha256 (58/58 verified), 41 families,
+  SFT↔preference overlap map: pilot02 pairs = single-step extractions (chosen
+  byte-identical to a parent SFT assistant message; prompt = SFT msg0), wave1
+  pairs = exact SFT splits at msg1, wave2 pairs = exact prefix (SFT[:si]) +
+  labeled non-verbatim continuation; cross-batch family overlaps (aug11
+  density episode O32↔O26; 0dte-density O29/O28/O30; O20; sep29 O18+N13;
+  bpv00020 O15/RA07/RA08; idea_review RA04/N4/N6); dedup rule = families are
+  the independent units; dev (7) + final (10, frozen) explicitly excluded.
+- **qwen-coder performance note** (diagnosed 2026-10-11, 4 dispatches):
+  runs 1–2 bailed mid-diagnosis when the mechanism they were given was
+  self-contradictory (my spec defects: v1 M-c unsound; v2 generation-prompt
+  ownership prose-vs-formula contradiction); run 3 (patch-level spec + numbered
+  acceptance criteria) delivered exactly; run 4 (one-line fix) exact. Lesson:
+  this model's envelope = fully-determined, mechanically-checkable chunks;
+  the debugging loop stays with the main seat. It never fabricated a PASS or
+  touched the corpus.
+- **Canary step: PASSED (bf16, GPU1, 2026-10-11)**. Sequence: PM cleared GPU1;
+  4-bit run loaded fine (18.6GB) but OOMed at step 1 (4325 tokens, 94.9/94.97GB)
+  — receipt `training/canary_result_4bit_oom.json` (sha256
+  2d5d7d74b35f…). **DIAGNOSIS CORRECTED (PM)**: this does NOT establish a
+  Blackwell/bnb incompatibility; the 54GB-upcast explanation was retracted as
+  speculation. The actual cause: the canary had NO gradient checkpointing and
+  no use_cache=False — full 4325-token activations for all layers. After the
+  fix (checkpointing ON + use_cache=False, asserted in `config_verification`;
+  OOM handler now captures full traceback + memory_summary + requested alloc),
+  the **bf16 canary PASSED**: 10/10 steps, peak 58.28GB (≈36GB headroom on
+  96GB), 427 tok/s, ADAPTER_UPDATE PASS (fraction_changed 1.0,
+  grad_norm_step0 1.57), SAVE_RELOAD PASS (CPU tensor_compare max_diff 0.0;
+  real-reload forward loss_diff 0.0). Receipt `training/canary_result.json`
+  (sha256 912cdbca4f33…), log `training/canary_run5.log`, asserts deposited
+  via verify-run. Two latent device-placement bugs found+fixed on the way
+  (CPU tensors → CUDA model; disk adapter CPU vs GPU compare — now compared on
+  CPU per PM spec). Also fixed: canary's NameError (`batch_size` scope) +
+  assertion path now writes result JSON. NOTE: the 4-bit result's
+  `total_params` 15.03B is a bnb storage-numel artifact; the model is the
+  full 27.44B VLM in both runs. Real-SFT config decision (dtype/steps/lr)
+  still PM's; bf16 single-GPU sufficiency is now measured, not assumed.
+- **Checkpoint relationship + serving install (2026-10-11, CPU-only)** —
+  `docs/model-kb/qwen38_27b_checkpoint_relationship_and_vllm_lora_20261011.md`:
+  bf16 = Qwen/Qwen3.8-27B @ commit 1d4bf0f2 (pinned in .cache metadata);
+  fp8 = Qwen/Qwen3.8-27B-FP8 UNPINNED (main, 2026-08-22), publisher README
+  declares `base_model: Qwen/Qwen3.8-27B`. Structural compatibility proven
+  (text_config byte-identical; 1199/1199 tensor names match, fp8 adds exactly
+  407 weight_scale_inv for 128×128 blockwise e4m3/dynamic; 7/7 shape
+  spot-check; tokenizer vocab+special tokens+chat_template identical); NOT
+  identical ancestry (unpinned download, lossy quant). Serving: BOTH :8011 and
+  :8012 now run vLLM **0.30.0** (`.venv-vllm-0.30.0`, verified from live pids
+  + drop-ins; :8011 moved 2026-10-11 after 3rd Xid-31 on 0.20.2); legacy 0.20.2
+  env serves nothing but is still the bare-launch default. vLLM 0.30.0 source:
+  Qwen3_5 supported (SupportsLoRA + packed mapping incl. in_proj_qkvz),
+  blockwise FP8 handled by Fp8LinearMethod, LoRA wrappers delegate to the
+  quant method's apply + punica delta post-quant (correct for fp8 dynamic
+  act); VLM name-mapping machinery present. UNPROVEN until a real
+  `--lora-modules` smoke load (needs the trained adapter + reserved GPU):
+  full 256-target mapping through the VLM wrapper, and LoRA + MTP k=3 spec
+  decode (live endpoints run it).
+- **Dev baseline (step 4) protocol drafted**: .ai/dev_baseline_protocol_20261011.md
+  — 7 dev cases vs untrained model, per-case env copy + pi session on :8011
+  (recommended endpoint, PM ratification pending), 3 deterministic via
+  check_dev.py + 4 semantic via rubric (different seat scores), receipt to
+  dev_set/baseline_20261011/. Final set + answer keys stay out of training
+  and dev iteration.
+- **GPU vantage fact (this pi seat)**: NOT sandboxed — net:[4026531833] host
+  namespace, Seccomp 0, /dev/nvidia* present, nvidia-smi works directly. The
+  bwrap/excludedCommands machinery in AGENTS.md describes the opencode seats.
