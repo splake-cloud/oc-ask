@@ -248,3 +248,45 @@ set (10 families + freeze).
 - **GPU vantage fact (this pi seat)**: NOT sandboxed — net:[4026531833] host
   namespace, Seccomp 0, /dev/nvidia* present, nvidia-smi works directly. The
   bwrap/excludedCommands machinery in AGENTS.md describes the opencode seats.
+
+## 2026-10-11: FP8 + LoRA adapter + MTP k=3 serving-compatibility test — PASS (commit 32b08fd65)
+
+PM-directed **engineering** test (not adapter-quality): before substantive SFT, prove the
+FP8 base + LoRA adapter + MTP k=3 coexist and serve on the production vLLM 0.30.0
+combination. Reserved GPU1, temp server on port 8911 derived from production :8011 (only
++LoRA +port +GPU changed; context/concurrency/parsers/generation-config preserved). Receipt:
+`training/fp8_lora_mtp_test_20261011/receipt.md`. All 5 PM items established:
+1. **Full 256/256 adapter attachment, 0 skipped, 0 unexpected, dims match checkpoint.**
+   Static (CPU, `verify_adapter_attachment_static.py`): resolve all 256 targets through the REAL
+   vLLM `Qwen3_5ForConditionalGeneration.packed_modules_mapping` (qkv_proj/gate_up_proj) + the
+   `model.language_model.` VLM prefix, validated against the actual FP8 checkpoint dims.
+   Runtime (server load log): adapter loaded, **no unmapped-target warnings**. NOTE: the hybrid
+   full-attn q_proj out=**12288** (48×256), not the naive NH×HD=6144 — a trap; dims must be read
+   from the checkpoint, not the config formula.
+2. **Adapter selection changes computation (PROVEN):** 3 synthetic prompts, greedy temp 0,
+   logprob values differ at identical token positions (short 255/256, coding 21/21, ordinary
+   29/29; max Δ 1.49/0.117/0.095), base-to-base repeat **bit-identical** (determinism control →
+   the effect exceeds the base-to-base floor, which is zero). `prompt_logprobs` not returned by
+   vLLM 0.30 `/v1/completions`, but the preferred identical-token-position comparison was achieved.
+3. **Text + tool-call protocol PASS:** reasoning/content separated; `get_price` tool call parsed
+   (`{"ticker":"AAPL"}`), content=null on the call turn, final response stop.
+4. **MTP executes on adapted requests (PROVEN):** spec-decode counter delta on adapter-MTP =
+   1168 drafts / 3504 draft-tok / 1902 accepted (per-position acceptance present).
+5. **MTP speed benefit MEASURED = 2.01×:** adapter+MTP 83.89 tok/s vs adapter+MTP-off 41.80
+   tok/s (base+MTP 89.42 reference; adapter adds ~6% overhead vs base, expected for rank-16×256).
+
+Benign warnings recorded (not acted on): "no KV cache group identified as draft model's" (MTP;
+still drafts/accepts), "Using default LoRA kernel configs". GPU1 restored to 2 MiB; production
+:8011/:8013 unaffected throughout. 8011 config unchanged.
+
+**De-risks serving the substantive-SFT adapter** with the same path (FP8 + LoRA + MTP) after
+training. Method note: the standalone full-model LoRA-manager introspection HUNG (V1 multiproc
+executor → process-boundary getattr deadlocks); the fast rigorous path is CPU static resolution
++ runtime log corroboration, not in-process model introspection. The 318MB canary adapter is now
+in .gitignore (was untracked). Master now `32b08fd65`.
+
+**Serving-side gates now cleared.** Remaining gate before substantive SFT: the **token-mask
+report** (full deduplicated SFT examples + supervised-token counts) to fix the still-provisional
+real-SFT config (accumulation/lr/total updates). Then: fresh adapter over untouched base →
+post-SFT dev run (hash-check comparison_anchor inputs) → post-SFT serving smoke (this same
+test with the trained adapter) → frozen final set.
