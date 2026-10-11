@@ -24,10 +24,10 @@ Checkpoint `architectures=['Qwen3_5ForConditionalGeneration']`, `model_type 'qwe
 - **--max-seq-len 8192** covers measured max 4363 with headroom.
 - bnb 4-bit on Blackwell is UNKNOWN — the canary reports it, doesn't assume.
 - **Build bugs found on review + fixed (2nd qwen-coder EDIT, verified):** (1) `run_training` referenced `seq_lens`/`n_records` not in its scope → runtime NameError after the train loop, before JSON write (py_compile/import checks can't catch it) — fixed by adding both as params + passing at the call site (SIGNATURE_OK). (2) scheduler empty-line misfire guard added.
-- **STATUS: ARMED.** Scheduler launched detached (setsid+nohup), PID 1734599, first poll logged (gpu0 91652/100%, gpu1 93804/100%, gpu2 56391/0% — none free yet). Will fire the canary on the first freed GPU.
+- **STATUS: built + ready, launch is MANUAL (PM ruling).** The auto-scheduler `run_smoke_when_freed.sh` was ARMED (PID 1734599) then **KILLED on PM instruction**: "do not monitor for a time to send the canary; I will direct when it is time by hand. A quiet GPU is not an unused one necessarily." The `<2GB & 0% util = free` heuristic was the wrong trigger — a quiet/resident GPU may be reserved. So: NO auto-launch, NO monitoring. `smoke_1gpu.py` stays ready; when PM names a GPU, run it directly: `CUDA_VISIBLE_DEVICES=<idx> .venv-training/bin/python training/smoke_1gpu.py --dtype 4bit --max-seq-len 8192 --steps 10 --batch-size 1 --out training/smoke_result.json`. (`run_smoke_when_freed.sh` is kept on disk but NOT to be started unless PM re-authorizes.)
 
 ## Next / open
 - [x] Review canary build diff; syntax/import/signature checks pass; NameError + scheduler guard fixed + re-verified.
-- [x] Launch `run_smoke_when_freed.sh` detached — ARMED (PID 1734599), waiting for a freed GPU.
-- [ ] **Watch for the canary to fire** (a seat must finish and free a GPU). When it does, read `training/smoke_result.json` + `training/smoke_run.log`: peak mem + tokens/sec decide 1-GPU sufficiency; expand only if OOM/throughput justify (per PM). If 4-bit bnb fails on Blackwell, re-run canary with `--dtype bf16`.
+- [x] Scheduler was armed then **KILLED per PM** (quiet ≠ unused; no auto-launch, no monitoring).
+- [ ] **Wait for PM to name a GPU by hand**, then run the canary directly on it (command above). Read `training/smoke_result.json` + `training/smoke_run.log`: peak mem + tokens/sec decide 1-GPU sufficiency; expand only if OOM/throughput justify. If 4-bit bnb fails on Blackwell, re-run with `--dtype bf16`.
 - [ ] Then: real SFT config (assistant-only label masking, not the canary's full-sequence labels; thinking on/off decision; bf16 vs QLoRA based on canary memory).
