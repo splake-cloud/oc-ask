@@ -51,3 +51,43 @@ Committing the AGENTS.md rule with `git commit -am` swept 18 unrelated uncommitt
   fatal Xids on this card; verify with utilization, not just VRAM.
 - Commits: 8a1db922b (R1d), 60f22a3e2 (R1b corrections), 8d7305dc8 (wrapper+CPU demos),
   1010d4fbd (citation fix), 34f813d31 (R1e).
+
+## PM critique 2026-10-12 (binding) + corrective protocol
+
+PM verdict: the session's harness failures (probe selecting base instead of
+adapter; streaming parsers duplicating output; health checks reporting false
+success; cleanup killing production :8011; R1d watchdog never starting) and the
+investigation pattern (unsupported explanations treated as diagnoses; successive
+tests directed before foundations were trustworthy) were **avoidable and not an
+acceptable baseline for a pilot**.
+
+Root causes (self-assessment, 2026-10-12):
+1. **Command ran ≠ measurement valid.** Harnesses were run, never validated
+   against a known-answer control before their output was used for conclusions
+   (probe direction, parser round-trip, health scope).
+2. **Narrative outran evidence.** Plausible mechanisms (GDN/mamba D2D; embedding
+   sharing via the wrong module tree) were reported as "leading candidates"
+   before discriminating evidence existed; later data refuted one and the R2
+   review found the other mis-grounded.
+3. **Reactive operational fixes.** pgrep kill → pid-only rule; untested launcher
+   → fail-closed wrapper. Each fixed only after an incident.
+4. **Report style invited acceptance.** Confident, complete-sounding reports
+   whose evidence lines proved the harness OUTPUT, not the harness VALIDITY.
+
+Corrective protocol (binding for this thread and future eval/forensics work):
+1. **Harness gate before evidence.** Any harness measuring model behavior must
+   pass a known-answer control BEFORE its output supports a conclusion:
+   (a) parser round-trip on a synthetic known stream; (b) selection direction on
+   a trivially distinguishable base-vs-adapter prompt; (c) health scoped to the
+   workload (adapter attached, expected backend/capability), not HTTP 200.
+   Gate PASS/FAIL is recorded in the run README. No gate → no evidence.
+2. **Evidence-before-mechanism.** Every mechanism in a report is labeled
+   NAMED (directly observed: sanitizer frame, log line, source line) or
+   CANDIDATE (inference). Tests are framed to discriminate candidates, never to
+   "confirm" a leading candidate. Promotion to NAMED requires direct evidence.
+3. **State the foundation.** When a proposed test presupposes an unverified
+   foundation, that is stated explicitly and the test is gated on it — the
+   reader must never have to notice.
+4. **Self-check before reporting.** For each load-bearing claim: does the
+   evidence prove the harness output, or that the harness is valid? If only the
+   former and the harness is unvalidated → claim is UNVERIFIED, said as such.
