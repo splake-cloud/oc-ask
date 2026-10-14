@@ -47,6 +47,44 @@ so the fix was left local. (The prior session's teach-me commits c26e2ae9f/bf7a6
 in origin/master; this new fix is not yet — push it only with a PM go, or once that other work is
 pushed.)
 
+## 2026-10-14 update — the trigger rework (event-based triggers + tolerance gate; NO knowledge-gap)
+
+The old gate (`consequence × gap × throttle ≥ 0.5`, where `gap` was the user's
+knowledge-gap) was the whole reason the live card sat at `concepts: {}` — the model saw
+the nudge ("warrants a call: picking between methods/models where the choice shapes
+downstream results") and declined model-tuning decisions ("exploration/reporting," "PM
+has ratified it," "verification, not methodology"). The judgment under-fired. Per PM
+direction the gate was reworked to be **event-based** + **tolerance-only**:
+
+- **Two triggers** (the EVENT, not a judgment): `decision` (the model asks the user for a
+  decision on a *named concept* → teach inline at that stop) + `user-request` (the user
+  asks for more info → always teach, no gate). The model **names the concept** — it does
+  NOT judge consequence or knowledge-gap.
+- **Tolerance-only gate:** `user-request` always teaches; `decision` teaches iff the
+  concept's `throttle ≥ MIN_CONCEPT_THROTTLE` (0.3) AND the global `budget ≥ MIN_BUDGET`
+  (0.3). **`consequence`, `gap`, and `TEACH_THRESHOLD` are DELETED.** The card's v3 line
+  above ("the gate reads it: `effectiveGap = gap × throttle`… new concept defaults 0.5")
+  is **SUPERSEDED** — that formula is gone.
+- **Fresh throttle 0.5 → 1.0** (`FRESH_THROTTLE`): the old 0.5 made a fresh concept's gate
+  `consequence × gap ≥ 1.0` (near-impossible). At 1.0 a fresh concept earns full teaching
+  weight on a `decision` and self-limits (each skip drops the throttle 0.1 until it
+  saturates below 0.3 and the gate closes for that topic).
+- **`record_decision` now takes `{concept, decision, trigger}`** (was `{decision,
+  consequence, gap, rationale}`); the nudge is rewritten to "name the concept, do not
+  judge it."
+- **Unchanged from v3:** the form bandit, the throttle update rules, the budget, the
+  learned-style summary, the GPU2 split, the options line.
+
+**Commits (local master, NOT pushed):** `622090b8f` (the rework: policy.ts + index.ts +
+test.ts + verify receipt) + `9c845aff6` (scope-doc v4 section). Both trailer
+`jett-8011 (qwen3.8-27b-fp8)`. Local master is now **35** ahead of origin/master (33
+other-sessions' + 2 prior + 2 this rework). Test suite reworked to the new interface,
+`TEACH_ME_PHASE3_PASS` (receipt `verify/teach-me-trigger-rework-final.20261014T064738Z.txt`).
+
+**Still open:** a fresh `pi` session test to confirm the two triggers FIRE reliably
+during model-tuning work (the judgment under-fired; the event-based trigger is the fix —
+but it needs a live confirmation).
+
 ## The learning-style reframe (the core reframe — remember this)
 
 **One line: the module adapts to *how the user learns* (the teaching form); it does NOT measure
