@@ -85,6 +85,17 @@ other-sessions' + 2 prior + 2 this rework). Test suite reworked to the new inter
 during model-tuning work (the judgment under-fired; the event-based trigger is the fix —
 but it needs a live confirmation).
 
+**Live-verified + UX follow-up (later 2026-10-14):** the trigger fired live in session
+01a139fe (a `user-request` on the RAG-split concept, `docs/RAG.md §11`) — the full loop ran:
+block generated on GPU2 (log-proven: one teacher request at 10:44:38 after a ~6.5h idle
+gap), the user picked the depth form at 13:21, card updated (depth n:1 hits:1, budget
+0.5→0.6). Two UX fixes followed (commit dc3bd8cb4, text-only): (1) the nudge now keeps
+the session going after engagement (give the content, then prompt for the next step —
+don't die after one request); (2) the options go (a)-(e) → core-1..core-5 + a standing
+instruction that a core-N/form-word reply references the teaching block, not a decision
+(the (a) collided with primary-session decision options). Suite green (verify-run
+teach-me-keepgoing-coreN).
+
 ## The learning-style reframe (the core reframe — remember this)
 
 **One line: the module adapts to *how the user learns* (the teaching form); it does NOT measure
