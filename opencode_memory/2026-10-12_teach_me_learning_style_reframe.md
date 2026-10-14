@@ -16,6 +16,37 @@ concept in the form the user actually learns in.
 The build spans phases (the compacted history of this session); the **learning-style reframe** is
 the main work of this session and the thing you'll ask about.
 
+## 2026-10-14 update — teacher relaunched + the enable_thinking bug (READ THIS)
+
+The GPU2 fine-tune finished, releasing GPU2. The teacher was relaunched
+(`scripts/launch_qwen38_27b_fp8.sh` with `PORT=8013 GPU=2 CTX=16384 UTIL=0.38
+VENV=.../.venv-vllm-0.30.0 CUDA_HOME=/usr/local/cuda-13.2 VLLM_USE_V2_MODEL_RUNNER=0`),
+health 200, port-owner pid 3210589 (pid file `/tmp/teach_teacher_8013.pid`). The
+previously-blocked **live-teacher-generation smoke test** then ran and caught a real bug.
+
+**The bug (load-bearing):** the teacher is a *reasoning* model (qwen3 + `reasoning_parser
+qwen3`). With no disable-think, it spends its entire `max_tokens` (1200) on internal reasoning
+and returns `content: null` (`finish_reason: length`, `reasoning_tokens: 1200`) → the teaching
+block renders EMPTY. A plain "Return only the text" prompt is not enough for a reasoning model.
+**Fix (commit `e5ae47daa`):** the extension's teacher request now sends
+`chat_template_kwargs: { enable_thinking: false }` — verified live against :8013:
+`reasoning_tokens` 1200→0, `content` null→a clean 2-3 sentence block + "On your work:" synthesis,
+`finish_reason` length→stop, 136 completion tokens. `/no_think` alone was NOT enough (579
+reasoning tokens still); only `chat_template_kwargs.enable_thinking=false` disables it fully.
+
+**GPU2 co-residency (tight but stable):** :8081 (qwen-coder, 43808 MiB) came back when the
+fine-tune finished, so GPU2 now holds 3 servers — teacher :8013 (38058 MiB) + :8081 (43808) + RAG
+(12570) = 94458/97887 MiB (96.5%), 2792 MiB free. All 4 seats health 200. Stable: vllm
+pre-allocates its KV cache at startup (memory is fixed, no growth under load), but the OS margin
+is thin — do not add more to GPU2 without trimming a resident.
+
+**Committed to master, NOT pushed:** `e5ae47daa` (trailer `jett-8011 (qwen3.8-27b-fp8)`). Local
+master is now 33 ahead of origin/master — 32 of those are other sessions' unpushed work
+(datadesign step_6/7/8, sft serialization, the :8011 garbage-guard). Pushing would push all 32,
+so the fix was left local. (The prior session's teach-me commits c26e2ae9f/bf7a61a23 ARE already
+in origin/master; this new fix is not yet — push it only with a PM go, or once that other work is
+pushed.)
+
 ## The learning-style reframe (the core reframe — remember this)
 
 **One line: the module adapts to *how the user learns* (the teaching form); it does NOT measure
@@ -81,12 +112,15 @@ the main work of this session and the thing you'll ask about.
   `CLEAR_PREFERENCE_TOTAL`/`SATURATION_ENGAGED`/`SATURATION_SKIPPED`/`BUDGET_STEP`; functions
   `selectForm`/`selectTeachForm`/`learnedStyleSummary`/`applyEngagement`/`updateBudget`.
 - **Teacher (GPU2):** qwen3.8-27b-fp8, port **8013**, CTX 16384, UTIL 0.38, KV fp8, FlashInfer,
-  MTP k=3, `VLLM_USE_V2_MODEL_RUNNER=0`, `max_tokens 1200`. Dial URL
+  MTP k=3, `VLLM_USE_V2_MODEL_RUNNER=0`, `max_tokens 1200`, **`chat_template_kwargs:
+  {enable_thinking:false}`** (REQUIRED — it's a reasoning model; without it the block is empty;
+  commit e5ae47daa, 2026-10-14). Dial URL
   `TEACHER_URL = $TEACH_ME_TEACHER_URL || http://127.0.0.1:8013` (index.ts:34). Log:
-  `/data/agentic_trading/logs/qwen38_8013_*.log` (had fired — 8 completions at time of build).
+  `/data/agentic_trading/logs/qwen38_8013_*.log` (relaunched 2026-10-14, health 200, pid 3210589).
 - **Seat map (at time of build):** 8011 (GPU0) primary; 8012 (GPU1) semantic-worker;
-  8081 (GPU2) qwen-coder — **DOWN for a fine-tune**; 8013 (GPU2) teacher. Implementation was routed
-  to :8011 (qwen38-collab) since :8081/:8012 were down.
+  8081 (GPU2) qwen-coder — **DOWN for a fine-tune** (back UP by 2026-10-14, co-resident with the
+  teacher on GPU2); 8013 (GPU2) teacher (relaunched 2026-10-14, health 200). Implementation was
+  routed to :8011 (qwen38-collab) since :8081/:8012 were down at the time.
 - **JITI cache (load-bearing):** `rm -f /tmp/jiti/teach-me-*.mjs` after EVERY extension code change
   (a stale cache masks edits).
 - **tsc binary:** `/home/user/projects/llama.cpp/tools/ui/node_modules/typescript/bin/tsc`
