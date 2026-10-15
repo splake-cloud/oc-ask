@@ -216,3 +216,34 @@ teach-me-keepgoing-coreN).
 Commit trailers use `jett-8012` (the session's pre-compaction fingerprint). The **live** `PI_PROVIDER`
 for this session reads `jett-8011` — the model endpoint was likely re-pointed mid-session during the
 fine-tune. Minor attribution nuance; the commits are the record. Not force-pushed to change it.
+
+## Option (b) — mechanical confusion trigger (2026-10-15)
+
+**Under-firing confirmed by hand (session `01a139fe`).** The `decision` trigger does not fire in the
+real case: the model asked the user to decide on a batch of concepts; the user answered two and said
+**"no idea what this even is: udge-seat A/B, anaphoric-quote ruling, SSD Nodes URL, DEFAULT_INSTRUCTION
+generalization"** on four named concepts; the model **explained all four inline** and made **zero**
+`record_decision` calls → no teach-block. Root cause: the model's natural behavior on confusion is to
+explain inline; the teach-block is a *separate parallel mechanism* the model must *voluntarily* invoke
+in addition, and the trigger is the model's judgment in the moment (not an event) — so it loses to the
+inline explanation. The one fire that worked (10:44) was a *clean standalone question*; a *mixed*
+message (answers + confusion) gets absorbed into normal answering.
+
+**Decision (PM chose option b).** Fix it *mechanically*: detect the confusion signal **in the user's
+message**, extract the named concepts, fire the teach-block(s) — **no dependence on the model calling
+a tool.**
+
+**Integration point (confirmed vs pi 1.0.2):** the `before_agent_start` hook (already registered for
+the nudge) carries `event.prompt` = the raw user prompt text (`dist/core/extensions/types.d.ts:699`).
+Detection = a cheap case-insensitive regex (markers: "no idea what", "don't understand", "what is",
+"what do you mean by", …); extraction handles the **list form** (": X, Y, Z" → split) + the **single
+form** ("I don't understand X"); cap at 4; fire via a shared `fireTeacherCall` (extracted from
+`record_decision`); new trigger type `confusion`; confusion blocks are **uncapped** (bypass the
+`budget×3` settle cap — the user explicitly asked). Card untouched on fire (updated on engagement).
+Known trade-off: the user may get *both* the inline explanation and the adaptive block (acceptable —
+the block is the adaptive version; a mitigation nudge is out of scope).
+
+**Handoff brief (self-contained, for the continuation agent):**
+`/data/agentic_trading/docs/teach_me_option_b_handoff.md` — context, confirmed problem, design
+(detection/extraction/firing/budget), files to change, verification (unit + JITI clear + live test),
+constraints, grounding, out-of-scope, open design decisions. **Scoped only, not yet implemented.**
