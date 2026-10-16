@@ -1,4 +1,4 @@
-# Finance metadata pass — wave 0 + wave 1 (2026-10-16)
+# Finance metadata pass — wave 0 + wave 1 + wave 4 (2026-10-16)
 
 Tagging the untagged finance rows of the paper-corpus claim bank with comparability tuples,
 using the existing 10-key contract (NOT the model_tuning 11-key form). Wave 0 (plumbing) and
@@ -78,14 +78,32 @@ Lance backups: `claims.lance.bak-w1.20261016T120545Z` (pre-copy) + tool `bak-pre
 methodology-flavored tokens (model_specification/estimation) may be a tagging-guidance problem,
 not a vocab gap — review before promoting.
 
+## Wave 4 (natural_gas 8 + crude_oil 1 = 9 papers / 219 rows) — DONE 2026-10-16
+- Papers: chincarini Amaranth ×2 (collapse_2008=17, no_free_lunch_2007=30), hu_hu_lin (25),
+  qiu_ware_yang swing (24), rotondi gas options (28), schneider_tavin Samuelson (19), shao term-
+  structure (22), till_amaranth (26), trolle_schwartz crude (28).
+- **9/9 gates PASS, 9/9 canonicalize 0 changes**; single batch ingest (219 rows, per-paper counts
+  exact); :8090 restarted (3572896 → **3705081**); acceptance: hu_hu_lin 2/2 @8.875, schneider_tavin
+  8.875 + shao 8.25, trolle_schwartz 2/2 @9.9375; gas filters work (natural_gas 161 rows, crude_oil
+  23, swing_deal 30). **Coverage 39.6% → 45.1% (1812/4022).** Receipt:
+  `verify/w4-finance-metadata-gas-crude-acceptance.*`.
+- **5 more identity corrections** (all envelope slugs wrong, source decided): no_free_lunch_2007 =
+  "A Case Study on Risk Management: Lessons from the Collapse of Amaranth" (JAF 2008, Chincarini);
+  collapse_2008 = "The Amaranth Debacle..." (JAI Winter 2007, Chincarini); hu_hu_lin = "Effect of
+  Temperature Shock and Inventory Surprises on Natural Gas and Heating Oil Futures Returns" (Hindawi
+  S WJ 2014, DOI 10.1155/2014/457636); shao = dated 2023 (SSRN 4575374 preprint, not 2024);
+  trolle_schwartz = NBER WP 12744 Dec 2006 (working-paper version, not JFE 2009). Corpus caveat:
+  gas papers' `parsed/` gate_reference files live in the staging dir
+  `logs/paper_corpus/_natgas_staging_papers_index/parsed/...`, not the canonical corpus path.
+- Corpus note: the two Amaranth paper_ids are distinct claim sets (0 shared claim_text) — possibly
+  different versions/venues of the same case-study research; both legitimately retained.
+
 ## Remaining waves (approved scope)
 - **W2**: bubbles_crashes 12/306 + risk_backtesting 4/90 + behavioral 3/82 (vocab mostly fits)
 - **W3**: technical_analysis 13/1016 + market_structure 11/716 (biggest vocab gap; apply + extend
   existing `vocab/market_structure.json`; big papers split 2-part: edwards_magee 412, schabacker 225,
   hamilton 143, park_irwin 117)
-- **W4**: natural_gas 8/191 + crude_oil 1/28 (vocab built in w0; runs parallel to W1 — do it next,
-  it's ready)
-Target after all waves: 4022/4022 (100%).
+Target after all waves: 4022/4022 (100%). Current: 1812/4022 (45.1%).
 
 ## Keys
 - 10-key tag order: claim_id, subject_variable, object_variable, effect_shape, direction,
