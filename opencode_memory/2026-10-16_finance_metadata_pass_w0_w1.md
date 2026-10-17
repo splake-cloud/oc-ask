@@ -98,12 +98,37 @@ not a vocab gap — review before promoting.
 - Corpus note: the two Amaranth paper_ids are distinct claim sets (0 shared claim_text) — possibly
   different versions/venues of the same case-study research; both legitimately retained.
 
+## Wave 2 (bubbles_crashes 12 + risk_backtesting 4 + behavioral 3 = 19 papers / 478 rows) — DONE 2026-10-17
+- Papers: greenwood_shleifer_you (33), phillips_wu_yu (31), johansen_sornette (30), sornette_cauwels (29),
+  chen_hong_stein (28), barberis (27), brunnermeier_nagel (26), scheinkman_xiong (26), xiong_yu (24),
+  abreu_brunnermeier (23), vanhemert (29), sullivan (20), magdon_ismail (18), barber_odean (28),
+  hong_stein (28), li_anchors (26), phillips_yu_dating (18), bailey (23), phillips_shi_yu (11).
+- **19/19 gates PASS, 19/19 canonicalize 0 changes** (after applying barber_odean's 14 `trading`→
+  `other:trading` object_variable normalizations — the first time canonicalize wrote non-zero in this
+  pipeline; the validator does not check object_variable vocabulary, the canonicalizer does). Single
+  batch ingest (478 rows, per-paper counts exact); :8090 restarted (3705081 → **973134**);
+  acceptance: LPPL → sornette_cauwels 7.06 + johansen 2×; drawdowns → vanhemert 3/3 @7.44;
+  snooping → sullivan 3/3 @7.13; disagreement → xiong_yu 8.69; warrants → xiong_yu 3/3 @10.0;
+  anchors → li_anchors 5.81 (behind two 52wh papers — legitimate topical overlap).
+  **Coverage 45.1% → 56.9% (2290/4022).** Receipt:
+  `verify/w2-finance-metadata-bubbles-risk-behavioral-acceptance.20261017T033444Z.txt`.
+- **7 more identity corrections** (source decided): chen_hong_stein = NBER WP 7687 May 2000
+  (not 2001); greenwood_shleifer_you = NBER WP 23191 2017 (not 2019 JFE); barberis = NBER WP 21944
+  Jan 2016, authors Barberis/Greenwood/Jin/Shleifer (not 2018 AER); phillips_wu_yu = Cowles DP 1699
+  2009 (not 2011 JAE); xiong_yu = NBER WP 15481 Nov 2009 (not 2011); phillips_shi_yu = Cowles DP 1914
+  2013 (not 2015); magdon_ismail = "On the Maximum Drawdown of a Brownian Motion" Sept 2003 (not
+  2004). Running total of identity corrections across W1+W2+W4: **18**. The filename slug's year
+  is unreliable ~half the time — the identity-check clause keeps earning its place.
+- bailey's source title is "Stop-outs under serial correlation and 'The Triple Penance Rule'" — the
+  paper_id says triple_penance but the paper is primarily about stop-outs; title followed the source.
+- Operational: `ingest_claims.py --replace` is `action=append` — one `--replace <pid>` flag per
+  paper (a space-joined list is silently ignored; the dry-run shows `replace papers: []`).
+
 ## Remaining waves (approved scope)
-- **W2**: bubbles_crashes 12/306 + risk_backtesting 4/90 + behavioral 3/82 (vocab mostly fits)
 - **W3**: technical_analysis 13/1016 + market_structure 11/716 (biggest vocab gap; apply + extend
   existing `vocab/market_structure.json`; big papers split 2-part: edwards_magee 412, schabacker 225,
   hamilton 143, park_irwin 117)
-Target after all waves: 4022/4022 (100%). Current: 1812/4022 (45.1%).
+Target after all waves: 4022/4022 (100%). Current: 2290/4022 (56.9%).
 
 ## Keys
 - 10-key tag order: claim_id, subject_variable, object_variable, effect_shape, direction,
@@ -113,7 +138,8 @@ Target after all waves: 4022/4022 (100%). Current: 1812/4022 (45.1%).
   data_period_covered, tldr, topics(3–8), methodology, data_sources, instrument_scope, evidence,
   paper_id, schema_version, vocab_version, _provenance.
 - vocab_version "v3", schema_version "v1". `other:snake_case` = radar, one segment, [a-z0-9_-].
-- Ingest: `ingest_claims.py --claims <paths> --replace <pids>`; meta_dir auto =
-  `corpus/metadata/`; `--dry-run` = zero-write plan.
+- Ingest: `ingest_claims.py --claims <paths> --replace <pid> --replace <pid> ...` (one flag per
+  pid — action=append); meta_dir auto = `corpus/metadata/`; `--dry-run` = zero-write plan; back up
+  `indexes/claims.lance` → `claims.lance.bak-w<N>.<ts>Z` before every ingest.
 - Envelope template lives in this session's dispatches; reuse with the identity-check clause +
   the `ls`-before-PASS clause (both earned).
