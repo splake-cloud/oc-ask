@@ -124,11 +124,56 @@ not a vocab gap — review before promoting.
 - Operational: `ingest_claims.py --replace` is `action=append` — one `--replace <pid>` flag per
   paper (a space-joined list is silently ignored; the dry-run shows `replace papers: []`).
 
-## Remaining waves (approved scope)
-- **W3**: technical_analysis 13/1016 + market_structure 11/716 (biggest vocab gap; apply + extend
-  existing `vocab/market_structure.json`; big papers split 2-part: edwards_magee 412, schabacker 225,
-  hamilton 143, park_irwin 117)
-Target after all waves: 4022/4022 (100%). Current: 2290/4022 (56.9%).
+## Wave 3 (technical_analysis 14 + market_structure 11) — COMPLETE 2026-10-17 — pass done
+- **Scope**: 25 registry pids, `chang_osler_head_shoulders_fx_1999` dropped (0-byte claims file, 0
+  table rows) → **24 papers / 1732 rows**. Exactly the remaining untagged set (4022 − 2290 = 1732).
+- **Vocab v4** (bumped in `scripts/paper_corpus/metadata_schema.py`, backward-compatible — v3
+  sidecars still pass the v4 validator): +22 tokens — constructs: composite_operator, supply, demand,
+  volume, spread, trend_state, divergence, moving_average; regimes: accumulation, markup,
+  distribution, markdown, balance, imbalance; topics: 11 (incl. value_area, point_of_control,
+  primary_trend, supply_demand, climactic_action); data_sources: price_volume, tape_reading,
+  market_profile, historical_charts; methodologies: discretionary, case_study, historical;
+  effect_shape: regime_dependent. **Deliberately NOT applied**: ms-vocab `direction:
+  bullish/bearish/neutral` — the direction axis is locked at v3 semantics (positive/negative/
+  conditional/null) because 2290 existing rows use it.
+- **24/24 gates PASS, 24/24 canonicalize 0 changes** (sum 1732 = scope exactly). One P1-stage
+  defect: edwards_magee line 28 shipped subject "distribution" (a regime token) → main-seat
+  deterministic repair to "supply" (evidence defines distribution as supply overcoming demand).
+  First P1 canonicality defect across W1–W3.
+- **7 identity corrections** (source decided): nelson → ©1902; cbot → ©1996; edwards_magee → 9th ed
+  2007 CRC Press w/ W.H.C. Bassetti (not the 1948 original); savin_weller → WP Jan 2003 (pid keeps
+  _2007); lo_mamaysky → NBER WP 7613 March 2000, WP title "…Empirical Implementation" (not the JASA
+  "…Anomalies"); wyckoff_day → "The Day Trader's Bible — Or… My Secrets of Day Trading In Stocks"
+  (agent rejected the envelope's alternate-title hint); wyckoff_method → ©1932 "A Course of
+  Instruction in Tape Reading and Active Trading". Plus 3 year-resolutions keeping publication year
+  (menkhoff_taylor JES 2007 vs WP 2006; cowles_forecasters Econometrica 1933; brown_goetzmann as
+  March 1998 WP). **Running identity corrections W1+W2+W4+W3: 25.**
+- **Ingest**: backup `claims.lance.bak-w3.20261017T044320Z` (41M); single batch, 24 per-pid
+  `--replace` flags; dry-run: 1732 replaced, projected total 4022; real: OK. Post: table total 4022,
+  W3 rows 1732, per-paper table count == sidecar count for all 24.
+- **:8090** 973134 → **1156000** (python pid; nohup wrapper 1155899). Acceptance: Wyckoff
+  distribution → edwards_magee 7.06 (repaired line 28 ranked #1) + pal_lstm 5.38; Dow Theory →
+  brown_goetzmann 6.88 + hamilton 6.81; chart-pattern academic → dawson_steeley 5.88 + park_irwin
+  5.75; market profile → dalton 7.50 + cbot 5.56; FX TA/GP → park_irwin 7.12 + neely_weller_dittmar
+  6.62 + menkhoff_taylor 6.50.
+- **Coverage 56.9% → 100.0% (4022/4022). FINANCE METADATA PASS COMPLETE** — 64 finance papers tagged
+  across W1+W4+W2+W3 (567+219+478+1732 = 2996) + 1026 pre-W0 gamma rows.
+- Receipts: `verify/w3-finance-metadata-ta-market-structure-acceptance.20261017T044632Z.txt` +
+  `verify/w3-finance-metadata-coverage-gates.20261017T044655Z.txt` (verify-run, exit=0).
+- Ops: tsinaslanidis first attempt died silently (8k tokens, 2 tool uses, no files) — re-dispatch
+  succeeded and its agent corrected the envelope's wrong pid hint (pattern_factors →
+  pattern_profitability). Two duplicate dispatches (cowles_1944, wyckoff_method) completed
+  idempotently. All 24 missions ran on qwen38-collab; P1/P2 two-part protocol worked for the 4 split
+  papers (edwards_magee 206+206, schabacker 113+112, hamilton 72+71, park_irwin 59+58).
+- Notable subjects: schabacker chart_pattern 74 + composite_operator 69; hamilton trend_state +
+  composite_operator w/ Wyckoff regimes; park_irwin trend_following_performance; williams volume +
+  composite_operator; dalton other:value_area + other:auction.
+- **Next (all waves done)**: end-of-pass vocab promotion review — 101+ `other:` radar tokens
+  cumulative (W3 added ~17: tape_reading, professional_usage, forecast_accuracy, expert_forecast,
+  genetic_programming, transaction_cost, technical_rule, bandwidth_selection, smoothing_bandwidth,
+  detection_parameters, position_risk, trader_psyche, window_span, confidence_interval,
+  survey_limitation, sample_bias, dow). Top promotion candidates: tape_reading, model_specification,
+  beta_exposure, information_asymmetry, trading_volume, forecast_accuracy.
 
 ## Keys
 - 10-key tag order: claim_id, subject_variable, object_variable, effect_shape, direction,
@@ -137,7 +182,9 @@ Target after all waves: 4022/4022 (100%). Current: 2290/4022 (56.9%).
 - 17-field paper-level: title, authors, year, venue, doi (never invented), paper_type,
   data_period_covered, tldr, topics(3–8), methodology, data_sources, instrument_scope, evidence,
   paper_id, schema_version, vocab_version, _provenance.
-- vocab_version "v3", schema_version "v1". `other:snake_case` = radar, one segment, [a-z0-9_-].
+- vocab_version "v3" (W1–W4) / "v4" (W3), schema_version "v1". `other:snake_case` = radar, one
+  segment, [a-z0-9_-]. Validator checks tokens against the CURRENT `metadata_schema.VOCAB`
+  (superset-safe across versions).
 - Ingest: `ingest_claims.py --claims <paths> --replace <pid> --replace <pid> ...` (one flag per
   pid — action=append); meta_dir auto = `corpus/metadata/`; `--dry-run` = zero-write plan; back up
   `indexes/claims.lance` → `claims.lance.bak-w<N>.<ts>Z` before every ingest.
