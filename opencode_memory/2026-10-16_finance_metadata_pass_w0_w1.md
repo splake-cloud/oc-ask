@@ -175,6 +175,39 @@ not a vocab gap — review before promoting.
   survey_limitation, sample_bias, dow). Top promotion candidates: tape_reading, model_specification,
   beta_exposure, information_asymmetry, trading_volume, forecast_accuracy.
 
+## V5 vocab promotion review — RATIFIED + EXECUTED 2026-10-17 (PM ratified in-session)
+- Review: `verify/vocab-promotion-review.20261017.md` (read-only, 1,196 distinct other: tokens;
+  72% used once, 86% ≤2 → long tail left alone). Ratified set: **19 construct promotes**
+  (transaction_cost, tape_reading, forecast_accuracy, stop_order, position_sizing,
+  technical_analysis_usage, market_manipulation, central_bank_intervention, diversification,
+  short_sale_constraint, profile_shape, trader_psyche, value_area, filter_rule, net_demand,
+  liquidity, multicollinearity, analyst_coverage, capital_allocation), **7 underlying re-axes**
+  (dow, stock_index, equity_market, nikkei_225, us_stocks, equity, real_estate), **2 product
+  re-axes** (warrants, options), 6 merge clusters (trading_volume→volume, bid_ask_spread→spread,
+  transaction_costs→transaction_cost, position_size→position_sizing,
+  technical_analysis+professional_usage→technical_analysis_usage, manipulation→market_manipulation).
+- `metadata_schema.py` → VOCAB_VERSION v5 (construct 77→96, underlying 14→21, product 12→14) +
+  ~40 SYNONYMS ratchet entries (new raw inputs normalize to canonical; self-test extended,
+  passes) + backward-compat verified (v3/v4 sidecars pass v5 validator).
+- Retro-rewrite: **469 rows / 45 papers**, field-aware (re-axis tokens only in
+  instrument_scope, merges/promotes only in subject/object), idempotent (2nd run 0). Skipped as
+  ratified-optional: trader_disposition/variance_risk_premium/price_trend (stay on radar).
+  Mis-slots NOT touched: other:investor_behavior (topic in subject slot), other:balance (regime
+  in subject slot). NEW FINDING: other:equity ×3 (ni_expiration_clustering) sits in the
+  instrument_scope.PRODUCT slot, not underlying — review-table granularity hid the sub-field;
+  left as-is (equity→equity_options map not ratified), flagged for next cycle.
+- Sweep: 39/45 full-clean; 6 legacy gamma papers fail --strict-state only on pre-existing missing
+  state files (identical failure pre-v5 in the W3 sweep; pass non-strict 'legacy-ok').
+- Ingest: backup `claims.lance.bak-v5.20261017T151213Z`; 45 papers, 2046 rows --replace;
+  total stays 4022. :8090 1156000 → **2331242**.
+- Acceptance (verify-run exit=0, 10/10): underlying='dow' 0→**149**; transaction_cost 0→36;
+  product='warrants' 0→24; stop_order 0→12; tape_reading 0→25; volume subject 81→97
+  (object 8→27; earlier '216' was a substring count, corrected); old-token residue 0;
+  Dow semantic query top hit 6.88→10.12. Radar 1196→1162 distinct tokens.
+- Receipts: `verify/v5-vocab-promotion-execution.20261017T152500Z.txt` +
+  `verify/v5-vocab-promotion-acceptance.*.txt`. Commits: agentic_trading 80e41438c was W3;
+  v5 commit this session.
+
 ## Keys
 - 10-key tag order: claim_id, subject_variable, object_variable, effect_shape, direction,
   timeframe{resolution,horizon}, instrument_scope{underlying,product,tenor_bucket}, regime,
