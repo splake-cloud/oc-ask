@@ -247,3 +247,173 @@ the block is the adaptive version; a mitigation nudge is out of scope).
 `/data/agentic_trading/docs/teach_me_option_b_handoff.md` — context, confirmed problem, design
 (detection/extraction/firing/budget), files to change, verification (unit + JITI clear + live test),
 constraints, grounding, out-of-scope, open design decisions. **Scoped only, not yet implemented.**
+
+---
+
+## 2026-10-16 — v5: adaptive learning-style loop (designed → built → deployed)
+
+Option (b)'s mechanical confusion trigger shipped as v4.1, then three defects
+confirmed live on the fwg seat killed the architecture: (1) confusion trigger
+over-fired on bare `what is/what's/what are` (whole clauses grabbed as
+"concepts"); (2) sidecar-as-primary made the loop fully inert when the backend
+was dead (card stuck empty); (3) hard-coded "quant-trading user" frame in the
+teacher prompt (extension copied from a quant seat). **PM-locked redesign
+intent: the system learns HOW the user learns (form preference / engagement /
+skip), not WHAT they know; the model's OWN teaching turns are the event; the
+user's REACTION is the signal; the profile SHAPES how the model teaches.**
+
+**v5 architecture (spec `docs/teach_me_adaptive_v5.md`):** two halves —
+FORMATION (`turn_end` gate `isTeachingTurn` → sidecar concept extraction →
+`pendingTeaching`; next `before_agent_start` → sidecar reaction classification
+→ `mapReactionLabel` → `applyEngagement` — reused v4.1 card/bandit/dial) and
+APPLICATION (learned-style directive injected into `promptGuidelines` every
+turn: dominant form + saturation + frame clause + budget-gated form-options
+footer the model emits itself). Sidecar demoted to auxiliary (naming /
+classification / on-demand form elaboration only — D-A option 1, PM-locked;
+dead backend no longer makes the loop inert). Frame parameterized:
+`TEACH_ME_USER_FRAME` (quant-trading host / generic fwg) — no hard-coded user.
+Retired: confusion detector (full removal), `record_decision` +
+`record_engagement` tools (mechanical harvest replaces model self-report —
+keeps them = double-counting), v4.1 nudge text.
+
+**Grounded decisions (pi 1.0.2 types.d.ts):** turn gate at `turn_end`
+(`TurnEndEvent.message: AgentMessage`; `AgentBeforeSettleEvent` carries no
+text — the spec's first draft was wrong); runner AWAITS async handlers
+(`emitBeforeAgentStart` awaits → harvest awaited inline with 5s
+`AbortSignal.timeout`, fail-closed); elaboration trigger = `formFromPrompt`
+(per-branch regex, priority depth>intuitive>example>practical>clarify) +
+active pending; `FORM_PICK_RE` decides explicit-vs-implied harvest weight.
+
+**Build (3 missions, qwen38-collab @ :8012 — qwen-coder's :8081 backend was
+DOWN, 0-token connection error):** M1 policy foundation `fed32c0a4`
+(`isTeachingTurn`, `mapReactionLabel`, `globalStyleSummary`,
+`frameRelevanceClause` + unit tests); M2 wiring `11f454ab8` (turn_end hook,
+harvest, directive injection, form/frame-aware `fireTeacherCall`, tool +
+confusion removal, gate.log turn-gate/concept-extract/reaction lines,
+integration tests driving the full loop with ordered mock sidecar); M3
+rollout `50b7b280d`. Suite: `TEACH_ME_PHASE3_PASS` + `TEACH_ME_V5_POLICY_PASS`
++ `TEACH_ME_V5_WIRING_PASS`; transcripts `verify/teachme-v5-{policy-m1,
+wiring-m2,m3-rollout}.*`.
+
+**Rollout state (verified, md5-parity):** host seats (agentic_trading +
+research_agent, shared `~/.bashrc`): `TEACH_ME_USER_FRAME=quant-trading`,
+`TEACH_ME_TEACHER_URL=http://127.0.0.1:8012` (dedicated :8013 teacher seat is
+DOWN; :8012 serves the same qwen3.8-27b-fp8). fwg seat (container `seat-fwg`):
+v5 files re-copied to `/root/.pi/agent/extensions/teach-me/`,
+`TEACH_ME_USER_FRAME=generic`, `TEACH_ME_TEACHER_URL=http://172.29.0.1:8011`.
+**Pi restart required on each seat for env pickup.**
+
+**Open / next:** live end-to-end confirmation post-restart (teaching turn →
+reaction → card updates → next turn shaped by learned form; watch
+`~/.teach-me/gate.log` for turn-gate/concept-extract/reaction lines); tune
+`TEACHING_TURN_MIN_*` thresholds + `formFromPrompt` over-fire (bare "unclear"
+/ "practical" in ordinary work sentences); PM option: restore :8013 + :8081
+dedicated seats (host-side model management).
+
+**PM ruling 2026-10-16 (footer layout):** the v5 draft silently reworded the
+established core-N footer into a question sentence; user called the
+unrequested layout change out. Lesson: **rewording an established user-facing
+string is a layout change, not a copyedit — surface it as a decision, never
+ship it inside a larger design.** Restored verbatim per user dictation
+(`c345e4bc2`): `core-1 deeper on the mechanics · core-2 intuitive explanation
+· core-3 an example · core-4 the practical application · core-5 tell me
+what's unclear   — or just keep going`. FORM_PICK_RE `practical use`→`practical`
+so core-4 registers explicit. Bonus finding: **pi hot-reloads extensions**
+(mid-process, code yes / env no) — the Oct-11 pi process (pid 2725032) runs
+v5 with NO env → its formation calls fail into dead :8013 (gate.log
+`fetch failed` lines) while sessions launched after the rollout learn fine
+via :8012. Restart the process for env pickup (frame=quant-trading).
+
+**2026-10-20 — fwg reported bug: bare "4" from the form-options menu never
+fired the elaboration block.** Diagnosis (fwg seat) verified against source,
+then fixed. Root cause: `formFromPrompt` (`.pi/extensions/teach-me/policy.ts`,
+the pure gate for Stage-7 on-demand elaboration in `before_agent_start`) had
+word-only regexes — no numeric branch — while `FORM_PICK_RE` (index.ts:59)
+recognizes `\b[1-5]\b`; the two regexes disagreed on whether "4" is a pick.
+(The sidecar classifying "4" as not-a-reaction is a red herring — harvest and
+generation are decoupled paths; harvest only updates the card.) Fix: numeric
+fallback in `formFromPrompt` (1=depth 2=intuitive 3=example 4=practical
+5=clarify), checked AFTER the word branches, and TIGHTER than FORM_PICK_RE's
+bare `\b[1-5]\b` — the number must be the pick (whole message / start of
+message / after option|pick|take|do|number|the / legacy core-N spelling), so
+"I have 2 questions" and "42" are not picks (avoids spurious blocks in a
+system built to minimize interruptions). 18 new assertions (ffp-num-*) in
+test.ts; full suite PHASE3+V5_POLICY+V5_WIRING green — verify-run
+`teachme-formpick-numeric` (recipe: esbuild CJS transpile of policy/test/
+index.ts in /tmp scratch with pi's node_modules symlinked + sed-patched
+extensionless requires; the checked-in `test-compiled.cjs` is stale and was
+never runnable as-is — its `require("./policy")` had no compiled target).
+Uncommitted (PM commit decision). fwg seat needs the file re-copied to
+`/root/.pi/agent/extensions/teach-me/` + pi restart (hot-reload picks up code,
+not env — per Oct-16 finding, code alone DOES hot-reload).
+
+**2026-10-20 (cont.) — committed + propagated.** Commit `1fb9b9b8c`
+(pathspec, Agent-Print pi/jett-8011) pushed to master (only local commit
+ahead at push time — rule 8 clean). Propagation checksum-verified: fwg
+(seat-fwg) got policy.ts+test.ts; pax (seat-pax) had NO teach-me dir at all
+— created with index.ts+policy.ts+test.ts (no test-compiled.cjs; stale).
+**fwg index.ts drift SURFACED, not synced (PM decision):** fwg's index.ts is
+stale (Oct 17) — missing ~385 lines = the ask_user dialog commits
+`45adc27aa` + `2cd534840` (real dialog, standing options dont_know/discuss,
+numbered options). pax's index.ts matches repo. Sync cmd when approved:
+`docker cp .pi/extensions/teach-me/index.ts seat-fwg:/root/.pi/agent/extensions/teach-me/index.ts`.
+Env state: fwg pi process HAS TEACH_ME_TEACHER_URL=http://172.29.0.1:8011 +
+TEACH_ME_USER_FRAME=generic (fix hot-reloads, no restart); pax pi (pid 20,
+since Oct 17) has NO TEACH_ME_* env → sidecar teacher calls fail-closed on
+default 127.0.0.1:8013 (main teaching loop unaffected); pax env config =
+PM decision (URL + pi restart for env pickup).
+
+**2026-10-20 (cont.2) — pax env pushed (PM "push it to pax").** pax's
+`/workspace` is NOT the repo (own tree, inodes differ) → user-level
+`/root/.pi/agent/extensions/teach-me/` copy is the only active one, no
+duplication. Env mirroring fwg: appended `TEACH_ME_TEACHER_URL=http://172.29.0.1:8011`
++ `TEACH_ME_USER_FRAME="generic"` to pax `/root/.bashrc` (fwg's values, from
+fwg .bashrc:44/47). Restart: old pi pid 20 killed (pid from seat's own ps,
+cross-checked cmdline; interactive TUI, no port) → `tmux send-keys -t "%0"
+"source /root/.bashrc && pi" Enter` (first attempt `main:%0` failed — pane
+target is `"%0"`). New pi pid 1190: both env vars in /proc environ, old pid
+gone, :8011 reachable from pax netns (curl /health → 200). **fwg index.ts
+drift still open (PM decision).**
+
+**2026-10-20 (cont.3) — fwg "still not resolved" — root cause + second fix.**
+fwg's monologue claimed "elaboration did fire"; gate.log disproved it: the
+"4" turn had a reaction line (pendingTeaching WAS set, Stage 7 ran) but NO
+teacher line → fireTeacherCall never called → running process's
+formFromPrompt("4") still null = **stale module in memory**. pi's hot-reload
+did NOT propagate a changed dependency (policy.ts, copied 15:26) into the
+already-loaded entry (index.ts; pi proc 5765 started 14:06). Oct-16's
+"hot-reload code yes" was entry-file-verified only — dependency changes need
+a process restart. Fixed seats need restart, not just copy. **Second latent
+defect fixed (commit 5c783dd33, pushed):** settle consumed finishedBlocks
+without waiting for the in-flight teacher call (async 30s) — fast main
+response → block lands one turn late / orphaned. Now: inflight tracking +
+bounded await at agent_before_settle (TEACHER_SETTE_WAIT 20s default;
+runner awaits boundary handlers — verified in extension-runner emitBoundary
+source); timeout doesn't drop the block, next settle gets it. New wiring
+test v5e (numeric "4" → practical teacher prompt; 150ms cap → timeout
+settle no block; late block appended at second settle); suite green
+(verify teachme-settle-wait). Deployed: all 3 files checksum-verified on
+fwg + pax; BOTH pi procs restarted (fwg 5765→6891, pax 1190→1368), env
+verified in /proc environ. E2E proof pending PM's next form-pick on fwg
+(gate.log must gain a teacher line + block appears same turn). fwg index.ts
+ask_user drift: NOTE — resolved by this deployment (fwg now runs the repo
+index.ts b44de57d… = current; the drift was closed as a side effect since
+the restart forced a fresh load of the repo file).
+
+**2026-10-20 (cont.4) — :8013 removed as base case (PM: "shouldnt be the
+base case unless there is a reason").** PM also ruled on the fwg noise:
+"8013 is down, it should not be, investigate" + "telling the user that is
+noise, state the responding model as a signature (jett-8011/8012/8081/8013)"
+— signature behavior = open item (separate design, not done). :8013 status:
+DOWN (host-vantage curl 000), no launcher in scripts/, referenced only by
+stale docs; host→:8012, fwg/pax→:8011 (all 200 up). Commit 8f7437dda
+pushed: TEACHER_URL has NO fallback — unset → sidecar disabled fail-closed
+(extract line reason=teacher-url-unset; teacher fail line naming unset var;
+zero fetches), main loop unaffected; test v5f (0 fetches, pending null,
+log lines). Deployed fwg+pax checksum-verified, NO restart (behaviorally
+inert — all seats have the env set). NOTE: fwg's earlier "sidecar down on
+:8013, I'll hand it to you" preamble was confabulated — same turn's
+gate.log shows teacher:ok on :8011 + the block actually landed (16:25:22).
+Also caught in v5f: test cache-clear pattern "teach-me" missed workdir
+"teachme-verify-work" → stale module reused; workdir renamed to
+teach-me-verify-work.
