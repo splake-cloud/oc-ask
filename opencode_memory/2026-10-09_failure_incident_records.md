@@ -59,13 +59,14 @@ with counterexamples and family groupings.
   Oct 2 time-accounting ruling), INT-0233 (state the pass condition, don't pre-state outcomes),
   INT-0237 (no patch-and-rerun cycles), INT-0201 (frozen validator / STOP CHANGING IT), R-00066
   (machine-vs-semantic boundary), INT-0193 (path-typo ≠ filesystem defect).
-- **Dominant mechanism across the 14:** proxy substitution (7/15) — a mechanical quantity standing in
-  for the semantic/empirical one (file presence → semantic completion; "65 concepts" → 65+50; "serial
-  sum" → serial baseline; "✓ Confirmed" → file read; "88/88 malformed" → model capability; "live" →
-  production proof; "already specifies D5" → resolved decision). Silent fallback is the second
-  mechanism (4/15).
-- **Detection pattern:** 8/15 PM-detected, 3/15 in-session self-detected, 2/15 undetected at session
-  end (Oct 4 D5; Jun 23 capability conclusion).
+- **2026-10-21 correction:** the 7/15 proxy-substitution dominance claim is withdrawn. B3 did
+  not treat D5 as ratified; the other six grouped cases mix supplied-pack, gate, document, timing,
+  and tool-schema failures. No replacement homogeneous count or ranking is established. See
+  /data/agentic_trading/training/proxy_substitution_real_packet_inventory_20261021/INVENTORY.md.
+  The original audit also listed silent fallback as 4/15; that is a separate historical tally.
+- **Detection pattern (corrected for B3):** the original audit listed 8/15 PM-detected and
+  3/15 self-detected. Its 2/15 undetected tally included unsupported B3; only the Jun 23
+  capability conclusion remains in that category.
 - **Notable locates:** the Sep 30 giant-write incident = BPV-00023 shard A, four deaths at the 32,768
   output-token cap (monolithic thinking block); the grammar incident = llama.cpp GBNF maxLength>2000
   clamp → silent unconstrained generation (1,139 failing grammars; INT-0196 fix); the Sep 29 routing
