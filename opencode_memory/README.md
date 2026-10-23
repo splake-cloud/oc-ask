@@ -23,5 +23,5 @@ created/modified, design decided, tooling installed), write the receipt without
 being asked.
 
 **Project runbooks** live in the project dirs (e.g.
-`/data/models/stable_diffusion/comfyui/WAN22_I2V_RUNBOOK.md`); cards point at
+`/data/agentic_trading/docs/model-kb/sandboxed_seat_runbook.md`); cards point at
 them, never duplicate them.
