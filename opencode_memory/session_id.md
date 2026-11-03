@@ -254,3 +254,4 @@ SPX dwell rev-2 repair complete: F13/F13b finalize+pin daac06c45, F15 manifest r
 01a1999c-0dd6-7464-8ae0-f1f982d4e1c3 (pi, qwen3.8-flash-next-nvfp4, research_agent) | 2026-11-03 BSA orchestrator runbook v1 drafted from live source, published research_agent 6438c3430
 01a1999c-0dd6-7464-8ae0-f1f982d4e1c3 (pi, qwen3.8-flash-next-nvfp4, research_agent) | 2026-11-03 5-run delta eval closed (4/2, receipt+intervention budget), auto-route+budget-align shipped (c937bac82), BPV-EVAL-1 claim-deadlock defect banked
 01a1a206-bcee-7318-b178-0dd6f2484ea9 (pi, qwen3.8-flash-next-nvfp4, research_agent) | 2026-11-03 pi-lens skills eval: design v1 + maverick instrument (fixtures/oracles/50-trial bank/gate0, ALL PASS construction) published research_agent fdce82d75
+01a1a206-bcee-7318-b178-0dd6f2484ea9 (pi, qwen3.8-flash-next-nvfp4, research_agent) | 2026-11-03 steered maverick provisioning seat (HANDOFF: vendor pyright, c-package path flags); published research_agent 2117c0c61
