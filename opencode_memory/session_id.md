@@ -251,3 +251,4 @@ SPX dwell rev-2 repair complete: F13/F13b finalize+pin daac06c45, F15 manifest r
 ## 2026-11-03T05:31:27Z | 2dd9e53d9 | ng_tick_live_v1 registered in POOL_LEDGER + data_catalog (RAG card pending corpus refresh)
 ## 2026-11-03T06:15Z | 16f7c7891 | spx_0050_encounter_cross_outcome DELTA revalidation closed (pi-jett-8013 orchestrator): candidate 2fa0226e5201 BPV_PASS, first live delta walk, hook BPV-00141 DONE, D7/D9 machine fixes shipped
 ## 2026-11-03T06:26Z | 231ac8e74 | delta replay demonstration 2fa0226e5201_r2 COMPLETE again (30/30, live repair-round first exercise, bytes-path latent fix); session 01a1999c exited with encounter_cross_outcome delta CLOSED (BPV_PASS, BPV-00141 DONE)
+01a1999c-0dd6-7464-8ae0-f1f982d4e1c3 (pi, qwen3.8-flash-next-nvfp4, research_agent) | 2026-11-03 BSA orchestrator runbook v1 drafted from live source, published research_agent 6438c3430
