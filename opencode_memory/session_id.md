@@ -339,3 +339,4 @@ dashboard-build-2026-11-05 (pi, qwen3.8-flash-8013, agentic_trading) | trendday 
 
 01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi-web, qwen3.8-27b-fp8-instruct, agentic_trading) | Tape rebuild follow-up: overlay checkboxes dropped (VWAP/EMA21 always on), VIX added to ticker vocabulary (0a33572d1); deployed to :8766
 01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi-web, qwen3.8-27b-fp8-instruct, agentic_trading) | replayserve FlatFileAdapter mtime-reload fix (SPX/VIX frozen-snapshot bug) (67be276dd); resident :8767 restarted, SPX edge tracking verified on :8766
+01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi-web, qwen3.8-27b-fp8-instruct, agentic_trading) | All overlay furniture dropped: legacy overlays strip (VIX toggle) from page + VWAP/EMA21 lines from client (d748c0202); deployed to :8766
