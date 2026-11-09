@@ -347,3 +347,7 @@ dashboard-build-2026-11-05 (pi, qwen3.8-flash-8013, agentic_trading) | trendday 
 
 
 01a1c1b4-fa0e-72b0-8b19-6132d56f5878 (pi, qwen3.8-27b-fp8-instruct, research_agent) | vendor_consolidation migration brief: retire Massive, consolidate VIX/SPX ingest on Databento DBIX.CORE (draft for PM ratification, no workstation changes)
+01a1bda2-264a-72b0-8b19-60d2d07db806 (pi, qwen3.8-flash-next-nvfp4, agentic_trading) | gateway design v3: custody-leak check (keyed pi sessions inherit provider+key into subagents; closed via --exclude-tools launcher clause), passive-mode audit (sole rejection class = unkeyed instruct POSTs; GET/health/metrics pass), port-8081 consumer diff addendum (llm_swap/flicker-probe/baseline/oc_seat_config), guard M=15 steer -> ledger record only (suite 10/10)
+01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi, qwen3.8-27b-fp8-instruct, research_agent) | replay default-date fix (commit 14d805f2e): empty-date REPLAY resolves to latest calendar date, bad date 400s naming both, /api/replay/default-date + page prefill; 256 non-browser + 5 browser gates, 4/4 live proof on :8766
+
+01a1c1b4-fa0e-72b0-8b19-6132d56f5878 (pi, qwen3.8-27b-fp8-instruct, research_agent) | vendor_consolidation brief finalized: retire Massive, add Databento Core Indices $99; actual CME line $179 (PM-confirmed), net +$50/mo ~$278 total; seam convention + shadow-mode cutover plan (commits 73f80b0d5..f5aa8f593)
