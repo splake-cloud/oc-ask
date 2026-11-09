@@ -345,3 +345,5 @@ dashboard-build-2026-11-05 (pi, qwen3.8-flash-8013, agentic_trading) | trendday 
 01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi-web, qwen3.8-27b-fp8-instruct, agentic_trading) | VWAP/EMA21 checkbox overlays RESTORED to shipped f2bfd618e form after PM ruled the removal was overreach (54e3466fd); deployed to :8766
 01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi-web, qwen3.8-27b-fp8-instruct, agentic_trading) | Overlay checkboxes moved to grey header bar right of LIVE button (PM: off the index levels) + Trend Day plugin UI cut (lamp/R1-R3/phase/rail/CONTEXT/monitor dropdown; /api/state backend kept for the refactor) (88a5954ca); deployed to :8766
 
+
+01a1c1b4-fa0e-72b0-8b19-6132d56f5878 (pi, qwen3.8-27b-fp8-instruct, research_agent) | vendor_consolidation migration brief: retire Massive, consolidate VIX/SPX ingest on Databento DBIX.CORE (draft for PM ratification, no workstation changes)
