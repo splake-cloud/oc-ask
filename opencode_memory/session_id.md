@@ -338,3 +338,4 @@ dashboard-build-2026-11-05 (pi, qwen3.8-flash-8013, agentic_trading) | trendday 
 - trend_day_rule range expansion analysis (pi, claude-opus-4-6, research_agent) | 1a0d8aadd: 4 RE variants x 1714-day population — no decision-time RE predictor (Q1), RE1 separates TP/FP only at close (Q2), RE = magnitude descriptor not pre-RTH predictor (Q3, corr(ORX,MFE)=0.01), one hypothesis cell ORX_ATR 1.0-1.5 -> 17.8% strict OOS inverting >1.5 (Q4); rebuild: no RE gate, descriptors only, hypothesis banked
 
 01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi-web, qwen3.8-27b-fp8-instruct, agentic_trading) | Tape rebuild follow-up: overlay checkboxes dropped (VWAP/EMA21 always on), VIX added to ticker vocabulary (0a33572d1); deployed to :8766
+01a1bc1c-6c5c-745f-b865-f53dce0c329f (pi-web, qwen3.8-27b-fp8-instruct, agentic_trading) | replayserve FlatFileAdapter mtime-reload fix (SPX/VIX frozen-snapshot bug) (67be276dd); resident :8767 restarted, SPX edge tracking verified on :8766
