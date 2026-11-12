@@ -427,3 +427,4 @@ pi web 01a1c2fe-7a4b-7732-9887-182a5bc93f8d (pi web, qwen3.8-flash-next-nvfp4, a
 01a1cb4e-8cb1-7416-abf5-3d5d4fc4780f
   (pi, qwen3.8-flash-next-nvfp4, market_data) | 5c668ae3d fix(ui): replay outage — replayed day was routed to the live lane (wave-1b via_live); replay_day pins it to archive; bite-test models live-lane amnesia; production replay verified ES+NQ streaming.
 01a1cb4e-8cb1-7416-abf5-3d5d4fc4780f | (pi, qwen3.8-flash-next-nvfp4, market_data) | 5c668ae3d fix(ui): replay outage — replayed day routed to live lane (wave-1b via_live); replay_day pins it to archive; bite-test models live-lane amnesia; production replay verified ES+NQ streaming
+01a1cb4e-8cb1-7416-abf5-3d5d4fc4780f | (pi, qwen3.8-flash-next-nvfp4, market_data) | replay outage #2: SSE pump thread killed by 10s read timeout on quiet streams; read=None + httpx-error wrapping feeds reconnect ladder; NG range replay verified past old death point
