@@ -1,8 +1,41 @@
 # Weather ensemble archive — pilot built and proven (2026-11-13)
 
 Pi session `01a1d2b5-e58e-7507-99ad-e7d13d3dd30d` (pi-web, agentic_trading).
-Work is on disk under `/data/agentic_trading/weather_archive/` — **uncommitted**
-(no commit-and-push was requested).
+Work is on disk under `/data/agentic_trading/weather_archive/`; committed
+(market_data `23955984c` pilot, `1fcc1de00` winter/unit-fix).
+
+## Day-2 update (2026-11-13 evening → 11-14 03:00 UTC)
+
+- **W2025-26 backfill**: GEFS DONE (1,198,080 msgs ok, 0 failed, 200 GB, 13.6 h)
+  + acceptance validation ALL PASS (19,328 member-init pairs 100% finite,
+  identity + identical-date revisions). ECMWF/AIFS-ENS ~92% (init 2026-03-09),
+  493 per-file S3 SlowDown failures recorded on holiday dates — idempotent
+  retry pass after DONE.
+- **O layer via CDS**: cdsapi 0.7.7 works but `/tasks/` polling is dead (new
+  datastores client; monitor via `client.get_jobs()`). Winter-window ERA5
+  delivered; then 6-hourly (604× = 151d×4, 24 MB, job d3fd46a3) →
+  `slices/wx_obs.parquet`, builder verified cell-by-cell vs raw netCDF.
+  12Z UTC = US morning cold minimum (noon-only HDD biased HIGH).
+- **K/F unit bug found & fixed (wxlib-1.1)**: derive computed HDD as
+  `65F − (K−273.15)` — Celsius vs Fahrenheit base, 3 sites; ERA5 cross-check
+  exposed it (conus HDD 51.99 vs 9.6 correct, 2025-11-01; the 51.99 reproduces
+  the Celsius formula exactly). Raw zarr stores always correct (Kelvin).
+  Derived DD/ens/revision tables + study W/C panels rebuild at the
+  post-backfill joint re-derive (derive-mid-write caused an earlier zero-fill;
+  re-derive must wait for BOTH stores closed, then assert no all-zero winter
+  runs).
+- **4-season gap batch launched**: GEFS + ECMWF inits 2026-04-01→2026-10-15
+  (units wx-gap2026-{gefs,ecmwf}; GEFS started, ECMWF queued behind winter
+  backfill on the per-source flock). Gives one continuous four-season year
+  Nov 2025→Oct 2026, both models, no code changes.
+- **History reach measured**: same-code floor = GEFS FV3 2021-11 (verified
+  pgrb2ap5 on bucket; 2022+ = zero new code, ~35-40 GB/winter); old eras
+  2017-2020 exist but are different grids (2017-2018 1° verified from files,
+  2019-2021.10 0.25°) needing per-era decoders (~200-230 GB downsampled);
+  ERA5 truth 1940→ now via the proven CDS path (~60 MB/winter CONUS).
+- **ng_weather_eval**: P panel done; harness smoke PASS both models; v1.1 eval
+  spec still not on disk as a frozen file (pre-registration gap).
+
 
 ## What exists
 
