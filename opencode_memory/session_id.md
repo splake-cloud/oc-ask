@@ -667,3 +667,4 @@ ng-options-deletion-20261118 (pi lead, jett, both) | deleted /data/parquet/ng_op
 01a1fa26-3b46-70a4-9d9c-075c08f8bd47 (pi, qwen3.8-flash-next-nvfp4, agentic_trading+research_agent) | page rule 5aaa8d625: page is asset-scoped - gas/crude strips only on their own tape asset, ES trend-day badge no longer painted on crude/gas (author display rule was defeating [hidden])
 
 01a1f9ab-d982-757e-8335-332ea46785bd (pi, qwen3.8-27b-fp8-instruct, agentic_trading) | 5.5 cutover installed (e3891ffef, PM-approved, live 34/34); capped canary pass rc=0 both products, historical manifest rows loaded=0, peak 88.1 MiB (19ee1dbe3); first-downloading-poll watcher armed for 20261121 00Z
+01a1f934-04fd-777e-8a0e-ed1966acb883 (pi, gpt-6.1-sol, agentic_trading) | Published df914cb3f: IFS/AIFS speed candidate and independent review; 178 tests pass, transport-retry telemetry and cross-scheme redirect defects reproduced; recommend hold installation pending fixes and PM review.
