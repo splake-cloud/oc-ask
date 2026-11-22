@@ -1,0 +1,1 @@
+01a1fa26 (pi, qwen3.8-flash-next-nvfp4, research_agent+market_data) | ES heatmap live on 8766: engine 718455b92, client 7924e650d, seam 4a0a00d22 (deploy checkout 4dbbd3790->4a0a00d22); three independent reviews + deploy receipt b2a5cecbd; served heat proved baseline-relative (10:01 raw 9681 -> 1.30, 23:01 raw 1185 -> 5.12)
