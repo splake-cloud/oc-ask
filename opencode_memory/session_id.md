@@ -802,3 +802,5 @@ ng-options-deletion-20261118 (pi lead, jett, both) | deleted /data/parquet/ng_op
 
 01a204f4-3516-7177-a44f-2d2119049046 (pi, jett-8081-think qwen3.8-27b-fp8-instruct, /data/agentic_trading) | breaker-ruling scorer arc closed: deferred flat live->paper + weekend tape guard, 7/7 + 52/52, independent review PASS + addendum, first scorer ledger entry (d4843783), AT 5401bfa7e
 01a2089a-eddb-749c-ba53-af5ef63cbb16 (pi, anthropic claude-opus-4-6, /data/agentic_trading) | H closure resolved: both narrow corrections (Flake A test assertion; gate driver RC capture) RESOLVED with fresh targeted runs (29/29 OK; hash 764f4c94 + RC demo), no live rerun [AT 19685fc4f]
+
+01a204f4-3516-7177-a44f-2d2119049046 (pi, jett-8081-think qwen3.8-27b-fp8-instruct, /data/agentic_trading) | PM ratified breaker-arc acceptance 1-5 + carried forward both judgment calls (per-model unscored; process-level settle-conflict rule) as standing scorer behavior; ledger re-asserted [AT 8f7bdb06f]
