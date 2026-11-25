@@ -3,3 +3,4 @@
 01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | D5 follow-up: signal alarm = C1 tick age (row age = info), injection endpoint + live-verified, web var/ writes recorded as 2 approved exceptions; market_data c7c84dcf5
 01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | D5 correction: missing C1 tick = red dead-pipeline (30s startup grace only); render 28/28; market_data follow-up commit
 01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | D5: alerts log = collapsed arrow link (hidden until clicked); render 31/31
+01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | D5: health panel acquisition alerts tail = collapsed arrow link too; render 35/35; market_data f5855ad42
