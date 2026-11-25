@@ -1,0 +1,1 @@
+01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | wx-gas aux-path root-cause fixes per PM ruling: pinned-module health tick, split C3/C5 with C5 aux_path_down alert, watchdog aux leg (detection-only), latent Path-key push crash found by fixture; restatement spec narrowed to 5 rows (weekends UNVERIFIED), S2b-first order; market_data db9a09beb
