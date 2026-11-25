@@ -834,3 +834,5 @@ ng-options-deletion-20261118 (pi lead, jett, both) | deleted /data/parquet/ng_op
 01a20e55-d8c5-7177-a44f-2e631692a75e (pi, jett-8081-think qwen3.8-27b-fp8-instruct, /data/agentic_trading) | F1 ledger line narrowed to IFS (0.25 grid: pre-fix 0.25 step only wrong on 0.5 GEFS; match does not clear eb15bb11 in general); market_data e2c0887ba (1 file, 1 line)
 
 01a204f4-3516-7177-a44f-2d2119049046 (pi, jett-8081-think qwen3.8-27b-fp8-instruct, /data/agentic_trading) | work saved: 5.19 closure + rulings (f5925c878); reconciled 3 post-commit POOL_LEDGER lines (seal service + 11-25 session) as c9e860483; all on origin/master
+
+01a20ace-1f44-7177-a44f-2dbc59181123 (pi, jett-8081-think qwen3.8-27b-fp8-instruct, /data/agentic_trading) | wx forward-test holiday-rule + early-settle arcs closed (resolver 55b0073e / scorer 0fe1c5a3 / list file ced2cb08 canonical; C8 80-row byte-identical; E3 PASS 47 receipts); live log 84 rows (gefs 20261124T18Z accepted 02:03Z); stale decision-price audit done read-only (9 rows: 6 stale / 1 ok / 2 missing; fix arc awaiting PM ruling) — market_data c9e860483..e6e9676a8
