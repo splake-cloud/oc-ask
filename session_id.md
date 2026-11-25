@@ -6,3 +6,4 @@
 01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | D5: health panel acquisition alerts tail = collapsed arrow link too; render 35/35; market_data f5855ad42
 01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | fixture leak guard: test_guard.py, temp root for whole var/+logs/ per suite, refuse-to-start on any production output path; caught missed alerts.LOGS; all suites green; market_data 758774d8e
 01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | guard audit = machine-checked pre-condition (unguarded suite blocks all); self-test 4/4; all suites green; market_data d349a2fee
+01a20e55-d8c5-7177-a44f-2e631692a75e (pi, openai gpt-5.2, /data/agentic_trading) | stall detection fixed (count_changed_ts; frozen count now stops), leaked entries purged through worker (progress_purge_request), aifs 12Z re-logged from None; health 34/34; market_data 63fd56cde
